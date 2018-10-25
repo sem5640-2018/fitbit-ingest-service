@@ -12,6 +12,8 @@
 
 #Intellij Files
 .idea/
+target/
+classes/
 
 # Package Files #
 *.jar
