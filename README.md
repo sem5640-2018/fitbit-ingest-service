@@ -1,6 +1,11 @@
 # fitbit-ingest-service
 AberFitness FitBit Ingest Service
 
+| Branch | Status |
+|-|-|
+| Development | [![Development Build Status](https://travis-ci.org/sem5640-2018/fitbit-ingest-service.svg?branch=development)](https://travis-ci.org/sem5640-2018/fitbit-ingest-service) |
+| Release | [![Release Build Status](https://travis-ci.org/sem5640-2018/fitbit-ingest-service.svg?branch=master)](https://travis-ci.org/sem5640-2018/fitbit-ingest-service) |
+
 # Maintained by
 * James
 * Jack
