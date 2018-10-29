@@ -1,5 +1,10 @@
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.Assume;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 
 public class TestPersistance_Local {
 
@@ -18,16 +23,17 @@ public class TestPersistance_Local {
 
     String app_id2 = "Application ID 999";
 
+    private EntityManager initaliseEM() {
+        EntityManagerFactory emf = Persistence.createEntityManagerFactory("fitbitPU");
+        return emf.createEntityManager();
+    }
+
     @Test
     public void TestCommitToken() {
         StorageManager store = new StorageManager();
         String input;
 
-        int ret = store.initEM();
-        if (ret == -1) {
-            Assert.fail();
-            return;
-        }
+        Assume.assumeTrue(store.initEM());
 
         store.commitTokenMap(user1, accessToken1, refreshToken1);
         input = store.getToken(user1, false);
@@ -45,24 +51,16 @@ public class TestPersistance_Local {
 
     @Test
     public void TestRemoveToken() {
-        //TODO implement test
         StorageManager store = new StorageManager();
         String input;
 
-        int ret = store.initEM();
-        if (ret == -1) {
-            Assert.fail();
-            return;
-        }
+        Assume.assumeTrue(store.initEM());
 
         store.commitTokenMap(user2, accessToken2, refreshToken2);
-        input = store.getToken(user2, false);
-
-        Assert.assertEquals(accessToken2, input);
+        Assert.assertNotNull(store.doesTokenMapExist(user2));
 
         store.removeTokenMap(user2);
-
-        Assert.assertFalse(store.doesRecordExist(user2));
+        Assert.assertNull(store.doesTokenMapExist(user2));
 
         store.closeEM();
     }
@@ -70,41 +68,66 @@ public class TestPersistance_Local {
     @Test
     public void TestRemoveToken_NonExistant() {
         StorageManager store = new StorageManager();
-        String input;
+        int ret;
 
-        int ret = store.initEM();
-        if (ret == -1) {
-            Assert.fail();
-            return;
-        }
+        Assume.assumeTrue(store.initEM());
 
-        store.removeTokenMap("fake_uid");
+        ret = store.removeTokenMap("fake_uid");
+        Assert.assertEquals(-1, ret);
 
+        store.closeEM();
     }
 
     @Test
     public void TestStoreAppCreds() {
-        StorageManager storeManager = new StorageManager();
+        StorageManager store = new StorageManager();
         String[] input = {"", ""};
 
-        int ret = storeManager.initEM();
-        if (ret == -1) {
-            Assert.fail();
-            return;
-        }
+        Assume.assumeTrue(store.initEM());
 
-        storeManager.storeAppCreds(app_id1, app_secret1);
-        input[0] = storeManager.getAppId();
-        input[1] = storeManager.getAppSecret();
+        store.storeAppCreds(app_id1, app_secret1);
+        input[0] = store.getAppId();
+        input[1] = store.getAppSecret();
 
         Assert.assertEquals(app_id1, input[0]);
         Assert.assertEquals(app_secret1, input[1]);
 
-        storeManager.storeAppCreds(app_id2, app_secret1);
-        input[0] = storeManager.getAppId();
-
+        store.storeAppCreds(app_id2, app_secret1);
+        input[0] = store.getAppId();
         Assert.assertEquals(app_id2, input[0]);
 
-        storeManager.closeEM();
+        store.closeEM();
+    }
+
+    @Test
+    public void TestRemoveAppCreds() {
+        StorageManager store = new StorageManager();
+        int ret;
+
+        Assume.assumeTrue(store.initEM());
+
+        store.storeAppCreds(app_id1, app_secret1);
+        Assert.assertNotNull(store.doesCredRecordExist());
+
+        ret = store.removeAppCreds();
+        Assert.assertNull(store.doesCredRecordExist());
+
+        store.closeEM();
+    }
+
+    @Test
+    public void TestRemoveAppCreds_NonExitant() {
+        StorageManager store = new StorageManager();
+        int ret;
+
+        Assume.assumeTrue(store.initEM());
+
+        ret = store.removeAppCreds();
+        Assert.assertNull(store.doesCredRecordExist());
+
+        ret = store.removeAppCreds();
+        Assert.assertEquals(-1, ret);
+
+        store.closeEM();
     }
 }

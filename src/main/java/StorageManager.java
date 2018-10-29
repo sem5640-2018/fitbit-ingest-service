@@ -1,15 +1,12 @@
-import javax.persistence.*;
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-
-import com.sun.security.ntlm.Client;
-import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import org.hibernate.service.spi.ServiceException;
 
+import javax.persistence.*;
+import javax.persistence.EntityManager;
 import java.io.Serializable;
 
 public class StorageManager implements Serializable {
 
+    @PersistenceContext
     private EntityManager em;
 
     public StorageManager() {
@@ -17,22 +14,21 @@ public class StorageManager implements Serializable {
     }
 
     /**
-     * Initialises the Entity Manager instance variable.
+     * This function is for initialising the Entity Manager
+     * @return 0 for success, -1 for error
      */
-    public int initEM() {
-        int ret = 0;
+    public boolean initEM() {
         try {
             EntityManagerFactory emf = Persistence.createEntityManagerFactory("fitbitPU");
             em = emf.createEntityManager();
         } catch (ServiceException se) {
-            System.err.println("Unable to initialise Entity Manager!\n");
-            ret = -1;
+            return false;
         }
-        return ret;
+        return true;
     }
 
     /**
-     * THis function closes the Entity Manager.
+     * This Function is for getting the Entity Manager
      */
     public void closeEM() {
         em.close();
@@ -46,7 +42,8 @@ public class StorageManager implements Serializable {
      * @param refreshToken refresh token to be stored.
      */
     public void commitTokenMap(String uID, String accessToken, String refreshToken) {
-        if (!doesRecordExist(uID)) {
+        TokenMap tokenMap = doesTokenMapExist(uID);
+        if (tokenMap == null) {
             createTokenMap(uID, accessToken, refreshToken);
         } else {
             updateTokenMap(uID, accessToken, refreshToken);
@@ -71,13 +68,17 @@ public class StorageManager implements Serializable {
     /**
      * This function removes a record from persistent storage.
      * @param uId user id of the current user
+     * @return 0 for success, -1 failure (record doesn't exist)
      */
-    public void removeTokenMap(String uId) {
-        TokenMap tm = getTokenMap(uId);
-        TokenMap tokenMap = em.find(TokenMap.class, tm.getId());
-        em.getTransaction().begin();
-        em.remove(tokenMap);
-        em.getTransaction().commit();
+    public int removeTokenMap(String uId) {
+        TokenMap tokenMap = doesTokenMapExist(uId);
+        if (tokenMap != null) {
+            em.getTransaction().begin();
+            em.remove(tokenMap);
+            em.getTransaction().commit();
+        } else
+            return -1;
+        return 0;
     }
 
     /**
@@ -99,7 +100,7 @@ public class StorageManager implements Serializable {
             e.printStackTrace();
         }
     }
-
+    
     private void updateTokenMap(String uId, String accessToken, String refreshToken) {
         TokenMap tm = getTokenMap(uId);
         TokenMap tokenMap = em.find(TokenMap.class, tm.getId());
@@ -117,39 +118,73 @@ public class StorageManager implements Serializable {
         return tokeMap;
     }
 
-    public boolean doesRecordExist(String uId) {
+    /**
+     * This method serves a function for retrieving a Token Map and also Checking for it't existence in the Database
+     * @param uId user id of current user
+     * @return return TokenMap if it Exists, null if it does not.
+     */
+    public TokenMap doesTokenMapExist(String uId) {
         TokenMap tokeMap;
         try {
             tokeMap = getTokenMap(uId);
         } catch (NoResultException nre) {
             tokeMap = null;
         }
-
-        if (tokeMap == null) { return false; }
-
-        return true;
+        return tokeMap;
     }
 
+    /**
+     * This fuction allows a user to store application credentials in the DB, and also update them if they already exist
+     * @param appId app_id code from fitbit
+     * @param appSecret app_secret from fitbit
+     */
     public void storeAppCreds(String appId, String appSecret) {
-        if (doesCredRecordExist()) {
-            updateCredRecord(appId, appSecret);
+        ClientCredentials clientCredentials = doesCredRecordExist();
+        if (clientCredentials != null) {
+            updateCredRecord(clientCredentials, appId, appSecret);
         } else {
             createCredRecord(appId, appSecret);
         }
     }
 
+    /**
+     * This function retrieves the app_id from the database.
+     * @return app_id returned, null if no record found
+     */
     public String getAppId() {
-        ClientCredentials creds = getClientCredentials();
+        ClientCredentials creds = doesCredRecordExist();
+        if (creds == null)
+            return null;
         return creds.getClientId();
     }
 
+    /**
+     * This funtion is for retrieving the app_secret
+     * @return app_secret returned, null if no record found.
+     */
     public String getAppSecret() {
-        ClientCredentials creds = getClientCredentials();
+        ClientCredentials creds = doesCredRecordExist();
+        if (creds == null)
+            return null;
         return creds.getClientSecret();
     }
 
-    private void  updateCredRecord(String id, String secret) {
-        ClientCredentials cred = getClientCredentials();
+    /**
+     * This funtion removes Application Credentials
+     * @return
+     */
+    public int removeAppCreds() {
+        ClientCredentials creds = doesCredRecordExist();
+        if (creds != null) {
+            em.getTransaction().begin();
+            em.remove(creds);
+            em.getTransaction().commit();
+            return 0;
+        } else
+            return -1;
+    }
+
+    private void  updateCredRecord(ClientCredentials cred, String id, String secret) {
         em.getTransaction().begin();
         cred.setClientId(id);
         cred.setClientSecret(secret);
@@ -173,15 +208,17 @@ public class StorageManager implements Serializable {
         return creds;
     }
 
-    private boolean doesCredRecordExist() {
+    /**
+     *
+     * @return
+     */
+    public ClientCredentials doesCredRecordExist() {
         ClientCredentials clientCredentials;
         try {
             clientCredentials = getClientCredentials();
         } catch (NoResultException nre) {
             clientCredentials = null;
         }
-
-        if (clientCredentials == null) { return false; }
-        return true;
+        return clientCredentials;
     }
 }
