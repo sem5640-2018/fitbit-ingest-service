@@ -1,15 +1,18 @@
 import javax.persistence.*;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+
+import com.sun.security.ntlm.Client;
+import com.sun.xml.internal.ws.api.ha.StickyFeature;
 import org.hibernate.service.spi.ServiceException;
 
 import java.io.Serializable;
 
-public class TokenStorage implements Serializable {
+public class StorageManager implements Serializable {
 
     private EntityManager em;
 
-    public TokenStorage() {
+    public StorageManager() {
 
     }
 
@@ -26,6 +29,13 @@ public class TokenStorage implements Serializable {
             ret = -1;
         }
         return ret;
+    }
+
+    /**
+     * THis function closes the Entity Manager.
+     */
+    public void closeEM() {
+        em.close();
     }
 
     /**
@@ -91,13 +101,12 @@ public class TokenStorage implements Serializable {
     }
 
     private void updateTokenMap(String uId, String accessToken, String refreshToken) {
-        //TODO implement
         TokenMap tm = getTokenMap(uId);
         TokenMap tokenMap = em.find(TokenMap.class, tm.getId());
         em.getTransaction().begin();
-        tokenMap.setUserID(uId);
-        tokenMap.setAccessToken(accessToken);
-        tokenMap.setRefreshToken(refreshToken);
+        tm.setUserID(uId);
+        tm.setAccessToken(accessToken);
+        tm.setRefreshToken(refreshToken);
         em.getTransaction().commit();
     }
 
@@ -111,15 +120,68 @@ public class TokenStorage implements Serializable {
     public boolean doesRecordExist(String uId) {
         TokenMap tokeMap;
         try {
-            Query q = em.createQuery("SELECT b FROM TokenMap b WHERE b.userID = :uId");
-            q.setParameter("uId", uId);
-            tokeMap = (TokenMap) q.getSingleResult();
+            tokeMap = getTokenMap(uId);
         } catch (NoResultException nre) {
             tokeMap = null;
         }
 
         if (tokeMap == null) { return false; }
 
+        return true;
+    }
+
+    public void storeAppCreds(String appId, String appSecret) {
+        if (doesCredRecordExist()) {
+            updateCredRecord(appId, appSecret);
+        } else {
+            createCredRecord(appId, appSecret);
+        }
+    }
+
+    public String getAppId() {
+        ClientCredentials creds = getClientCredentials();
+        return creds.getClientId();
+    }
+
+    public String getAppSecret() {
+        ClientCredentials creds = getClientCredentials();
+        return creds.getClientSecret();
+    }
+
+    private void  updateCredRecord(String id, String secret) {
+        ClientCredentials cred = getClientCredentials();
+        em.getTransaction().begin();
+        cred.setClientId(id);
+        cred.setClientSecret(secret);
+        em.getTransaction().commit();
+    }
+
+    private void createCredRecord(String id, String secret) {
+        ClientCredentials creds = new ClientCredentials();
+        creds.setClientId(id);
+        creds.setClientSecret(secret);
+        creds.setService("fitbit");
+        em.getTransaction().begin();
+        em.persist(creds);
+        em.getTransaction().commit();
+    }
+
+    private ClientCredentials getClientCredentials() {
+        Query q = em.createQuery("SELECT b FROM ClientCredentials b WHERE b.service = :serv");
+        q.setParameter("serv", "fitbit");
+        ClientCredentials creds = (ClientCredentials) q.getSingleResult();
+        return creds;
+    }
+
+    private boolean doesCredRecordExist() {
+        ClientCredentials clientCredentials;
+        try {
+            clientCredentials = getClientCredentials();
+        } catch (NoResultException nre) {
+            clientCredentials = null;
+        }
+
+        if (clientCredentials == null) { return false; }
         return true;
     }
 }
