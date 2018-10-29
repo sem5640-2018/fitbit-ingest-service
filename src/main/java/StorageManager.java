@@ -82,11 +82,20 @@ public class StorageManager implements Serializable {
     }
 
     /**
-     * Adds a TokenMap record to db.
-     * @param uID user id associated with tokens
-     * @param accessToken access token for accessing FitBit data
-     * @param refreshToken refresh token for receiving new access token when old one expires
+     * This method serves a function for retrieving a Token Map and also Checking for it't existence in the Database
+     * @param uId user id of current user
+     * @return return TokenMap if it Exists, null if it does not.
      */
+    public TokenMap doesTokenMapExist(String uId) {
+        TokenMap tokeMap;
+        try {
+            tokeMap = getTokenMap(uId);
+        } catch (NoResultException nre) {
+            tokeMap = null;
+        }
+        return tokeMap;
+    }
+
     private void createTokenMap(String uID, String accessToken, String refreshToken) {
         try {
             TokenMap tokenMap = new TokenMap();
@@ -115,21 +124,6 @@ public class StorageManager implements Serializable {
         Query q = em.createQuery("SELECT b FROM TokenMap b WHERE b.userID = :uId");
         q.setParameter("uId", uId);
         TokenMap tokeMap = (TokenMap) q.getSingleResult();
-        return tokeMap;
-    }
-
-    /**
-     * This method serves a function for retrieving a Token Map and also Checking for it't existence in the Database
-     * @param uId user id of current user
-     * @return return TokenMap if it Exists, null if it does not.
-     */
-    public TokenMap doesTokenMapExist(String uId) {
-        TokenMap tokeMap;
-        try {
-            tokeMap = getTokenMap(uId);
-        } catch (NoResultException nre) {
-            tokeMap = null;
-        }
         return tokeMap;
     }
 
@@ -184,6 +178,20 @@ public class StorageManager implements Serializable {
             return -1;
     }
 
+    /**
+     * This function is used as check to see if fitbit record exists and also get the Credentials if it does.
+     * @return fitbit credentials if exists, null if they don't exist.
+     */
+    public ClientCredentials doesCredRecordExist() {
+        ClientCredentials clientCredentials;
+        try {
+            clientCredentials = getClientCredentials();
+        } catch (NoResultException nre) {
+            clientCredentials = null;
+        }
+        return clientCredentials;
+    }
+
     private void  updateCredRecord(ClientCredentials cred, String id, String secret) {
         em.getTransaction().begin();
         cred.setClientId(id);
@@ -206,19 +214,5 @@ public class StorageManager implements Serializable {
         q.setParameter("serv", "fitbit");
         ClientCredentials creds = (ClientCredentials) q.getSingleResult();
         return creds;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public ClientCredentials doesCredRecordExist() {
-        ClientCredentials clientCredentials;
-        try {
-            clientCredentials = getClientCredentials();
-        } catch (NoResultException nre) {
-            clientCredentials = null;
-        }
-        return clientCredentials;
     }
 }
