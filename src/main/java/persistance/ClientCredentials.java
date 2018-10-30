@@ -1,3 +1,5 @@
+package persistance;
+
 import javax.persistence.*;
 
 @Entity(name = "client_credentials")

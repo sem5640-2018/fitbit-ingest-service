@@ -1,3 +1,5 @@
+package persistance;
+
 import org.hibernate.service.spi.ServiceException;
 
 import javax.persistence.*;
@@ -84,7 +86,7 @@ public class StorageManager implements Serializable {
     /**
      * This method serves a function for retrieving a Token Map and also Checking for it't existence in the Database
      * @param uId user id of current user
-     * @return return TokenMap if it Exists, null if it does not.
+     * @return return persistance.TokenMap if it Exists, null if it does not.
      */
     public TokenMap doesTokenMapExist(String uId) {
         TokenMap tokeMap;
@@ -119,7 +121,7 @@ public class StorageManager implements Serializable {
     }
 
     private TokenMap getTokenMap(String uId) {
-        Query q = em.createQuery("SELECT b FROM TokenMap b WHERE b.userID = :uId");
+        Query q = em.createQuery("SELECT b FROM persistance.TokenMap b WHERE b.userID = :uId");
         q.setParameter("uId", uId);
         TokenMap tokeMap = (TokenMap) q.getSingleResult();
         return tokeMap;
@@ -208,7 +210,7 @@ public class StorageManager implements Serializable {
     }
 
     private ClientCredentials getClientCredentials() {
-        Query q = em.createQuery("SELECT b FROM ClientCredentials b WHERE b.service = :serv");
+        Query q = em.createQuery("SELECT b FROM persistance.ClientCredentials b WHERE b.service = :serv");
         q.setParameter("serv", "fitbit");
         ClientCredentials creds = (ClientCredentials) q.getSingleResult();
         return creds;

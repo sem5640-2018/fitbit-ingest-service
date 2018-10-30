@@ -1,6 +1,7 @@
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Assume;
+import persistance.StorageManager;
 
 public class TestPersistance_Local {
 

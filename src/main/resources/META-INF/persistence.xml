@@ -5,7 +5,8 @@
 
     <persistence-unit name="fitbitPU">
         <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
-        <class>TokenMap</class>
+        <class>persistance.TokenMap</class>
+        <class>persistance.ClientCredentials</class>
         <properties>
             <property name="hibernate.connection.url" value="jdbc:postgresql://localhost:5432/fitbit_digest_db"/>
             <property name="hibernate.connection.driver_class" value="org.postgresql.Driver"/>
