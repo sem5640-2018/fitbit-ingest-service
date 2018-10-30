@@ -2,10 +2,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.Assume;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-
 public class TestPersistance_Local {
 
     //Test Tokens
@@ -22,11 +18,6 @@ public class TestPersistance_Local {
     String app_secret1 = "Applicatio Secret 123";
 
     String app_id2 = "Application ID 999";
-
-    private EntityManager initaliseEM() {
-        EntityManagerFactory emf = Persistence.createEntityManagerFactory("fitbitPU");
-        return emf.createEntityManager();
-    }
 
     @Test
     public void TestCommitToken() {

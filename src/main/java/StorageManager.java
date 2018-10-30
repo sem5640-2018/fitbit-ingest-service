@@ -28,7 +28,7 @@ public class StorageManager implements Serializable {
     }
 
     /**
-     * This Function is for getting the Entity Manager
+     * This Function is for closing the Entity Manager.
      */
     public void closeEM() {
         em.close();
@@ -46,7 +46,7 @@ public class StorageManager implements Serializable {
         if (tokenMap == null) {
             createTokenMap(uID, accessToken, refreshToken);
         } else {
-            updateTokenMap(uID, accessToken, refreshToken);
+            updateTokenMap(tokenMap, accessToken, refreshToken);
         }
     }
 
@@ -57,7 +57,7 @@ public class StorageManager implements Serializable {
      * @return Access Token for user
      */
     public String getToken(String uId, boolean refresh) {
-        TokenMap tokenMap = getTokenMap(uId);
+        TokenMap tokenMap = doesTokenMapExist(uId);
         if (refresh) {
             return tokenMap.getRefreshToken();
         } else {
@@ -110,11 +110,9 @@ public class StorageManager implements Serializable {
         }
     }
     
-    private void updateTokenMap(String uId, String accessToken, String refreshToken) {
-        TokenMap tm = getTokenMap(uId);
+    private void updateTokenMap(TokenMap tm, String accessToken, String refreshToken) {
         TokenMap tokenMap = em.find(TokenMap.class, tm.getId());
         em.getTransaction().begin();
-        tm.setUserID(uId);
         tm.setAccessToken(accessToken);
         tm.setRefreshToken(refreshToken);
         em.getTransaction().commit();
