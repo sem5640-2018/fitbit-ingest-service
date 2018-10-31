@@ -6,18 +6,28 @@ import javax.persistence.*;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
 
+/**
+ * This class represents a Storage Manager which is responsible for providing the glue code between the DB and the
+ * application.
+ * @author James Britton
+ * @author jhb15@aber.ac.uk
+ * @version 0.1
+ */
 public class StorageManager implements Serializable {
 
     @PersistenceContext
     private EntityManager em;
 
+    /**
+     * Empty constructor for Storage Manager
+     */
     public StorageManager() {
-
+        //
     }
 
     /**
      * This function is for initialising the Entity Manager
-     * @return 0 for success, -1 for error
+     * @return true for success, false for error
      */
     public boolean initEM() {
         try {
@@ -70,17 +80,17 @@ public class StorageManager implements Serializable {
     /**
      * This function removes a record from persistent storage.
      * @param uId user id of the current user
-     * @return 0 for success, -1 failure (record doesn't exist)
+     * @return true for success, false for failure (record doesn't exist)
      */
-    public int removeTokenMap(String uId) {
+    public boolean removeTokenMap(String uId) {
         TokenMap tokenMap = doesTokenMapExist(uId);
         if (tokenMap != null) {
             em.getTransaction().begin();
             em.remove(tokenMap);
             em.getTransaction().commit();
         } else
-            return -1;
-        return 0;
+            return false;
+        return true;
     }
 
     /**
@@ -91,13 +101,21 @@ public class StorageManager implements Serializable {
     public TokenMap doesTokenMapExist(String uId) {
         TokenMap tokeMap;
         try {
-            tokeMap = getTokenMap(uId);
+            Query q = em.createQuery("SELECT b FROM persistance.TokenMap b WHERE b.userID = :uId");
+            q.setParameter("uId", uId);
+            tokeMap = (TokenMap) q.getSingleResult();
         } catch (NoResultException nre) {
             tokeMap = null;
         }
         return tokeMap;
     }
 
+    /**
+     * Private method for creating/commiting the Token Map to the database.
+     * @param uID user id for token map table
+     * @param accessToken access token to be stored in token map table
+     * @param refreshToken refresh token for token map table
+     */
     private void createTokenMap(String uID, String accessToken, String refreshToken) {
         try {
             TokenMap tokenMap = new TokenMap();
@@ -111,20 +129,19 @@ public class StorageManager implements Serializable {
             e.printStackTrace();
         }
     }
-    
+
+
+    /**
+     * Private method for updateing an existing Token Map record.
+     * @param tm existing Token Map to be updated
+     * @param accessToken new access token
+     * @param refreshToken new refresh token
+     */
     private void updateTokenMap(TokenMap tm, String accessToken, String refreshToken) {
-        TokenMap tokenMap = em.find(TokenMap.class, tm.getId());
         em.getTransaction().begin();
         tm.setAccessToken(accessToken);
         tm.setRefreshToken(refreshToken);
         em.getTransaction().commit();
-    }
-
-    private TokenMap getTokenMap(String uId) {
-        Query q = em.createQuery("SELECT b FROM persistance.TokenMap b WHERE b.userID = :uId");
-        q.setParameter("uId", uId);
-        TokenMap tokeMap = (TokenMap) q.getSingleResult();
-        return tokeMap;
     }
 
     /**
@@ -165,17 +182,17 @@ public class StorageManager implements Serializable {
 
     /**
      * This funtion removes Application Credentials
-     * @return
+     * @return boolean value true for success and false for failure
      */
-    public int removeAppCreds() {
+    public boolean removeAppCreds() {
         ClientCredentials creds = doesCredRecordExist();
         if (creds != null) {
             em.getTransaction().begin();
             em.remove(creds);
             em.getTransaction().commit();
-            return 0;
+            return true;
         } else
-            return -1;
+            return false;
     }
 
     /**
@@ -185,13 +202,21 @@ public class StorageManager implements Serializable {
     public ClientCredentials doesCredRecordExist() {
         ClientCredentials clientCredentials;
         try {
-            clientCredentials = getClientCredentials();
+            Query q = em.createQuery("SELECT b FROM persistance.ClientCredentials b WHERE b.service = :serv");
+            q.setParameter("serv", "fitbit");
+            clientCredentials = (ClientCredentials) q.getSingleResult();
         } catch (NoResultException nre) {
             clientCredentials = null;
         }
         return clientCredentials;
     }
 
+    /**
+     * Function for updateing an existing Client Credential record.
+     * @param cred existing Client Credential
+     * @param id new client id
+     * @param secret new client secret
+     */
     private void  updateCredRecord(ClientCredentials cred, String id, String secret) {
         em.getTransaction().begin();
         cred.setClientId(id);
@@ -199,6 +224,11 @@ public class StorageManager implements Serializable {
         em.getTransaction().commit();
     }
 
+    /**
+     * Function for creating a Client Credential when one doesn't already exist.
+     * @param id client id
+     * @param secret client secret
+     */
     private void createCredRecord(String id, String secret) {
         ClientCredentials creds = new ClientCredentials();
         creds.setClientId(id);
@@ -207,12 +237,5 @@ public class StorageManager implements Serializable {
         em.getTransaction().begin();
         em.persist(creds);
         em.getTransaction().commit();
-    }
-
-    private ClientCredentials getClientCredentials() {
-        Query q = em.createQuery("SELECT b FROM persistance.ClientCredentials b WHERE b.service = :serv");
-        q.setParameter("serv", "fitbit");
-        ClientCredentials creds = (ClientCredentials) q.getSingleResult();
-        return creds;
     }
 }

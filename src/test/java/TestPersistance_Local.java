@@ -60,12 +60,10 @@ public class TestPersistance_Local {
     @Test
     public void TestRemoveToken_NonExistant() {
         StorageManager store = new StorageManager();
-        int ret;
 
         Assume.assumeTrue(store.initEM());
 
-        ret = store.removeTokenMap("fake_uid");
-        Assert.assertEquals(-1, ret);
+        Assert.assertFalse(store.removeTokenMap("fake_uid"));
 
         store.closeEM();
     }
@@ -94,14 +92,14 @@ public class TestPersistance_Local {
     @Test
     public void TestRemoveAppCreds() {
         StorageManager store = new StorageManager();
-        int ret;
+        boolean ret;
 
         Assume.assumeTrue(store.initEM());
 
         store.storeAppCreds(app_id1, app_secret1);
         Assert.assertNotNull(store.doesCredRecordExist());
 
-        ret = store.removeAppCreds();
+        Assert.assertTrue(store.removeAppCreds());
         Assert.assertNull(store.doesCredRecordExist());
 
         store.closeEM();
@@ -110,15 +108,14 @@ public class TestPersistance_Local {
     @Test
     public void TestRemoveAppCreds_NonExitant() {
         StorageManager store = new StorageManager();
-        int ret;
 
         Assume.assumeTrue(store.initEM());
 
-        ret = store.removeAppCreds();
-        Assert.assertNull(store.doesCredRecordExist());
+        if (store.doesCredRecordExist() != null) {
+            store.removeAppCreds();
+        }
 
-        ret = store.removeAppCreds();
-        Assert.assertEquals(-1, ret);
+        Assert.assertFalse(store.removeAppCreds());
 
         store.closeEM();
     }
