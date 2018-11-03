@@ -19,31 +19,12 @@ public class StorageManager implements Serializable {
     private EntityManager em;
 
     /**
-     * Empty constructor for Storage Manager
+     * Storage Manager constructor taking one parameter the Entity Manager that should be setup outside of the object
+     * an passed in when constructed.
+     * @param em
      */
-    public StorageManager() {
-        //
-    }
-
-    /**
-     * This function is for initialising the Entity Manager
-     * @return true for success, false for error
-     */
-    public boolean initEM() {
-        try {
-            EntityManagerFactory emf = Persistence.createEntityManagerFactory("fitbitPU");
-            em = emf.createEntityManager();
-        } catch (ServiceException se) {
-            return false;
-        }
-        return true;
-    }
-
-    /**
-     * This Function is for closing the Entity Manager.
-     */
-    public void closeEM() {
-        em.close();
+    public StorageManager(EntityManager em) {
+        this.em = em;
     }
 
     /**
