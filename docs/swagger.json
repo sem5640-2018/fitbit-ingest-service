@@ -26,8 +26,8 @@
 				"consumes": ["application/json"],
 				"produces": ["application/json"],
 				"responses": {
-					"405": {
-						"description": "TBC"
+					"200": {
+						"description": "OK"
 					}
 				}
 			}
@@ -50,8 +50,8 @@
 				"consumes": ["application/json"],
 				"produces": ["application/json"],
 				"responses": {
-					"405": {
-						"description": "TBC"
+					"200": {
+						"description": "Returns page letting user know if code was valid and they are successfully connected."
 					}
 				}
 			}
@@ -74,7 +74,7 @@
 				"consumes": ["application/json"],
 				"produces": ["application/json"],
 				"responses": {
-					"405": {
+					"200": {
 						"description": "The FitBit data for the specified user."
 					}
 				}
@@ -98,7 +98,7 @@
 				"consumes": ["application/json"],
 				"produces": ["application/json"],
 				"responses": {
-					"405": {
+					"200": {
 						"description": "Returns true or false depending if a user has been connected"
 					}
 				}
