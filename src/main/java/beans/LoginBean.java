@@ -19,7 +19,6 @@ public class LoginBean implements Serializable {
 
     // Used as a singleton to store access tokens
     private static final StorageManager store = new StorageManager();
-    private static final String PROTECTED_RESOURCE_URL = "https://api.fitbit.com/1/user/%s/profile.json";
 
     private String token;
     private String authLocation;
@@ -70,6 +69,14 @@ public class LoginBean implements Serializable {
     public void setToken(String token) {
         this.token = token;
     }
+
+
+    /**
+     * This method is used for mapping the token parameter
+     *
+     * @return token this is the provided parameter
+     */
+    public String getToken() { return this.token; }
 
 
     /**
