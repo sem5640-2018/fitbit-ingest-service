@@ -22,6 +22,7 @@ public class LoginBean implements Serializable {
 
     private String token;
     private String authLocation;
+    private String error;
 
     public LoginBean() {
         // Do nothing
@@ -32,8 +33,21 @@ public class LoginBean implements Serializable {
      *
      */
     public void onLoad() {
-        final String clientId = "22D4RT";
-        final String clientSecret = "547470906547f1d7d0ffc7e55fc4a733";
+        if (store == null) {
+            // @TODO Log error
+            error = "No store configured";
+            return;
+        }
+
+        final String clientId = store.getAppId();
+        final String clientSecret = store.getAppSecret();
+
+        if (clientId == null || clientSecret == null) {
+            // @TODO Log error
+            error = "No client ID or client secret";
+            return;
+        }
+
         OAuth20Service service = new ServiceBuilder(clientId)
                 .apiSecret(clientSecret)
                 .scope("activity profile")
@@ -46,15 +60,18 @@ public class LoginBean implements Serializable {
                 final OAuth2AccessToken oauth2AccessToken = service.getAccessToken(token);
                 if (!(oauth2AccessToken instanceof FitBitOAuth2AccessToken)) {
                     token = null;
+                    // @TODO Log error
+                    error = "Invalid token provided, please retry";
                     return;
                 }
 
                 final FitBitOAuth2AccessToken accessToken = (FitBitOAuth2AccessToken) oauth2AccessToken;
-
-                //store.commitTokenMap("test", accessToken.getAccessToken(), accessToken.getRefreshToken());
+                store.commitTokenMap("test", accessToken.getAccessToken(), accessToken.getRefreshToken());
 
             } catch (Exception e) {
-                e.printStackTrace();
+                // @TODO Log error
+                error = "Could not store token";
+                token = null;
             }
         } else {
            authLocation = service.getAuthorizationUrl();
@@ -70,7 +87,6 @@ public class LoginBean implements Serializable {
         this.token = token;
     }
 
-
     /**
      * This method is used for mapping the token parameter
      *
@@ -78,6 +94,12 @@ public class LoginBean implements Serializable {
      */
     public String getToken() { return this.token; }
 
+    /**
+     * This method is used for retrieving the errors if any
+     *
+     * @return error if there is one otherwise null
+     */
+    public String getError() { return this.error; }
 
     /**
      * This method is called when the login button is pressed,
@@ -98,7 +120,7 @@ public class LoginBean implements Serializable {
      *
      * @param manager the storage manager to use
      */
-    public void setStorageManager(StorageManager manager) {
+    public static void setStorageManager(StorageManager manager) {
         store = manager;
     }
 }
