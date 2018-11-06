@@ -1,9 +1,9 @@
 package persistence;
 
-import org.hibernate.service.spi.ServiceException;
-
-import javax.persistence.*;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import java.io.Serializable;
 
 /**
@@ -89,6 +89,21 @@ public class StorageManager implements Serializable {
             tokeMap = null;
         }
         return tokeMap;
+    }
+
+    /**
+     * This method serves as a way to test the number of items in the store
+     * @return returns the number of tokens in the store and -1 if an error has occurred
+     */
+    public long getTokenCount() {
+        int count;
+        try {
+            Query q = em.createQuery("SELECT COUNT(b) FROM persistence.TokenMap b");
+            count = Integer.parseInt(q.getSingleResult().toString());
+        } catch (NoResultException nre) {
+            count = -1;
+        }
+        return count;
     }
 
     /**

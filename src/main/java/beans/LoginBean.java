@@ -18,7 +18,7 @@ import java.io.Serializable;
 public class LoginBean implements Serializable {
 
     // Used as a singleton to store access tokens
-    private static final StorageManager store = new StorageManager();
+    private static StorageManager store;
 
     private String token;
     private String authLocation;
@@ -28,7 +28,7 @@ public class LoginBean implements Serializable {
     }
 
     /**
-     * This method is called just before the
+     * This method is called just before the page loads
      *
      */
     public void onLoad() {
@@ -51,7 +51,7 @@ public class LoginBean implements Serializable {
 
                 final FitBitOAuth2AccessToken accessToken = (FitBitOAuth2AccessToken) oauth2AccessToken;
 
-                store.commitTokenMap("test", accessToken.getAccessToken(), accessToken.getRefreshToken());
+                //store.commitTokenMap("test", accessToken.getAccessToken(), accessToken.getRefreshToken());
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -91,5 +91,14 @@ public class LoginBean implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * This method is used for testing
+     *
+     * @param manager the storage manager to use
+     */
+    public void setStorageManager(StorageManager manager) {
+        store = manager;
     }
 }
