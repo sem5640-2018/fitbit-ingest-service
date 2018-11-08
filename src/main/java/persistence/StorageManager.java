@@ -1,7 +1,5 @@
 package persistence;
 
-import org.hibernate.service.spi.ServiceException;
-
 import javax.persistence.*;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
@@ -15,7 +13,6 @@ import java.io.Serializable;
  */
 public class StorageManager implements Serializable {
 
-    @PersistenceContext
     private EntityManager em;
 
     /**
