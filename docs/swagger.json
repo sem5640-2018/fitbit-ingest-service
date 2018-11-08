@@ -1,0 +1,108 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"description": "API for commmunicating with the FitBit Ingest Service.",
+		"version": "1.0.0",
+		"title": "Fitbit Ingest Service",
+		"contact": {
+			"email": "TBC@aber.ac.uk"
+		}
+	},
+	"host": "TBC",
+	"tags": [
+		{
+			"name": "Monitoring / Status",
+			"description": "Used to check the health of the system."
+		}
+	],
+	"schemes": ["https", "http"],
+	"paths": {
+		"/Status": {
+			"get": {
+				"tags": ["Monitoring / Status"],
+				"summary": "Returns the heath of the system.",
+				"description": "This will be consumed by GLaDOS",
+				"operationId": "getStatus",
+				"consumes": ["application/json"],
+				"produces": ["application/json"],
+				"responses": {
+					"200": {
+						"description": "OK"
+					}
+				}
+			}
+		},
+		"/Login": {
+			"post": {
+				"tags": ["API Endpoint for Fitbit"],
+				"summary": "This is required by the Fitbit API.",
+				"description": "This endpoint will recieve the code given by the the fitbit API",
+				"operationId": "postKey",
+				"parameters": [
+					{
+						"name": "code",
+						"in": "query",
+						"description": "The autherisation string",
+						"required": false,
+						"type": "string"
+					}
+				],
+				"consumes": ["application/json"],
+				"produces": ["application/json"],
+				"responses": {
+					"200": {
+						"description": "Returns page letting user know if code was valid and they are successfully connected."
+					}
+				}
+			}
+		},
+		"/Prompt": {
+			"get": {
+				"tags": ["Manual Request prompt"],
+				"summary": "This can be used to manually trigger a request to the Fitbit API for a specific user.",
+				"description": "With a given user ID the request will prompt Fitbit and return the data",
+				"operationId": "getPrompt",
+				"parameters": [
+					{
+						"name": "userId",
+						"in": "query",
+						"description": "The user id of the user of which to check against",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"consumes": ["application/json"],
+				"produces": ["application/json"],
+				"responses": {
+					"200": {
+						"description": "The FitBit data for the specified user."
+					}
+				}
+			}
+		},
+		"/Check": {
+			"get": {
+				"tags": ["Check if connected"],
+				"summary": "Used to check if a user is connected with Fitbit.",
+				"description": "With a given users ID it will check if they have been authenticated with FitBit",
+				"operationId": "checkUser",
+				"parameters": [
+					{
+						"name": "userId",
+						"in": "query",
+						"description": "The user id of the user of which to check against",
+						"required": true,
+						"type": "string"
+					}
+				],
+				"consumes": ["application/json"],
+				"produces": ["application/json"],
+				"responses": {
+					"200": {
+						"description": "Returns true or false depending if a user has been connected"
+					}
+				}
+			}
+		}
+	}
+}
