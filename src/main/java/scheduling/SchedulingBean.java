@@ -1,4 +1,4 @@
-package background;
+package scheduling;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -7,7 +7,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
 /**
- * Scheduling EJB for kicking of the background tasks that will run once the application has started up.
+ * Scheduling EJB for kicking of the scheduling tasks that will run once the application has started up.
  */
 @Startup
 @Singleton
