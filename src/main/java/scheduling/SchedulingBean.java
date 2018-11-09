@@ -8,6 +8,9 @@ import javax.ejb.Startup;
 
 /**
  * Scheduling EJB for kicking of the scheduling tasks that will run once the application has started up.
+ * @Author James H Britton
+ * @Author "jhb15@aber,ac,uk"
+ * @Version 0.1
  */
 @Startup
 @Singleton
