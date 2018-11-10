@@ -57,10 +57,10 @@ public class TestTokenMap extends PersistenceTest {
     @Test
     public void testDeleteTokenMap() {
         store.commitTokenMap(dt_user, dt_accessToken, dt_refreshToken);
-        Assert.assertNotNull(store.doesTokenMapExist(dt_user));
+        Assert.assertNotNull(store.getTokenMap(dt_user));
 
         store.removeTokenMap(dt_user);
-        Assert.assertNull(store.doesTokenMapExist(dt_user));
+        Assert.assertNull(store.getTokenMap(dt_user));
     }
 
     @Test
