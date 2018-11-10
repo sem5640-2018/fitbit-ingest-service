@@ -32,7 +32,7 @@ public class StorageManager implements Serializable {
      * @param refreshToken refresh token to be stored.
      */
     public void commitTokenMap(String uID, String accessToken, String refreshToken) {
-        TokenMap tokenMap = doesTokenMapExist(uID);
+        TokenMap tokenMap = getTokenMap(uID);
         if (tokenMap == null) {
             createTokenMap(uID, accessToken, refreshToken);
         } else {
@@ -47,7 +47,7 @@ public class StorageManager implements Serializable {
      * @return Access Token for user
      */
     public String getToken(String uId, boolean refresh) {
-        TokenMap tokenMap = doesTokenMapExist(uId);
+        TokenMap tokenMap = getTokenMap(uId);
         if (refresh) {
             return tokenMap.getRefreshToken();
         } else {
@@ -61,7 +61,7 @@ public class StorageManager implements Serializable {
      * @return true for success, false for failure (record doesn't exist)
      */
     public boolean removeTokenMap(String uId) {
-        TokenMap tokenMap = doesTokenMapExist(uId);
+        TokenMap tokenMap = getTokenMap(uId);
         if (tokenMap != null) {
             em.getTransaction().begin();
             em.remove(tokenMap);
@@ -76,7 +76,7 @@ public class StorageManager implements Serializable {
      * @param uId user id of current user
      * @return return persistence.TokenMap if it Exists, null if it does not.
      */
-    public TokenMap doesTokenMapExist(String uId) {
+    public TokenMap getTokenMap(String uId) {
         TokenMap tokeMap;
         try {
             Query q = em.createQuery("SELECT b FROM persistence.TokenMap b WHERE b.userID = :uId");
@@ -86,6 +86,23 @@ public class StorageManager implements Serializable {
             tokeMap = null;
         }
         return tokeMap;
+    }
+
+    /**
+     * This method serves a function for retrieving all the tokens from the database
+     * @return return an array of TokenMaps any are to be found, and null if an error occured.
+     */
+    public TokenMap[] getAllTokens() {
+        TokenMap[] allTokens;
+
+        try {
+            Query q = em.createQuery("SELECT b FROM persistence.TokenMap b");
+            allTokens = (TokenMap[]) q.getSingleResult();
+        } catch (NoResultException nre) {
+            allTokens = null;
+        }
+
+        return allTokens;
     }
 
     /**
