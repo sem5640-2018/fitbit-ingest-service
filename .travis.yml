@@ -3,11 +3,6 @@ sudo: false
 notifications:
   slack: sem5640-2018:4U7aCLy3FSLaqVepipksnN0a
 
-# Specify which branches can be built on PR merge
-branches:
-  only:
-    - master
-    - development
 
 cache:
   directories:
