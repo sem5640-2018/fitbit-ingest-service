@@ -1,7 +1,6 @@
 package scheduling;
 
 import datacollection.FitbitDataCollector;
-import persistence.StorageManager;
 import persistence.TokenMap;
 
 import javax.annotation.PostConstruct;
@@ -9,6 +8,9 @@ import javax.annotation.PreDestroy;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 /**
  * Scheduling EJB for kicking of the scheduling tasks that will run once the application has started up.
@@ -20,8 +22,10 @@ import javax.ejb.Startup;
 @Singleton
 public class SchedulingBean {
 
+    @PersistenceContext
+    private EntityManager em;
+
     private final FitbitDataCollector collector = new FitbitDataCollector();
-    private static final StorageManager storageManager = new StorageManager(null);
 
     /**
      * This method is ran once the EJB is created.
@@ -36,14 +40,14 @@ public class SchedulingBean {
      */
     @Schedule(hour = "*/1", minute = "0", second = "0", persistent = false)
     public void getFitbitData() {
-        TokenMap[] allTokens = storageManager.getAllTokens();
+        List<TokenMap> allTokens = TokenMap.getAllTokenMap(em);
 
         if (allTokens == null) {
             // @TODO Log the fact we have no tokens
             return;
         }
 
-        collector.getAllUsersInfo(allTokens);
+        collector.getAllUsersInfo(allTokens.toArray(new TokenMap[0]));
     }
 
     /**

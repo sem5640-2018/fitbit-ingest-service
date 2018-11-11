@@ -1,6 +1,7 @@
 package persistence;
 
 import javax.persistence.*;
+import java.util.List;
 
 /**
  * This class represents a Token Map record stored in the fitbit ingest database.
@@ -8,7 +9,12 @@ import javax.persistence.*;
  * @author jhb15@aber.ac.uk
  * @version 0.1
  */
-@Entity(name = "client_credentials")
+@Entity
+@Table(name = "client_credentials")
+@NamedQueries({
+        @NamedQuery(name = "ClientCredentials.findAll", query = "SELECT c FROM ClientCredentials c"),
+        @NamedQuery(name = "ClientCredentials.findByService", query = "SELECT c FROM ClientCredentials c WHERE c.service = :serv")
+})
 public class ClientCredentials {
 
     @Id
@@ -104,5 +110,40 @@ public class ClientCredentials {
      */
     public void setService(String service) {
         this.service = service;
+    }
+
+
+    public static ClientCredentials getClientCredentials(EntityManager em, String service) {
+        ClientCredentials tm;
+        try {
+            Query query = em.createNamedQuery("ClientCredentials.findByService", ClientCredentials.class);
+            query.setParameter("serv", service);
+            tm = (ClientCredentials) query.getSingleResult();
+        } catch (NoResultException nre) {
+            tm = null;
+        }
+        return tm;
+    }
+
+    public static List<ClientCredentials> getAllClientCredentials(EntityManager em) {
+        List<ClientCredentials> clientCredList;
+        try {
+            Query query = em.createNamedQuery("ClientCredentials.findAll", ClientCredentials.class);
+            clientCredList = query.getResultList();
+        } catch (NoResultException nre) {
+            clientCredList = null;
+        }
+        return clientCredList;
+    }
+
+    public static boolean removeByService(EntityManager em, String service) {
+        ClientCredentials cliCred = getClientCredentials(em, service);
+        if (cliCred != null) {
+            em.getTransaction().begin();
+            em.remove(cliCred);
+            em.getTransaction().commit();
+        } else
+            return false;
+        return true;
     }
 }
