@@ -1,7 +1,9 @@
 package datacollection;
 
 import persistence.TokenMap;
+import persistence.TokenMapDAO;
 
+import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.ServletException;
@@ -16,8 +18,8 @@ import java.util.Date;
 @WebServlet(name = "Prompt", urlPatterns = {"/Prompt", "/GetFitbit"})
 public class Prompt extends HttpServlet {
 
-    @PersistenceContext
-    EntityManager em;
+    @EJB
+    TokenMapDAO tokenMapDAO;
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -33,6 +35,7 @@ public class Prompt extends HttpServlet {
             //redirct user back to origin
         //else
             //Invalid Request response
+        PrintWriter out = response.getWriter();
 
         TokenMap tm = new TokenMap();
         tm.setAccessToken("testAT");
@@ -42,12 +45,15 @@ public class Prompt extends HttpServlet {
         tm.setFitbitUid("testFitbitUID");
         tm.setLastAccessed(new Date());
 
-        em.getTransaction().begin();
-        em.persist(tm);
-        em.getTransaction().commit();
+        tokenMapDAO.save(tm);
 
-        PrintWriter out = response.getWriter();
-        out.println("<p>Manual Prompt Unimplemented!</p>");
+        tm = tokenMapDAO.getByUid("testUID");
+        out.println("<p>" + tm.toString() + "</p>");
+
+        tm.setAccessToken("updateTestAT");
+        tokenMapDAO.update(tm);
+        tm = tokenMapDAO.getByUid("testUID");
+        out.println("<p>" + tm.toString() + "</p>");
 
         out.close();
 

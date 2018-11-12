@@ -140,6 +140,21 @@ public class TokenMap implements Serializable {
         return createdAt;
     }
 
+    @Override
+    public String toString() {
+        return "TokenMap{" +
+                "id=" + id +
+                ", userID='" + userID + '\'' +
+                ", accessToken='" + accessToken + '\'' +
+                ", expiresIn=" + expiresIn +
+                ", refreshToken='" + refreshToken + '\'' +
+                ", fitbitUid='" + fitbitUid + '\'' +
+                ", lastAccessed=" + lastAccessed +
+                ", updatedAt=" + updatedAt +
+                ", createdAt=" + createdAt +
+                '}';
+    }
+
     /**
      * Static function for running 'TokenMap.findByUid' Names Query with appropriate error checking to avoid code
      * duplication.
