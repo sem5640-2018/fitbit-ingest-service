@@ -68,71 +68,56 @@ public class ClientCredentials {
         this.clientSecret = clientSecret;
     }
 
-    /**
-     * Getter for id used in table
-     * @return the id of Token Map
-     */
     public Long getId() {
         return id;
     }
 
-    /**
-     * Setter for the id used in the table.
-     * @param id desired id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * Getter for the client id
-     * @return client id
-     */
     public String getClientId() {
         return clientId;
     }
 
-    /**
-     * Setter for the client id
-     * @param clientId desired client id
-     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 
-    /**
-     * Getter for the client secret
-     * @return client secret
-     */
     public String getClientSecret() {
         return clientSecret;
     }
 
-    /**
-     * Setter for the client secret
-     * @param clientSecret desired client secret
-     */
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
 
-    /**
-     * Getter for the service string.
-     * @return service string
-     */
     public String getService() {
         return service;
     }
 
-    /**
-     * Setter for the service string.
-     * @param service desired service string
-     */
     public void setService(String service) {
         this.service = service;
     }
 
+    public Date getUpdatedAt() { return updatedAt; }
 
+    public Date getCreatedAt() { return createdAt; }
+
+    @Override
+    public String toString() {
+        return "ClientCredentials{" +
+                "id=" + id +
+                ", clientId='" + clientId + '\'' +
+                ", clientSecret='" + clientSecret + '\'' +
+                ", service='" + service + '\'' +
+                ", updatedAt=" + updatedAt +
+                ", createdAt=" + createdAt +
+                '}';
+    }
+
+    /**
+     * This function is used to utilise the 'ClientCredentials.findByService' named query.
+     * @param em entity manager where the data is
+     * @param service the sevice that identitfys the ClientCredentials
+     * @return The result of the query.
+     */
     public static ClientCredentials getClientCredentials(EntityManager em, String service) {
         ClientCredentials tm;
         try {
@@ -145,6 +130,12 @@ public class ClientCredentials {
         return tm;
     }
 
+    /**
+     * This function utilises the 'ClientCredentials.findAll' named query for retreiving all the Records in the client
+     * credentials table.
+     * @param em Entity Manager for where the data resides
+     * @return A List of Client Credential Records
+     */
     public static List<ClientCredentials> getAllClientCredentials(EntityManager em) {
         List<ClientCredentials> clientCredList;
         try {
@@ -156,6 +147,13 @@ public class ClientCredentials {
         return clientCredList;
     }
 
+    /**
+     * This allows the removal of Client Credential records from the table by using the service column to identify the
+     * record to be removed.
+     * @param em Entity Manager for where the data resides
+     * @param service service credentials we wish to remove.
+     * @return boolean true for success & false for error
+     */
     public static boolean removeByService(EntityManager em, String service) {
         ClientCredentials cliCred = getClientCredentials(em, service);
         if (cliCred != null) {

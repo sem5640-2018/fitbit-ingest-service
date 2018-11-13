@@ -85,10 +85,6 @@ public class TokenMap implements Serializable {
         return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
     public String getUserID() {
         return userID;
     }
@@ -206,8 +202,8 @@ public class TokenMap implements Serializable {
             em.getTransaction().begin();
             em.remove(tm);
             em.getTransaction().commit();
+            return true;
         } else
             return false;
-        return true;
     }
 }
