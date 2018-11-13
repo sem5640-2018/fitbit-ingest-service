@@ -1,6 +1,7 @@
 package persistence;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +31,25 @@ public class ClientCredentials {
 
     @Column(name = "service")
     private String service;
+
+    @Column(name = "updated_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    @Column(name = "created_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @PrePersist
+    protected void prePersist() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void preUpdate() {
+        updatedAt = new Date();
+    }
 
     /**
      * Empty constructor for Client Credentials

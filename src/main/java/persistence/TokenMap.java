@@ -43,20 +43,23 @@ public class TokenMap implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastAccessed;
 
-    @Column(name = "updated_at", insertable = false, nullable = false)
+    @Column(name = "updated_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt;
 
-    @Column(name = "created_at", insertable = false, nullable = false)
+    @Column(name = "created_at", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt;
 
     @PrePersist
-    @PreUpdate
-    protected void updateTimestamps() {
+    protected void prePersist() {
+        createdAt = new Date();
         updatedAt = new Date();
-        if (createdAt == null)
-            createdAt = new Date();
+    }
+
+    @PreUpdate
+    protected void preUpdate() {
+        updatedAt = new Date();
     }
 
     /**
