@@ -18,5 +18,7 @@ CREATE TABLE client_credentials (
   client_id VARCHAR(50),
   client_secret VARCHAR(50),
   service VARCHAR(50),
+  updated_at TIMESTAMP,
+  created_at TIMESTAMP,
   PRIMARY KEY (id)
 );

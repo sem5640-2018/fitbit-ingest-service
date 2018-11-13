@@ -23,7 +23,7 @@
           <factory-entry name="fitbitPU" value="58e8053c-14bd-4851-91d7-27e4f1926387" />
           <factory-entry name="test-fitbitPU" value="58e8053c-14bd-4851-91d7-27e4f1926387" />
         </datasource-mapping>
-        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/main/resources/META-INF/persistence.xml" />
+        <deploymentDescriptor name="persistence.xml" url="file://$MODULE_DIR$/src/test/resources/META-INF/persistence.xml" />
       </configuration>
     </facet>
     <facet type="ejb" name="EJB">
