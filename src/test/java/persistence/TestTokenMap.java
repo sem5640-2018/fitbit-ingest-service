@@ -68,6 +68,16 @@ public class TestTokenMap extends PersistenceTest {
     }
 
     @Test
+    public void testTokenCount() {
+        long start = store.getTokenCount();
+
+        store.commitTokenMap(ct_user, ct_accessToken, ct_refreshToken);
+
+        long end = store.getTokenCount();
+        Assert.assertTrue(start < end);
+    }
+
+    @Test
     public void testDeleteTokenMap() {
         commitTokenMap(dt_user, dt_accessToken, dt_refreshToken);
         Assert.assertNotNull(TokenMap.getTokenMap(em, dt_user));
