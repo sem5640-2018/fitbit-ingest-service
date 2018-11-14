@@ -5,7 +5,7 @@ public class Activity {
     private long activityParentId;
     private long calories;
     private String description;
-    private long distance;
+    private float distance;
     private long duration;
     private boolean hasStartTime;
     private boolean isFavorite;

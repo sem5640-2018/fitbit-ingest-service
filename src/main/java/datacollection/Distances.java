@@ -2,7 +2,7 @@ package datacollection;
 
 public class Distances {
     private String activity;
-    private long distance;
+    private float distance;
 
     public Distances() {
 

@@ -9,7 +9,7 @@ public class Summary {
 
     private List<Distances> distances;
 
-    private long elevation;
+    private float elevation;
     private long fairlyActiveMinutes;
     private long floors;
     private long lightlyActiveMinutes;
