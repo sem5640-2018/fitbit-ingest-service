@@ -1,5 +1,9 @@
 package datacollection;
 
+import beans.OAuthBean;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Verb;
 import persistence.TokenMap;
 
 import java.text.SimpleDateFormat;
@@ -10,20 +14,20 @@ public class DataCheckThread implements Runnable {
     private ConcurrentLinkedQueue<TokenMap> input;
     private ConcurrentLinkedQueue<String> output;
     private String address;
+    private OAuthBean oAuthBean;
 
-    DataCheckThread(ConcurrentLinkedQueue<TokenMap> input, ConcurrentLinkedQueue<String> out) {
+    DataCheckThread(ConcurrentLinkedQueue<TokenMap> input, ConcurrentLinkedQueue<String> out, OAuthBean oAuthBean) {
         // Create Shallow copy to the global linked queue
         this.input = input;
         this.output = out;
+        this.oAuthBean = oAuthBean;
 
         // Needed for API requests with FitBit
         Date date = new Date();
         String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
 
         this.address = "https://api.fitbit.com/1/user/-/activities/date/" + textDate + ".json";
-
     }
-
 
     /**
      * This method is called automatically when the thread is started
@@ -43,25 +47,18 @@ public class DataCheckThread implements Runnable {
      * @return JSON Array with activity data
      */
     private void requestActivityData(TokenMap tokenMap) {
-        /*final OAuth2AccessToken oauth2AccessToken = new FitBitOAuth2AccessToken(tokenMap.getAccessToken());
-
-        if (!(oauth2AccessToken instanceof FitBitOAuth2AccessToken)) {
-            return;
-        }
-
-        final FitBitOAuth2AccessToken accessToken = (FitBitOAuth2AccessToken) oauth2AccessToken;
-
         final OAuthRequest request = new OAuthRequest(Verb.GET,
-                String.format(this.address, accessToken.getUserId()));
+                String.format(this.address, tokenMap.getUserID()));
         request.addHeader("x-li-format", "json");
 
-        // TODO with a global service to access
-        //service.signRequest(accessToken, request);
+        oAuthBean.getService().signRequest(tokenMap.getAccessToken(), request);
 
-        //TODO will send of API request for activity data
-        String s = "some JSON to be parsed";
-
- */
+        try {
+            final Response response = oAuthBean.getService().execute(request);
+            output.add(response.getBody());
+        } catch (Exception err) {
+            // @TODO LOg error with request
+        }
     }
 
 }

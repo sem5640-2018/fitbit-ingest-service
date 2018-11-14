@@ -1,5 +1,6 @@
 package scheduling;
 
+import beans.OAuthBean;
 import datacollection.FitbitDataCollector;
 import persistence.TokenMap;
 
@@ -8,6 +9,7 @@ import javax.annotation.PreDestroy;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -25,7 +27,10 @@ public class SchedulingBean {
     @PersistenceContext
     private EntityManager em;
 
-    private final FitbitDataCollector collector = new FitbitDataCollector();
+    @Inject
+    OAuthBean oAuthBean;
+
+    private final FitbitDataCollector collector = new FitbitDataCollector(oAuthBean);
 
     /**
      * This method is ran once the EJB is created.
