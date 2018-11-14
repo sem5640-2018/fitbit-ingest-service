@@ -179,6 +179,7 @@ public class TokenMap implements Serializable {
      * @param em initialised Entity Manager
      * @return
      */
+    @SuppressWarnings("unchecked")
     public static List<TokenMap> getAllTokenMap(EntityManager em) {
         List<TokenMap> tokenMapList;
         try {

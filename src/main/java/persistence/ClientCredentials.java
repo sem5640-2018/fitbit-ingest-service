@@ -136,6 +136,7 @@ public class ClientCredentials {
      * @param em Entity Manager for where the data resides
      * @return A List of Client Credential Records
      */
+    @SuppressWarnings("unchecked")
     public static List<ClientCredentials> getAllClientCredentials(EntityManager em) {
         List<ClientCredentials> clientCredList;
         try {
