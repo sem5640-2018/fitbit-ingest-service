@@ -185,7 +185,7 @@ public class TokenMap implements Serializable {
         try {
             Query query = em.createNamedQuery("TokenMap.findAll", TokenMap.class);
             tokenMapList = query.getResultList();
-        } catch (NoResultException nre) {
+        } catch (Exception nre) {
             tokenMapList = null;
         }
         return tokenMapList;

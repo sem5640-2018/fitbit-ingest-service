@@ -61,7 +61,7 @@ public class DataCheckThread implements Runnable {
         //TODO will send of API request for activity data
         String s = "some JSON to be parsed";
 
-*/
+ */
     }
 
 }
