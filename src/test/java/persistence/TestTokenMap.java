@@ -3,8 +3,6 @@ package persistence;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.persistence.Query;
-
 public class TestTokenMap extends PersistenceTest {
 
     //Test Tokens
@@ -69,11 +67,11 @@ public class TestTokenMap extends PersistenceTest {
 
     @Test
     public void testTokenCount() {
-        long start = store.getTokenCount();
+        long start = TokenMap.getAllTokenMap(em).size();
 
-        store.commitTokenMap(ct_user, ct_accessToken, ct_refreshToken);
+        commitTokenMap(ct_user, ct_accessToken, ct_refreshToken);
 
-        long end = store.getTokenCount();
+        long end = TokenMap.getAllTokenMap(em).size();
         Assert.assertTrue(start < end);
     }
 
