@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
 
+import static java.lang.Thread.sleep;
+
 @WebServlet(name = "Prompt", urlPatterns = {"/Prompt", "/GetFitbit"})
 public class Prompt extends HttpServlet {
 
@@ -37,23 +39,7 @@ public class Prompt extends HttpServlet {
             //Invalid Request response
         PrintWriter out = response.getWriter();
 
-        TokenMap tm = new TokenMap();
-        tm.setAccessToken("testAT");
-        tm.setRefreshToken("testRT");
-        tm.setUserID("testUID");
-        tm.setExpiresIn(3600);
-        tm.setFitbitUid("testFitbitUID");
-        tm.setLastAccessed(new Date());
-
-        tokenMapDAO.save(tm);
-
-        tm = tokenMapDAO.getByUid("testUID");
-        out.println("<p>" + tm.toString() + "</p>");
-
-        tm.setAccessToken("updateTestAT");
-        tokenMapDAO.update(tm);
-        tm = tokenMapDAO.getByUid("testUID");
-        out.println("<p>" + tm.toString() + "</p>");
+        out.println("<p>Not Yet Implemented, will trigger request for data from fitbit!</p>");
 
         out.close();
 
