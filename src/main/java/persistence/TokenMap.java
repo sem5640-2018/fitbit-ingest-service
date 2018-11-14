@@ -24,7 +24,7 @@ public class TokenMap implements Serializable {
     @Column(name="id")
     private Long id;
 
-    @Column(name="user_id")
+    @Column(name="user_id", unique = true)
     private String userID;
 
     @Column(name= "access_token")
