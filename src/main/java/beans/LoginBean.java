@@ -22,7 +22,6 @@ public class LoginBean implements Serializable {
     @Inject
     TokenMapDAO tokenMapDAO;
 
-
     private String token;
     private String authLocation;
     private String error;
@@ -36,7 +35,6 @@ public class LoginBean implements Serializable {
      *
      */
     public void onLoad() {
-
 
         if (token != null) {
             try {
@@ -90,8 +88,6 @@ public class LoginBean implements Serializable {
      * it will redirect the user to the authentication page provided by FitBit
      */
     public void loginButtonPress() {
-        if (authLocation == null) return;
-
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(authLocation);
         } catch (IOException e) {
