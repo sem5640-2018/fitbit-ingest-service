@@ -1,11 +1,6 @@
 package datacollection;
 
-import persistence.TokenMap;
-import persistence.TokenMapDAO;
-
 import javax.ejb.EJB;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -14,8 +9,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Date;
-
-import static java.lang.Thread.sleep;
+import java.util.List;
+import persistence.TokenMap;
+import persistence.TokenMapDAO;
 
 @WebServlet(name = "Prompt", urlPatterns = {"/Prompt", "/GetFitbit"})
 public class Prompt extends HttpServlet {
@@ -37,11 +33,8 @@ public class Prompt extends HttpServlet {
             //redirct user back to origin
         //else
             //Invalid Request response
-        PrintWriter out = response.getWriter();
-
-        out.println("<p>Not Yet Implemented, will trigger request for data from fitbit!</p>");
-
-        out.close();
+        
+        response.sendError(HttpServletResponse.SC_NOT_IMPLEMENTED);
 
     }
 
