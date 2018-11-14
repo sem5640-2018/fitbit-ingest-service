@@ -3,12 +3,10 @@ package persistence;
 import org.junit.Assert;
 import org.junit.Test;
 
-import javax.persistence.Query;
-
 public class TestTokenMap extends PersistenceTest {
 
     //Test Tokens
-    String ct_user = "commitTrestUser";
+    String ct_user = "commitTestUser";
     String ct_accessToken = "commitTestAccessToken";
     String ct_refreshToken = "commitTestRefreshToken";
 
@@ -19,6 +17,10 @@ public class TestTokenMap extends PersistenceTest {
     String dt_user = "delTestUser";
     String dt_accessToken = "delTestAccessToken";
     String dt_refreshToken = "delTestRefreshToken";
+
+    String cot_user = "countTestUser";
+    String cot_accessToken = "countTestAccessToken";
+    String cot_refreshToken = "countTestRefreshToken";
 
     private void commitTokenMap(String user, String accessToken, String refreshToken) {
         TokenMap tm = new TokenMap();
@@ -69,11 +71,11 @@ public class TestTokenMap extends PersistenceTest {
 
     @Test
     public void testTokenCount() {
-        long start = store.getTokenCount();
+        long start = TokenMap.getAllTokenMap(em).size();
 
-        store.commitTokenMap(ct_user, ct_accessToken, ct_refreshToken);
+        commitTokenMap(cot_user, cot_accessToken, cot_refreshToken);
 
-        long end = store.getTokenCount();
+        long end = TokenMap.getAllTokenMap(em).size();
         Assert.assertTrue(start < end);
     }
 

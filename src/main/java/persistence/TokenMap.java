@@ -24,7 +24,7 @@ public class TokenMap implements Serializable {
     @Column(name="id")
     private Long id;
 
-    @Column(name="user_id")
+    @Column(name="user_id", unique = true)
     private String userID;
 
     @Column(name= "access_token")
@@ -185,7 +185,7 @@ public class TokenMap implements Serializable {
         try {
             Query query = em.createNamedQuery("TokenMap.findAll", TokenMap.class);
             tokenMapList = query.getResultList();
-        } catch (NoResultException nre) {
+        } catch (Exception nre) {
             tokenMapList = null;
         }
         return tokenMapList;
