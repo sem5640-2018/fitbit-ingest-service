@@ -1,5 +1,7 @@
 package persistence;
 
+import org.hibernate.service.spi.ServiceException;
+
 import javax.persistence.*;
 import javax.persistence.EntityManager;
 import java.io.Serializable;
@@ -13,6 +15,7 @@ import java.io.Serializable;
  */
 public class StorageManager implements Serializable {
 
+    @PersistenceContext
     private EntityManager em;
 
     /**
@@ -121,6 +124,22 @@ public class StorageManager implements Serializable {
         tm.setRefreshToken(refreshToken);
         em.getTransaction().commit();
     }
+
+    /**
+     * This method serves as a way to test the number of items in the store
+     * @return returns the number of tokens in the store and -1 if an error has occurred
+     */
+    public long getTokenCount() {
+        int count;
+        try {
+            Query q = em.createQuery("SELECT COUNT(b) FROM persistence.TokenMap b");
+            count = Integer.parseInt(q.getSingleResult().toString());
+        } catch (NoResultException nre) {
+            count = -1;
+        }
+        return count;
+    }
+
 
     /**
      * This fuction allows a user to store application credentials in the DB, and also update them if they already exist
