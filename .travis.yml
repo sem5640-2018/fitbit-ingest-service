@@ -1,16 +1,40 @@
 language: java
-sudo: false
+sudo: true
+services:
+- docker
 notifications:
   slack: sem5640-2018:4U7aCLy3FSLaqVepipksnN0a
-
+env:
+  global:
+  - secure: KgJNBrGtwrPYrqG2hHacVtK0lyejEOlO3gdsUN48RRj+hWEJq8kHtKwINBcX8ZySVbF3ctsdrJ5BYe6ITGU5KEuI869t9lPIYjAqxs4RXoFxTXPpLZcUtCzyH47HZXhSjLxpEbULxhsIepNX2mxAMWs9chxLzn2VNM4Uloi2dJrUequjpR6Ob9kzdXY/P1pejp/8Wux+z5e5Eea31uFAFNomhhs4DKh5uYxSv5m+HtQ5h097Tp/oZs+Gv3voM2AL/fihKq5xMaw/3d9sHNdVeXfeRsAMJe7ZyDrUUepNKSCDuBXuAd7AxZWTUtwafgz+r57nJF6CVddImHLSjPIIhpCd87SI444Qjpb/oyI0q+M1klVO5LZdDwWhAxHYnZG9bZfKTUx0NqSecRbxRhnEYRNVte3WnuNhUiHGrh0BNRm9+ZknPJrCyig+6ntqjPq+W58/8oGZJdw2QEZ0qRoDFkHgN1aofk3f2wnWXcBZsp4wKGIwJCi0q38CuUziocXDlswBMP54WEqwQ3A7m2PEfblaBLjmNazd6Aduw8Iy9Lvmvdjm7+8Ir7fWzmjUn9keab22i58lZcv5v7OQj2EYwNHKPSei3/mt1h40N3X1QOZHFKJ0PwSfxtjpiBmR8TSEyoR7rTgEJZfVowda6Yhj/PCTaHmET/zwnDZ8ZHvg+fI=
+  - secure: t6UYcVmLReuxHcfqz22B2gFudz0+HqHSkdz1CcKQIYXxmHHcZ+jkx77jaTIJVAvKLTEeabj5qhmUh2cPTJjMd/sbqPZcgTKFXBU9RtzuHr2p978LdO7XYhHWw0K+4RRhaPY5CZtGpBSxGTpRMK6RG5wl9oyrjhU5TYabBCgKv33H/dmwrGioxWDCC1xt0Ph9Nep+UD09ZuhuKv5Y3Ed6jaR0lrVQE47QkkARV6j3wd14A5xEZBc+Ad7OiXCYu15kTsei+aYMZ+ElbLaCYgoA91kf6k7po2Emwzu5wnI1o3q8cc17qi7Az9rxH57/II7QztF0azz30jCGlMWWH8V4phnQkzFuSq3VELcj3uv4DpN/qRW12CmnqN6W32b/hqjmSn+TrfVdMthnZ82Nc9TroOxT9+t0jIjnaHsnMFg8uYfcl2+dJhZ9NfC/RIL2PjMmsAB24X3JDffarGLDd2QwwgG7WqIe5KU7ztwEUymc3kJq57/+/nlL4+mWXE9xN6SH27+cn1oTdiDw4ua7dBAR6v1ySzrXydTYmSsS22/LqSiXz9L8oEJxxeYsaDUDwsZCinyh06kTopsP0JnwpZcIkyeUOu9VRn08yJTFmTvP7DXIVzsqQ0wDmHZdzEyJJMG2Vqiv0w/K3hOtDAMMsNz7enYzzVon68uDF5Kf5sFB3tU=
+  - SYSLOG_HOST=127.0.0.1
 
 cache:
   directories:
-    - $HOME/.m2
-
-
-install: 
-# Build dependencies first so it goes away
-- mvn dependency:resolve
-script: 
-- mvn test -B
+  - "$HOME/.m2"
+stages:
+- test
+- name: build_staging
+  if: branch = development AND type = push
+- name: build_release
+  if: branch = master AND type = push
+jobs:
+  include:
+  - stage: test
+    name: Tests
+    language: java
+    install:
+    - mvn dependency:resolve
+    script:
+    - mvn test -B
+  - stage: build_staging
+    name: Build docker staging image
+    script:
+    - mvn war:exploded
+    - "./bin/docker.sh staging"
+  - stage: build_release
+    name: Build docker release image
+    script:
+    - mvn war:exploded
+    - "./bin/docker.sh latest"
