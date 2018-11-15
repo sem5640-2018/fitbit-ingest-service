@@ -65,7 +65,7 @@ public class DataProcessThread implements Runnable {
               String dateStr = fitbitClass.getFromDate() + ":" + activity.getStartTime();
               try {
                   Date startTime = df.parse(dateStr);
-                  activity.setJavaDate(new Date(startTime.getTime() + activity.getDuration()));
+                  activity.setJavaDate(startTime);
                   activities.add(activity);
               } catch (ParseException e) {
                   e.printStackTrace();
@@ -77,6 +77,6 @@ public class DataProcessThread implements Runnable {
     }
 
     private boolean isRelevant(Activity activity, Date lastChecked) {
-        return activity.getJavaDate().getTime() > lastChecked.getTime();
+        return activity.getJavaDate().getTime() + activity.getDuration() > lastChecked.getTime();
     }
 }
