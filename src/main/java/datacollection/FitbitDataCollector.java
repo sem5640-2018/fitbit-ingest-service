@@ -27,11 +27,11 @@ public class FitbitDataCollector {
      * This method takes in all the tokens and runs through these concurrently
      *
      * @param tokenMap this is an array of all tokens in the database
-     * @return
+     * @return a linked list of the data ready for it to be processed
      */
-    public String[] getAllUsersInfo(TokenMap[] tokenMap) {
+    public ConcurrentLinkedQueue<ProcessedData> getAllUsersInfo(TokenMap[] tokenMap) {
       ConcurrentLinkedQueue<TokenMap> input = new ConcurrentLinkedQueue<TokenMap>(Arrays.asList(tokenMap));
-      ConcurrentLinkedQueue<String> output = new ConcurrentLinkedQueue<String>();
+      ConcurrentLinkedQueue<ProcessedData> output = new ConcurrentLinkedQueue<ProcessedData>();
 
       Thread[] threads = new Thread[threadCount];
 
@@ -49,7 +49,7 @@ public class FitbitDataCollector {
             }
         }
 
-      return (String[]) output.toArray();
+      return output;
     }
 
     /**
