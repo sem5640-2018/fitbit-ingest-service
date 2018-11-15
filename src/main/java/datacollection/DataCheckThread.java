@@ -8,25 +8,23 @@ import persistence.TokenMap;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DataCheckThread implements Runnable {
     private ConcurrentLinkedQueue<TokenMap> input;
-    private ConcurrentLinkedQueue<String> output;
-    private String address;
+    private ConcurrentLinkedQueue<ProcessedData> output;
     private OAuthBean oAuthBean;
+    private Date now;
 
-    DataCheckThread(ConcurrentLinkedQueue<TokenMap> input, ConcurrentLinkedQueue<String> out, OAuthBean oAuthBean) {
+    DataCheckThread(ConcurrentLinkedQueue<TokenMap> input, ConcurrentLinkedQueue<ProcessedData> out, OAuthBean oAuthBean) {
         // Create Shallow copy to the global linked queue
         this.input = input;
         this.output = out;
         this.oAuthBean = oAuthBean;
 
-        // Needed for API requests with FitBit
-        Date date = new Date();
-        String textDate = new SimpleDateFormat("yyyy-MM-dd").format(date);
-
-        this.address = "https://api.fitbit.com/1/user/-/activities/date/" + textDate + ".json";
+        // Store the start of the requests
+        now = new Date();
     }
 
     /**
@@ -47,18 +45,50 @@ public class DataCheckThread implements Runnable {
      * @return JSON Array with activity data
      */
     private void requestActivityData(TokenMap tokenMap) {
-        final OAuthRequest request = new OAuthRequest(Verb.GET,
-                String.format(this.address, tokenMap.getUserID()));
-        request.addHeader("x-li-format", "json");
+        ProcessedData toReturn = new ProcessedData(tokenMap);
+        Date lastAccessed = tokenMap.getLastAccessed();
+        LinkedList<String> addressesToPoll = new LinkedList<String>();
 
-        oAuthBean.getService().signRequest(tokenMap.getAccessToken(), request);
+        addressesToPoll.add(dateToFormat(now));
+        if (doNeedPreviousDay(lastAccessed))
+            addressesToPoll.add(dateToFormat(lastAccessed));
 
         try {
-            final Response response = oAuthBean.getService().execute(request);
-            output.add(response.getBody());
-        } catch (Exception err) {
-            // @TODO LOg error with request
+            for (String address : addressesToPoll) {
+                final OAuthRequest request = new OAuthRequest(Verb.GET,
+                        String.format(address, tokenMap.getUserID()));
+                request.addHeader("x-li-format", "json");
+
+                oAuthBean.getService().signRequest(tokenMap.getAccessToken(), request);
+                final Response response = oAuthBean.getService().execute(request);
+                toReturn.addActivityJSON(response.getBody());
+            }
         }
+       catch (Exception err) {
+            // @TODO LOg error with request
+
+           // RETURN TERMINATE UPDATE
+           return;
+        }
+
+        output.add(toReturn);
     }
 
+    /**
+     * @param lastChecked this parameter is the date to check
+     * @return a boolean representing if now and the input are on the same calendar day
+     */
+    private boolean doNeedPreviousDay(Date lastChecked) {
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+        return fmt.format(lastChecked).equals(fmt.format(now));
+    }
+
+    /**
+     * @param toFormat the date to be turned into a request url
+     * @return The uri to send for the JSON request
+     */
+    private String dateToFormat(Date toFormat) {
+        String textDate = new SimpleDateFormat("yyyy-MM-dd").format(toFormat);
+        return  "https://api.fitbit.com/1/user/-/activities/date/" + textDate + ".json";
+    }
 }

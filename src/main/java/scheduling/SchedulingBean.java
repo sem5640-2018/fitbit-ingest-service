@@ -2,6 +2,8 @@ package scheduling;
 
 import beans.OAuthBean;
 import datacollection.FitbitDataCollector;
+import datacollection.FitbitDataConverter;
+import datacollection.ProcessedData;
 import persistence.TokenMap;
 
 import javax.annotation.PostConstruct;
@@ -13,6 +15,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Scheduling EJB for kicking of the scheduling tasks that will run once the application has started up.
@@ -31,6 +34,7 @@ public class SchedulingBean {
     OAuthBean oAuthBean;
 
     private final FitbitDataCollector collector = new FitbitDataCollector(oAuthBean);
+    private final FitbitDataConverter converter = new FitbitDataConverter();
 
     /**
      * This method is ran once the EJB is created.
@@ -52,7 +56,13 @@ public class SchedulingBean {
             return;
         }
 
-        collector.getAllUsersInfo(allTokens.toArray(new TokenMap[0]));
+        // Retrieve all the JSON strings needed for processing
+        ConcurrentLinkedQueue<ProcessedData> data = collector.getAllUsersInfo(allTokens.toArray(new TokenMap[0]));
+
+        // Convert all our strings to usable objects
+        data = converter.convertActivityData(data);
+
+
     }
 
     /**
