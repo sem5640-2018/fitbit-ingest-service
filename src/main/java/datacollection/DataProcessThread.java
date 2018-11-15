@@ -44,7 +44,7 @@ public class DataProcessThread implements Runnable {
     }
 
     private LinkedList<Activity> getRelevantActivities(ProcessedData input, LinkedList<Activity> allActivities) {
-      LinkedList<Activity> relevantActivities = new LinkedList<Activity>();
+      LinkedList<Activity> relevantActivities = new LinkedList<Activity>(allActivities);
 
       for(Activity activity: relevantActivities) {
           if (isRelevant(activity, input.getInputToken().getLastAccessed()))
