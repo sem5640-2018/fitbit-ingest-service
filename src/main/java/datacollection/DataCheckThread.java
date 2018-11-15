@@ -54,14 +54,15 @@ public class DataCheckThread implements Runnable {
             addressesToPoll.add(dateToFormat(lastAccessed));
 
         try {
-            for (String address : addressesToPoll) {
+            for (String date : addressesToPoll) {
+                String address ="https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
                 final OAuthRequest request = new OAuthRequest(Verb.GET,
                         String.format(address, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
 
                 oAuthBean.getService().signRequest(tokenMap.getAccessToken(), request);
                 final Response response = oAuthBean.getService().execute(request);
-                toReturn.addActivityJSON(response.getBody());
+                toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
             }
         }
        catch (Exception err) {
@@ -88,7 +89,6 @@ public class DataCheckThread implements Runnable {
      * @return The uri to send for the JSON request
      */
     private String dateToFormat(Date toFormat) {
-        String textDate = new SimpleDateFormat("yyyy-MM-dd").format(toFormat);
-        return  "https://api.fitbit.com/1/user/-/activities/date/" + textDate + ".json";
+        return new SimpleDateFormat("yyyy-MM-dd").format(toFormat);
     }
 }

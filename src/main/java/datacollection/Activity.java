@@ -1,5 +1,7 @@
 package datacollection;
 
+import java.util.Date;
+
 public class Activity {
     private long activityId;
     private long activityParentId;
@@ -14,7 +16,25 @@ public class Activity {
     private String startTime;
     private long steps;
 
+    private Date javaDate;
+
     public Activity() {
 
+    }
+
+    public Date getJavaDate() {
+        return javaDate;
+    }
+
+    public void setJavaDate(Date javaDate) {
+        this.javaDate = javaDate;
+    }
+
+    public String getStartTime() {
+        return startTime;
+    }
+
+    public long getDuration() {
+        return duration;
     }
 }

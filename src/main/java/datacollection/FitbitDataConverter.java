@@ -1,6 +1,7 @@
 package datacollection;
 
 import com.google.gson.Gson;
+
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -23,8 +24,10 @@ public class FitbitDataConverter {
         // TODO check if threading will be faster
 
         for (ProcessedData data: input) {
-            for (String json: data.getActivityJSON()) {
-                data.addProcessedActivity(gson.fromJson(json, FitBitJSON.class));
+            for (ActivityJSON json: data.getActivityJSON()) {
+                FitBitJSON activityClass = gson.fromJson(json.JSON, FitBitJSON.class);
+                activityClass.setFromDate(json.date);
+                data.addProcessedActivity(activityClass);
             }
         }
 
