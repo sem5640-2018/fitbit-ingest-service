@@ -3,7 +3,6 @@ package datacollection;
 import com.google.gson.Gson;
 
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -12,15 +11,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DataProcessThread implements Runnable {
 
-    private static Calendar cal = Calendar.getInstance();
-    private static String format = "yyyy-MM-dd:H:m";
-    private static DateFormat df = new SimpleDateFormat(format);
-    private static Gson gson = new Gson();
+    private Calendar cal = Calendar.getInstance();
+    private String format = "yyyy-MM-dd:H:m";
+    private DateFormat df = new SimpleDateFormat(format);
+    private Gson gson = new Gson();
 
     private ConcurrentLinkedQueue<ProcessedData> input;
     private Date now;
 
-    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input) {
+    public DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input) {
         // Create Shallow copy to the global linked queue
         this.input = input;
 
@@ -33,7 +32,6 @@ public class DataProcessThread implements Runnable {
      */
     public void run() {
         ProcessedData toCheck = input.poll();
-
         while (toCheck != null) {
             checkData(toCheck);
 
@@ -59,9 +57,9 @@ public class DataProcessThread implements Runnable {
     }
 
     private LinkedList<Activity> getRelevantActivities(ProcessedData input, LinkedList<Activity> allActivities) {
-      LinkedList<Activity> relevantActivities = new LinkedList<Activity>(allActivities);
+      LinkedList<Activity> relevantActivities = new LinkedList<Activity>();
 
-      for(Activity activity: relevantActivities) {
+      for(Activity activity: allActivities) {
           if (isRelevant(activity, input.getInputToken().getLastAccessed()))
               relevantActivities.add(activity);
       }
@@ -82,15 +80,14 @@ public class DataProcessThread implements Runnable {
                   Date startTime = df.parse(dateStr);
                   activity.setJavaDate(startTime);
                   activities.add(activity);
-              } catch (ParseException e) {
+              } catch (Exception e) {
+                  System.out.println(dateStr);
                   e.printStackTrace();
               }
           }
       }
       return activities;
     }
-
-
 
     private boolean isRelevant(Activity activity, Date lastChecked) {
         return activity.getJavaDate().getTime() + activity.getDuration() > lastChecked.getTime();

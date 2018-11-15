@@ -1,9 +1,17 @@
 package beans;
 
 import com.google.gson.Gson;
+import datacollection.DataProcessThread;
 import datacollection.FitBitJSON;
+import datacollection.FitbitDataProcessor;
+import datacollection.ProcessedData;
 import org.junit.Assert;
 import org.junit.Test;
+import persistence.TokenMap;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class JSONTests {
 
@@ -19,5 +27,64 @@ public class JSONTests {
         FitBitJSON fitBitJSON = gson.fromJson(sampleJSON, FitBitJSON.class);
 
         Assert.assertNotNull(fitBitJSON);
+    }
+
+
+    @Test
+    public void TestProcess() throws InterruptedException {
+        TokenMap tm = new TokenMap();
+        tm.setUserID("");
+        tm.setAccessToken("");
+        tm.setRefreshToken("");
+        tm.setFitbitUid("FB");
+        tm.setExpiresIn(3600);
+        tm.setLastAccessed(new Date(0));
+        ProcessedData data = new ProcessedData(tm);
+
+        Gson gson = new Gson();
+        FitBitJSON fitBitJSON = gson.fromJson(sampleJSON, FitBitJSON.class);
+        fitBitJSON.setFromDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+        for(int i = 0; i < 10; i++) {
+            data.addProcessedActivity(fitBitJSON);
+        }
+        ConcurrentLinkedQueue<ProcessedData> queue = new ConcurrentLinkedQueue<ProcessedData>();
+
+        for(int i = 0; i < 100000; i++) {
+            queue.add(data);
+        }
+
+        Thread t = new Thread(new DataProcessThread(queue));
+        t.start();
+
+        t.join();
+    }
+
+    @Test
+    public void TestConcurrency() {
+        TokenMap tm = new TokenMap();
+        tm.setUserID("");
+        tm.setAccessToken("");
+        tm.setRefreshToken("");
+        tm.setFitbitUid("FB");
+        tm.setExpiresIn(3600);
+        tm.setLastAccessed(new Date(0));
+        ProcessedData data = new ProcessedData(tm);
+
+        Gson gson = new Gson();
+        FitBitJSON fitBitJSON = gson.fromJson(sampleJSON, FitBitJSON.class);
+        fitBitJSON.setFromDate(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
+
+        for(int i = 0; i < 10; i++) {
+            data.addProcessedActivity(fitBitJSON);
+        }
+        FitbitDataProcessor processor = new FitbitDataProcessor();
+
+        ConcurrentLinkedQueue<ProcessedData> queue = new ConcurrentLinkedQueue<ProcessedData>();
+        for(int i = 0; i < 100000; i++) {
+            queue.add(data);
+        }
+
+        processor.ProcessData(queue);
     }
 }
