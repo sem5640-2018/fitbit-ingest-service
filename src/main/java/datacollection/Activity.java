@@ -37,4 +37,16 @@ public class Activity {
     public long getDuration() {
         return duration;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public long getSteps() {
+        return steps;
+    }
+
+    public float getDistance() {
+        return distance;
+    }
 }

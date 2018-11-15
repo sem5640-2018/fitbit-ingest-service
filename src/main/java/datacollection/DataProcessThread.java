@@ -1,5 +1,7 @@
 package datacollection;
 
+import com.google.gson.Gson;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -9,11 +11,14 @@ import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DataProcessThread implements Runnable {
-    private ConcurrentLinkedQueue<ProcessedData> input;
-    private Date now;
+
     private static Calendar cal = Calendar.getInstance();
     private static String format = "yyyy-MM-dd:H:m";
     private static DateFormat df = new SimpleDateFormat(format);
+    private static Gson gson = new Gson();
+
+    private ConcurrentLinkedQueue<ProcessedData> input;
+    private Date now;
 
     DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input) {
         // Create Shallow copy to the global linked queue
@@ -41,6 +46,16 @@ public class DataProcessThread implements Runnable {
         allActivities = getRelevantActivities(input, allActivities);
 
         // @TODO send all new relevant activities to the Heath data Repository
+        LinkedList<String> readyToSend = getPacketsToSend(allActivities);
+    }
+
+    private LinkedList<String> getPacketsToSend(LinkedList<Activity> readyToSend) {
+        LinkedList<String> toSend = new LinkedList<String>();
+        for (Activity activity: readyToSend) {
+            HealthDataFormat formattedData = new HealthDataFormat(activity);
+            toSend.add(gson.toJson(formattedData));
+        }
+        return toSend;
     }
 
     private LinkedList<Activity> getRelevantActivities(ProcessedData input, LinkedList<Activity> allActivities) {
@@ -72,9 +87,10 @@ public class DataProcessThread implements Runnable {
               }
           }
       }
-
       return activities;
     }
+
+
 
     private boolean isRelevant(Activity activity, Date lastChecked) {
         return activity.getJavaDate().getTime() + activity.getDuration() > lastChecked.getTime();
