@@ -4,6 +4,7 @@ import com.github.scribejava.apis.FitbitApi20;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.oauth.OAuth20Service;
 
+import javax.annotation.PostConstruct;
 import javax.ejb.Singleton;
 import javax.inject.Inject;
 
@@ -16,6 +17,11 @@ public class OAuthBean {
     private OAuth20Service service;
 
     public OAuthBean() {
+        //Empty
+    }
+
+    @PostConstruct
+    public void init() {
         service = new ServiceBuilder(variableBean.getFitbitClientId())
                 .apiSecret(variableBean.getFitbitClientSecret())
                 .scope("activity profile")
