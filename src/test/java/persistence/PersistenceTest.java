@@ -19,7 +19,6 @@ public class PersistenceTest {
 
     protected static EntityManagerFactory emf;
     protected static EntityManager em;
-    protected static StorageManager store;
 
     @BeforeClass
     public static void init() throws FileNotFoundException, SQLException {
@@ -40,7 +39,6 @@ public class PersistenceTest {
                 }
             }
         });
-        store = new StorageManager(em);
     }
 
     @AfterClass

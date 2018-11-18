@@ -1,15 +1,14 @@
 package beans;
 
-import com.github.scribejava.apis.FitbitApi20;
 import com.github.scribejava.apis.fitbit.FitBitOAuth2AccessToken;
-import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.model.OAuth2AccessToken;
-import com.github.scribejava.core.oauth.OAuth20Service;
-import persistence.StorageManager;
+import persistence.TokenMap;
+import persistence.TokenMapDAO;
 
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.SessionScoped;
 import javax.faces.context.FacesContext;
+import javax.inject.Inject;
 import java.io.IOException;
 import java.io.Serializable;
 
@@ -17,12 +16,15 @@ import java.io.Serializable;
 @ManagedBean(name = "LoginBean")
 public class LoginBean implements Serializable {
 
-    // Used as a singleton to store access tokens
-    private static StorageManager store;
+    @Inject
+    OAuthBean oAuthBean;
+
+    @Inject
+    TokenMapDAO tokenMapDAO;
 
     private String token;
     private String authLocation;
-    private String error;
+    private String error = "Test";
 
     public LoginBean() {
         // Do nothing
@@ -33,31 +35,10 @@ public class LoginBean implements Serializable {
      *
      */
     public void onLoad() {
-        if (store == null) {
-            // @TODO Log error
-            error = "No store configured";
-            return;
-        }
-
-        final String clientId = store.getAppId();
-        final String clientSecret = store.getAppSecret();
-
-        if (clientId == null || clientSecret == null) {
-            // @TODO Log error
-            error = "No client ID or client secret";
-            return;
-        }
-
-        OAuth20Service service = new ServiceBuilder(clientId)
-                .apiSecret(clientSecret)
-                .scope("activity profile")
-                .callback("http://localhost:8080/injest_exploded/Login.xhtml")
-                .state("some_params")
-                .build(FitbitApi20.instance());
 
         if (token != null) {
             try {
-                final OAuth2AccessToken oauth2AccessToken = service.getAccessToken(token);
+                final OAuth2AccessToken oauth2AccessToken = oAuthBean.getFitbitService().getAccessToken(token);
                 if (!(oauth2AccessToken instanceof FitBitOAuth2AccessToken)) {
                     token = null;
                     // @TODO Log error
@@ -66,7 +47,8 @@ public class LoginBean implements Serializable {
                 }
 
                 final FitBitOAuth2AccessToken accessToken = (FitBitOAuth2AccessToken) oauth2AccessToken;
-                store.commitTokenMap("test", accessToken.getAccessToken(), accessToken.getRefreshToken());
+                TokenMap map = new TokenMap("test", accessToken.getAccessToken(), accessToken.getRefreshToken());
+                tokenMapDAO.save(map);
 
             } catch (Exception e) {
                 // @TODO Log error
@@ -74,7 +56,7 @@ public class LoginBean implements Serializable {
                 token = null;
             }
         } else {
-           authLocation = service.getAuthorizationUrl();
+           authLocation = oAuthBean.getFitbitService().getAuthorizationUrl();
         }
     }
 
@@ -106,21 +88,10 @@ public class LoginBean implements Serializable {
      * it will redirect the user to the authentication page provided by FitBit
      */
     public void loginButtonPress() {
-        if (authLocation == null) return;
-
         try {
             FacesContext.getCurrentInstance().getExternalContext().redirect(authLocation);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    /**
-     * This method is used for testing
-     *
-     * @param manager the storage manager to use
-     */
-    public static void setStorageManager(StorageManager manager) {
-        store = manager;
     }
 }
