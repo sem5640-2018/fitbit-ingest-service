@@ -35,7 +35,7 @@ public class FitbitDataCollector {
 
       Thread[] threads = new Thread[threadCount];
 
-      for (int i = 0; i < threadCount; i--) {
+      for (int i = 0; i < threadCount; i++) {
          threads[i] = new Thread(new DataCheckThread(input, output, this.oAuthBean));
          threads[i].start();
       }

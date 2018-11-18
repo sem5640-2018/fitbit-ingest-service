@@ -3,6 +3,7 @@ package scheduling;
 import beans.OAuthBean;
 import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataConverter;
+import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
 import persistence.TokenMap;
 
@@ -35,6 +36,7 @@ public class SchedulingBean {
 
     private final FitbitDataCollector collector = new FitbitDataCollector(oAuthBean);
     private final FitbitDataConverter converter = new FitbitDataConverter();
+    private final FitbitDataProcessor processor = new FitbitDataProcessor();
 
     /**
      * This method is ran once the EJB is created.
@@ -51,7 +53,7 @@ public class SchedulingBean {
     public void getFitbitData() {
         List<TokenMap> allTokens = TokenMap.getAllTokenMap(em);
 
-        if (allTokens == null) {
+        if (allTokens == null || allTokens.size() > 0) {
             // @TODO Log the fact we have no tokens
             return;
         }
@@ -62,7 +64,8 @@ public class SchedulingBean {
         // Convert all our strings to usable objects
         data = converter.convertActivityData(data);
 
-
+        // Process all out data
+        processor.ProcessData(data);
     }
 
     /**

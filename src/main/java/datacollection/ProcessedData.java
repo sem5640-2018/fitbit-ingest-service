@@ -18,7 +18,7 @@ public class ProcessedData {
     private TokenMap InputToken;
 
     private LinkedList<ActivityJSON> ActivityJSON;
-    private LinkedList<String> StepsJSON;
+    private LinkedList<ActivityJSON> StepsJSON;
 
     private LinkedList<FitBitJSON> ProcessedActivities;
     // @TODO add Steps Object
@@ -27,7 +27,7 @@ public class ProcessedData {
         this.InputToken = inputToken;
 
         ActivityJSON = new LinkedList<ActivityJSON>();
-        StepsJSON = new LinkedList<String>();
+        StepsJSON = new LinkedList<ActivityJSON>();
 
         ProcessedActivities = new LinkedList<FitBitJSON>();
     }
@@ -48,11 +48,11 @@ public class ProcessedData {
     }
 
     // Steps JSON CRUD
-    public LinkedList<String> getStepsJSON() {
+    public LinkedList<ActivityJSON> getStepsJSON() {
         return StepsJSON;
     }
 
-    public void addStepsJSON(String input) {
+    public void addStepsJSON(ActivityJSON input) {
         StepsJSON.add(input);
     }
 
