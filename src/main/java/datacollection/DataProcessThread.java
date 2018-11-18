@@ -4,27 +4,20 @@ import com.google.gson.Gson;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class DataProcessThread implements Runnable {
 
-    private Calendar cal = Calendar.getInstance();
     private String format = "yyyy-MM-dd:H:m";
     private DateFormat df = new SimpleDateFormat(format);
     private Gson gson = new Gson();
-
     private ConcurrentLinkedQueue<ProcessedData> input;
-    private Date now;
 
     public DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input) {
         // Create Shallow copy to the global linked queue
         this.input = input;
-
-        // Store the start of the requests
-        now = new Date();
     }
 
     /**
@@ -45,6 +38,7 @@ public class DataProcessThread implements Runnable {
 
         // @TODO send all new relevant activities to the Heath data Repository
         LinkedList<String> readyToSend = getPacketsToSend(allActivities);
+        readyToSend.size();
     }
 
     private LinkedList<String> getPacketsToSend(LinkedList<Activity> readyToSend) {

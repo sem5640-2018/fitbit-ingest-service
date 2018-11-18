@@ -18,4 +18,24 @@ public class HealthDataFormat {
         duration = input.getDuration();
         distance = input.getDistance();
     }
+
+    public float getDistance() {
+        return distance;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public String getQuantity() {
+        return quantity;
+    }
+
+    public String getActivity_type() {
+        return activity_type;
+    }
+
+    public String getStart_time() {
+        return start_time;
+    }
 }

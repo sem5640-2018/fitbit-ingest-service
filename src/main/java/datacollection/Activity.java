@@ -9,8 +9,6 @@ public class Activity {
     private String description;
     private float distance;
     private long duration;
-    private boolean hasStartTime;
-    private boolean isFavorite;
     private long logId;
     private String name;
     private String startTime;
@@ -48,5 +46,25 @@ public class Activity {
 
     public float getDistance() {
         return distance;
+    }
+
+    public long getActivityId() {
+        return activityId;
+    }
+
+    public long getActivityParentId() {
+        return activityParentId;
+    }
+
+    public long getCalories() {
+        return calories;
+    }
+
+    public long getLogId() {
+        return logId;
+    }
+
+    public String getName() {
+        return name;
     }
 }

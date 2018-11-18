@@ -19,4 +19,12 @@ public class FitBitJSON {
     public void setFromDate(String fromDate) {
         this.fromDate = fromDate;
     }
+
+    public Summary getSummary() {
+        return summary;
+    }
+
+    public Goals getGoals() {
+        return goals;
+    }
 }

@@ -21,4 +21,52 @@ public class Summary {
     public Summary() {
 
     }
+
+    public long getVeryActiveMinutes() {
+        return veryActiveMinutes;
+    }
+
+    public long getSteps() {
+        return steps;
+    }
+
+    public long getSedentaryMinutes() {
+        return sedentaryMinutes;
+    }
+
+    public long getMarginalCalories() {
+        return marginalCalories;
+    }
+
+    public long getLightlyActiveMinutes() {
+        return lightlyActiveMinutes;
+    }
+
+    public long getFloors() {
+        return floors;
+    }
+
+    public long getFairlyActiveMinutes() {
+        return fairlyActiveMinutes;
+    }
+
+    public float getElevation() {
+        return elevation;
+    }
+
+    public List<Distances> getDistances() {
+        return distances;
+    }
+
+    public long getCaloriesOut() {
+        return caloriesOut;
+    }
+
+    public long getCaloriesBMR() {
+        return caloriesBMR;
+    }
+
+    public long getActivityCalories() {
+        return activityCalories;
+    }
 }

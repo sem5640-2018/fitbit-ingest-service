@@ -14,8 +14,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  * @Version 0.1
  */
 public class FitbitDataCollector {
-
-    private static String baseUserURL = "https://api.fitbit.com/1/user/-/";
     private static final int threadCount = 4;
     private OAuthBean oAuthBean;
 
@@ -50,20 +48,5 @@ public class FitbitDataCollector {
         }
 
       return output;
-    }
-
-    /**
-     * Function for sending a request for Profile Data to the Fitbit API.
-     * @param tokenMap
-     * @return
-     */
-    public String requestProfileData(TokenMap tokenMap) {
-        //TODO will send of API request for profile data
-        return "some JSON to be parsed";
-    }
-
-    private String sendRequest(String url) {
-        //
-        return "some JSON";
     }
 }

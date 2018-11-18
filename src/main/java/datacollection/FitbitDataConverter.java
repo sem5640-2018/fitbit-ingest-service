@@ -33,9 +33,4 @@ public class FitbitDataConverter {
 
         return input;
     }
-
-    public String convertProfileData() {
-        //TODO implement
-        return "some JSON to be sent to Heath Data Repo";
-    }
 }

@@ -7,4 +7,12 @@ public class Distances {
     public Distances() {
 
     }
+
+    public float getDistance() {
+        return distance;
+    }
+
+    public String getActivity() {
+        return activity;
+    }
 }

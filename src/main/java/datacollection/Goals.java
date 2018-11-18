@@ -8,4 +8,20 @@ public class Goals {
 
     public Goals() {
     }
+
+    public float getDistance() {
+        return distance;
+    }
+
+    public long getFloors() {
+        return floors;
+    }
+
+    public long getSteps() {
+        return steps;
+    }
+
+    public long getCaloriesOut() {
+        return caloriesOut;
+    }
 }
