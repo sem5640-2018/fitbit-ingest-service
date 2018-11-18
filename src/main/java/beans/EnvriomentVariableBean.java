@@ -52,10 +52,10 @@ public class EnvriomentVariableBean {
     }
 
     public boolean isAberfitnessDataPresent() {
-        return (aberfitnessClientId != null) && (aberfitnessClientSecret != null) && (aberfitnessClientCallback != null);
+        return aberfitnessClientId != null && aberfitnessClientSecret != null && aberfitnessClientCallback != null;
     }
 
     public boolean isFitbitDataPresent() {
-        return (fitbitClientId != null) && (fitbitClientSecret != null) && (fitbitClientCallback != null);
+        return fitbitClientId != null && fitbitClientSecret != null && fitbitClientCallback != null;
     }
 }
