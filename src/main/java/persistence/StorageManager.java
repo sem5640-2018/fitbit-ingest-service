@@ -1,9 +1,6 @@
 package persistence;
 
-import org.hibernate.service.spi.ServiceException;
-
 import javax.persistence.*;
-import javax.persistence.EntityManager;
 import java.io.Serializable;
 
 /**
