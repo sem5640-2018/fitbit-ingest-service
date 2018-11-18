@@ -42,7 +42,6 @@ public class DataCheckThread implements Runnable {
     /**
      * Function for sending a request for Activity Data to the Fitbit API.
      * @param tokenMap TokenMap for user we want data for.
-     * @return JSON Array with activity data
      */
     private void requestActivityData(TokenMap tokenMap) {
         ProcessedData toReturn = new ProcessedData(tokenMap);
@@ -60,8 +59,8 @@ public class DataCheckThread implements Runnable {
                         String.format(address, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
 
-                oAuthBean.getService().signRequest(tokenMap.getAccessToken(), request);
-                final Response response = oAuthBean.getService().execute(request);
+                oAuthBean.getFitbitService().signRequest(tokenMap.getAccessToken(), request);
+                final Response response = oAuthBean.getFitbitService().execute(request);
                 toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
             }
         }

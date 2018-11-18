@@ -38,7 +38,7 @@ public class LoginBean implements Serializable {
 
         if (token != null) {
             try {
-                final OAuth2AccessToken oauth2AccessToken = oAuthBean.getService().getAccessToken(token);
+                final OAuth2AccessToken oauth2AccessToken = oAuthBean.getFitbitService().getAccessToken(token);
                 if (!(oauth2AccessToken instanceof FitBitOAuth2AccessToken)) {
                     token = null;
                     // @TODO Log error
@@ -56,7 +56,7 @@ public class LoginBean implements Serializable {
                 token = null;
             }
         } else {
-           authLocation = oAuthBean.getService().getAuthorizationUrl();
+           authLocation = oAuthBean.getFitbitService().getAuthorizationUrl();
         }
     }
 
