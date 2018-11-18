@@ -2,13 +2,14 @@ package beans;
 
 import com.github.scribejava.apis.FitbitApi20;
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.builder.api.BaseApi;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import scribe_java.GatekeeperApi;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
 import javax.inject.Inject;
 
+@Singleton
 public class OAuthBean {
 
     @Inject

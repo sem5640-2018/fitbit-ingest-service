@@ -28,7 +28,7 @@ public class OAuthLogin extends HttpServlet{
         String str = request.getParameter("code");
         if (str != null) {
             try {
-                final OAuth2AccessToken oauth2AccessToken = oAuthBean.getService().getAccessToken(str);
+                final OAuth2AccessToken oauth2AccessToken = oAuthBean.getFitbitService().getAccessToken(str);
                 if (!(oauth2AccessToken instanceof FitBitOAuth2AccessToken))
                     return;
 
@@ -40,7 +40,7 @@ public class OAuthLogin extends HttpServlet{
             }
         }
 
-        final String authorizationUrl = oAuthBean.getService().getAuthorizationUrl();
+        final String authorizationUrl = oAuthBean.getFitbitService().getAuthorizationUrl();
         response.sendRedirect(authorizationUrl);
     }
 }

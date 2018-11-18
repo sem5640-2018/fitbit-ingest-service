@@ -132,6 +132,13 @@
             <version>3.2.2</version>
         </dependency>
 
+        <!-- Hibernate Dependency for Testing-->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>5.4.0.CR1</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

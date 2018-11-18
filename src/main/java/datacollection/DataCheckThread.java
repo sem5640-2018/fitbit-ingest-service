@@ -61,16 +61,16 @@ public class DataCheckThread implements Runnable {
                 OAuthRequest request = new OAuthRequest(Verb.GET,
                         String.format(activities, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
-                oAuthBean.getService().signRequest(tokenMap.getAccessToken(), request);
-                Response response = oAuthBean.getService().execute(request);
+                oAuthBean.getFitbitService().signRequest(tokenMap.getAccessToken(), request);
+                Response response = oAuthBean.getFitbitService().execute(request);
                 toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
 
                 // Request Steps
                 request = new OAuthRequest(Verb.GET,
                         String.format(steps, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
-                oAuthBean.getService().signRequest(tokenMap.getAccessToken(), request);
-                response = oAuthBean.getService().execute(request);
+                oAuthBean.getFitbitService().signRequest(tokenMap.getAccessToken(), request);
+                response = oAuthBean.getFitbitService().execute(request);
                 toReturn.addStepsJSON(new ActivityJSON(response.getBody(), date));
             }
         }

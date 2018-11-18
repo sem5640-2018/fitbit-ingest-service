@@ -9,10 +9,10 @@ import persistence.TokenMap;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.inject.Inject;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
@@ -31,7 +31,7 @@ public class SchedulingBean {
     @PersistenceContext
     private EntityManager em;
 
-    @Inject
+    @EJB
     OAuthBean oAuthBean;
 
     private final FitbitDataCollector collector = new FitbitDataCollector(oAuthBean);
