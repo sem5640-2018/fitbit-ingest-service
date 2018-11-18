@@ -55,14 +55,24 @@ public class DataCheckThread implements Runnable {
 
         try {
             for (String date : addressesToPoll) {
-                String address ="https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
-                final OAuthRequest request = new OAuthRequest(Verb.GET,
-                        String.format(address, tokenMap.getUserID()));
-                request.addHeader("x-li-format", "json");
+                String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
+                String steps = "https://api.fitbit.com/1/user/-/activities/steps/date/" + date + "/1d.json";
 
+                // Request Activities
+                OAuthRequest request = new OAuthRequest(Verb.GET,
+                        String.format(activities, tokenMap.getUserID()));
+                request.addHeader("x-li-format", "json");
                 oAuthBean.getService().signRequest(tokenMap.getAccessToken(), request);
-                final Response response = oAuthBean.getService().execute(request);
+                Response response = oAuthBean.getService().execute(request);
                 toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
+
+                // Request Steps
+                request = new OAuthRequest(Verb.GET,
+                        String.format(steps, tokenMap.getUserID()));
+                request.addHeader("x-li-format", "json");
+                oAuthBean.getService().signRequest(tokenMap.getAccessToken(), request);
+                response = oAuthBean.getService().execute(request);
+                toReturn.addStepsJSON(new ActivityJSON(response.getBody(), date));
             }
         }
        catch (Exception err) {
