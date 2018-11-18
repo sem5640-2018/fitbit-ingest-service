@@ -6,25 +6,16 @@ import javax.ejb.Singleton;
 public class EnvriomentVariableBean {
 
     // Fitbit Info
-    private String fitbitClientId;
-    private String fitbitClientSecret;
-    private String fitbitClientCallback;
+    private static final String fitbitClientId = System.getenv("fitbitClientId");
+    private static final String fitbitClientSecret = System.getenv("fitbitClientSecret");
+    private static final String fitbitClientCallback = System.getenv("fitbitClientCallback");
 
     //Aberfitness Info
-    private String aberfitnessClientId;
-    private String aberfitnessClientSecret;
-    private String aberfitnessClientCallback;
+    private static final String aberfitnessClientId = System.getenv("ABERFITNESS_CLI_ID");
+    private static final String aberfitnessClientSecret = System.getenv("ABERFITNESS_CLI_SECRET");
+    private static final String aberfitnessClientCallback = System.getenv("ABERFITNESS_CLI_CALLBACK");
 
     public EnvriomentVariableBean() {
-        //Retrieval of Fitbit Data
-        fitbitClientId = System.getenv("fitbitClientId");
-        fitbitClientSecret = System.getenv("fitbitClientSecret");
-        fitbitClientCallback = System.getenv("fitbitClientCallback");
-
-        //Retrival of Aberfitness Data
-        aberfitnessClientId = System.getenv("ABERFITNESS_CLI_ID");
-        aberfitnessClientSecret = System.getenv("ABERFITNESS_CLI_SECRET");
-        aberfitnessClientCallback = System.getenv("ABERFITNESS_CLI_CALLBACK");
     }
 
     public String getFitbitClientSecret() {
