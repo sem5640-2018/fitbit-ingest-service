@@ -24,7 +24,7 @@ public class LoginBean implements Serializable {
 
     private String token;
     private String authLocation;
-    private String error;
+    private String error = "Test";
 
     public LoginBean() {
         // Do nothing

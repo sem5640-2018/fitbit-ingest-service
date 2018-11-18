@@ -5,10 +5,8 @@ import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.oauth.OAuth20Service;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.Singleton;
 import javax.inject.Inject;
 
-@Singleton
 public class OAuthBean {
 
     @Inject
@@ -18,6 +16,7 @@ public class OAuthBean {
 
     public OAuthBean() {
         //Empty
+        System.out.println("Constructing");
     }
 
     @PostConstruct
