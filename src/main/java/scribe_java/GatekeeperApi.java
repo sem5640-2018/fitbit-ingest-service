@@ -4,6 +4,8 @@ import com.github.scribejava.core.builder.api.DefaultApi20;
 
 public class GatekeeperApi extends DefaultApi20 {
 
+    private static String baseUrl = "https://gatekeeper.aberfitness.biz";//TODO extract to environment variables
+
     public GatekeeperApi() {
         //
     }
@@ -18,16 +20,21 @@ public class GatekeeperApi extends DefaultApi20 {
 
     @Override
     public String getAccessTokenEndpoint() {
-        return "https://gatekeeper.aberfitness.biz/token"; //TODO Correct URL needed
+        return baseUrl + "/access_token"; //TODO Correct URL needed
     }
 
-    /*@Override
+    @Override
     public String getRefreshTokenEndpoint() {
-        return null;
-    }*/
+        return baseUrl + "/refresh_token"; //TODO Correct URL needed
+    }
+
+    @Override
+    public String getRevokeTokenEndpoint() {
+        return baseUrl + "/revoke_token"; //TODO Correct URL needed
+    }
 
     @Override
     protected String getAuthorizationBaseUrl() {
-        return "https://gatekeeper.aberfitness.biz/authorise"; //TODO Correct URL needed
+        return baseUrl + "/authorise"; //TODO Correct URL needed
     }
 }
