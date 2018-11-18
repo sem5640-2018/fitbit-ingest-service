@@ -25,12 +25,14 @@ public class OAuthBean {
 
     @PostConstruct
     public void init() {
-        fitbitService = new ServiceBuilder(variableBean.getFitbitClientId())
-                .apiSecret(variableBean.getFitbitClientSecret())
-                .scope("activity profile")
-                .callback(variableBean.getFitbitClientCallback())
-                .state("some_params")
-                .build(FitbitApi20.instance());
+        if (variableBean.isFitbitDataPresent()) {
+            fitbitService = new ServiceBuilder(variableBean.getFitbitClientId())
+                    .apiSecret(variableBean.getFitbitClientSecret())
+                    .scope("activity profile")
+                    .callback(variableBean.getFitbitClientCallback())
+                    .state("some_params")
+                    .build(FitbitApi20.instance());
+        }
 
         if (variableBean.isAberfitnessDataPresent()) {
             aberfitnessService = new ServiceBuilder(variableBean.getAberfitnessClientId())
