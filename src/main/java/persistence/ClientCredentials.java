@@ -1,6 +1,8 @@
 package persistence;
 
 import javax.persistence.*;
+import java.util.Date;
+import java.util.List;
 
 /**
  * This class represents a Token Map record stored in the fitbit ingest database.
@@ -8,7 +10,12 @@ import javax.persistence.*;
  * @author jhb15@aber.ac.uk
  * @version 0.1
  */
-@Entity(name = "client_credentials")
+@Entity
+@Table(name = "client_credentials")
+@NamedQueries({
+        @NamedQuery(name = "ClientCredentials.findAll", query = "SELECT c FROM ClientCredentials c"),
+        @NamedQuery(name = "ClientCredentials.findByService", query = "SELECT c FROM ClientCredentials c WHERE c.service = :serv")
+})
 public class ClientCredentials {
 
     @Id
@@ -22,8 +29,27 @@ public class ClientCredentials {
     @Column(name = "client_secret")
     private String clientSecret;
 
-    @Column(name = "service")
+    @Column(name = "service", unique = true)
     private String service;
+
+    @Column(name = "updated_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
+
+    @Column(name = "created_at", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date createdAt;
+
+    @PrePersist
+    protected void prePersist() {
+        createdAt = new Date();
+        updatedAt = new Date();
+    }
+
+    @PreUpdate
+    protected void preUpdate() {
+        updatedAt = new Date();
+    }
 
     /**
      * Empty constructor for Client Credentials
@@ -42,67 +68,101 @@ public class ClientCredentials {
         this.clientSecret = clientSecret;
     }
 
-    /**
-     * Getter for id used in table
-     * @return the id of Token Map
-     */
     public Long getId() {
         return id;
     }
 
-    /**
-     * Setter for the id used in the table.
-     * @param id desired id
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    /**
-     * Getter for the client id
-     * @return client id
-     */
     public String getClientId() {
         return clientId;
     }
 
-    /**
-     * Setter for the client id
-     * @param clientId desired client id
-     */
     public void setClientId(String clientId) {
         this.clientId = clientId;
     }
 
-    /**
-     * Getter for the client secret
-     * @return client secret
-     */
     public String getClientSecret() {
         return clientSecret;
     }
 
-    /**
-     * Setter for the client secret
-     * @param clientSecret desired client secret
-     */
     public void setClientSecret(String clientSecret) {
         this.clientSecret = clientSecret;
     }
 
-    /**
-     * Getter for the service string.
-     * @return service string
-     */
     public String getService() {
         return service;
     }
 
-    /**
-     * Setter for the service string.
-     * @param service desired service string
-     */
     public void setService(String service) {
         this.service = service;
+    }
+
+    public Date getUpdatedAt() { return updatedAt; }
+
+    public Date getCreatedAt() { return createdAt; }
+
+    @Override
+    public String toString() {
+        return "ClientCredentials{" +
+                "id=" + id +
+                ", clientId='" + clientId + '\'' +
+                ", clientSecret='" + clientSecret + '\'' +
+                ", service='" + service + '\'' +
+                ", updatedAt=" + updatedAt +
+                ", createdAt=" + createdAt +
+                '}';
+    }
+
+    /**
+     * This function is used to utilise the 'ClientCredentials.findByService' named query.
+     * @param em entity manager where the data is
+     * @param service the sevice that identitfys the ClientCredentials
+     * @return The result of the query.
+     */
+    public static ClientCredentials getClientCredentials(EntityManager em, String service) {
+        ClientCredentials tm;
+        try {
+            Query query = em.createNamedQuery("ClientCredentials.findByService", ClientCredentials.class);
+            query.setParameter("serv", service);
+            tm = (ClientCredentials) query.getSingleResult();
+        } catch (NoResultException nre) {
+            tm = null;
+        }
+        return tm;
+    }
+
+    /**
+     * This function utilises the 'ClientCredentials.findAll' named query for retreiving all the Records in the client
+     * credentials table.
+     * @param em Entity Manager for where the data resides
+     * @return A List of Client Credential Records
+     */
+    @SuppressWarnings("unchecked")
+    public static List<ClientCredentials> getAllClientCredentials(EntityManager em) {
+        List<ClientCredentials> clientCredList;
+        try {
+            Query query = em.createNamedQuery("ClientCredentials.findAll", ClientCredentials.class);
+            clientCredList = query.getResultList();
+        } catch (NoResultException nre) {
+            clientCredList = null;
+        }
+        return clientCredList;
+    }
+
+    /**
+     * This allows the removal of Client Credential records from the table by using the service column to identify the
+     * record to be removed.
+     * @param em Entity Manager for where the data resides
+     * @param service service credentials we wish to remove.
+     * @return boolean true for success & false for error
+     */
+    public static boolean removeByService(EntityManager em, String service) {
+        ClientCredentials cliCred = getClientCredentials(em, service);
+        if (cliCred != null) {
+            em.getTransaction().begin();
+            em.remove(cliCred);
+            em.getTransaction().commit();
+        } else
+            return false;
+        return true;
     }
 }

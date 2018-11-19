@@ -22,7 +22,11 @@
 
     <persistence-unit name="fitbitPU" transaction-type="JTA">
         <jta-data-source>FitbitDatabase</jta-data-source>
+        <class>persistence.TokenMap</class>
+        <class>persistence.ClientCredentials</class>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
-        <properties/>
+        <properties>
+            <property name="javax.persistence.schema-generation.database.action" value="create"/>
+        </properties>
     </persistence-unit>
 </persistence>

@@ -6,7 +6,7 @@ import org.junit.Test;
 public class TestTokenMap extends PersistenceTest {
 
     //Test Tokens
-    String ct_user = "commitTrestUser";
+    String ct_user = "commitTestUser";
     String ct_accessToken = "commitTestAccessToken";
     String ct_refreshToken = "commitTestRefreshToken";
 
@@ -18,63 +18,78 @@ public class TestTokenMap extends PersistenceTest {
     String dt_accessToken = "delTestAccessToken";
     String dt_refreshToken = "delTestRefreshToken";
 
+    String cot_user = "countTestUser";
+    String cot_accessToken = "countTestAccessToken";
+    String cot_refreshToken = "countTestRefreshToken";
+
+    private void commitTokenMap(String user, String accessToken, String refreshToken) {
+        TokenMap tm = new TokenMap();
+        tm.setUserID(user);
+        tm.setAccessToken(accessToken);
+        tm.setRefreshToken(refreshToken);
+        tm.setFitbitUid("FB" + user);
+        tm.setExpiresIn(3600);
+        em.getTransaction().begin();
+        em.persist(tm);
+        em.getTransaction().commit();
+    }
+
     @Test
     public void testCommitTokenMap() {
-        String input;
 
-        store.commitTokenMap(ct_user, ct_accessToken, ct_refreshToken);
+        commitTokenMap(ct_user, ct_accessToken, ct_refreshToken);
 
-        input = store.getToken(ct_user, false);
-        Assert.assertEquals(ct_accessToken, input);
+        TokenMap tmIn = TokenMap.getTokenMap(em, ct_user);
 
-        input = store.getToken(ct_user, true);
-        Assert.assertEquals(ct_refreshToken, input);
-
-        ct_accessToken = "test_update_toke_1";
-        store.commitTokenMap(ct_user, ct_accessToken, ct_refreshToken);
-        input = store.getToken(ct_user, false);
-
-        Assert.assertEquals(ct_accessToken, input);
+        Assert.assertEquals(ct_accessToken, tmIn.getAccessToken());
+        Assert.assertEquals(ct_refreshToken, tmIn.getRefreshToken());
+        Assert.assertEquals("FB" + ct_user, tmIn.getFitbitUid());
     }
 
     @Test
     public void testEditTokenMap() {
-        String input;
+        commitTokenMap(ut_user, ut_accessToken, ut_refreshToken);
 
-        store.commitTokenMap(ut_user, ut_accessToken, ut_refreshToken);
+        TokenMap tm = TokenMap.getTokenMap(em, ut_user);
+
+        Assert.assertEquals(ut_accessToken, tm.getAccessToken());
+        Assert.assertEquals(ut_refreshToken, tm.getRefreshToken());
 
         ut_accessToken = "test_update_access_token";
         ut_refreshToken = "test_update_refresh_token";
-        store.commitTokenMap(ut_user, ut_accessToken, ut_refreshToken);
 
-        input = store.getToken(ut_user, false);
-        Assert.assertEquals(ut_accessToken, input);
+        em.getTransaction().begin();
+        tm.setAccessToken(ut_accessToken);
+        tm.setRefreshToken(ut_refreshToken);
+        em.getTransaction().commit();
 
-        input = store.getToken(ut_user, true);
-        Assert.assertEquals(ut_refreshToken, input);
+        TokenMap inTM = TokenMap.getTokenMap(em, ut_user);
+
+        Assert.assertEquals(ut_accessToken, inTM.getAccessToken());
+        Assert.assertEquals(ut_refreshToken, inTM.getRefreshToken());
     }
 
     @Test
     public void testTokenCount() {
-        long start = store.getTokenCount();
+        long start = TokenMap.getAllTokenMap(em).size();
 
-        store.commitTokenMap(ct_user, ct_accessToken, ct_refreshToken);
+        commitTokenMap(cot_user, cot_accessToken, cot_refreshToken);
 
-        long end = store.getTokenCount();
+        long end = TokenMap.getAllTokenMap(em).size();
         Assert.assertTrue(start < end);
     }
 
     @Test
     public void testDeleteTokenMap() {
-        store.commitTokenMap(dt_user, dt_accessToken, dt_refreshToken);
-        Assert.assertNotNull(store.doesTokenMapExist(dt_user));
+        commitTokenMap(dt_user, dt_accessToken, dt_refreshToken);
+        Assert.assertNotNull(TokenMap.getTokenMap(em, dt_user));
 
-        store.removeTokenMap(dt_user);
-        Assert.assertNull(store.doesTokenMapExist(dt_user));
+        TokenMap.removeByUid(em, dt_user);
+        Assert.assertNull(TokenMap.getTokenMap(em, dt_user));
     }
 
     @Test
     public void testDeleteTokenMap_Faliure() {
-        Assert.assertFalse(store.removeTokenMap("fake_uid"));
+        Assert.assertFalse(TokenMap.removeByUid(em, "fake_uid"));
     }
 }
