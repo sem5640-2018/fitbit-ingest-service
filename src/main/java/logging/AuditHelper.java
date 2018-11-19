@@ -2,7 +2,6 @@ package logging;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-
 import java.util.Date;
 
 /**
@@ -41,6 +40,8 @@ public class AuditHelper {
 
         System.out.println("Audit JSON to be sent to GLADOS: " + outJson);
         //TODO implement API connection!
+        destUrl.length(); //TODO Remove
+        addAuditUrl.length(); //TODO Remove
         return 501; //Unimplemented.
     }
 }
