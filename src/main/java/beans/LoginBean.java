@@ -47,7 +47,8 @@ public class LoginBean implements Serializable {
                 }
 
                 final FitBitOAuth2AccessToken accessToken = (FitBitOAuth2AccessToken) oauth2AccessToken;
-                TokenMap map = new TokenMap("test", accessToken.getAccessToken(), accessToken.getRefreshToken());
+                TokenMap map = new TokenMap("Test", accessToken.getAccessToken(), accessToken.getExpiresIn(),
+                        accessToken.getRefreshToken(), accessToken.getUserId());
                 tokenMapDAO.save(map);
 
             } catch (Exception e) {
