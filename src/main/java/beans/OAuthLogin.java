@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "Login", urlPatterns = { "/LoginPage" } )
+@WebServlet(name = "Login", urlPatterns = { "/" } )
 public class OAuthLogin extends HttpServlet{
 
     @Inject
