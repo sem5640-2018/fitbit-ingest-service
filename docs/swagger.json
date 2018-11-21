@@ -79,6 +79,7 @@
 					},
 					"400": {
 						"description": "Request did not contain user id parameter"
+					}
 				}
 			}
 		},
