@@ -53,11 +53,13 @@ public class DataCheckThread implements Runnable {
         addressesToPoll.add(dateToFormat(now));
         if (lastAccessed != null && doNeedPreviousDay(lastAccessed))
             addressesToPoll.add(dateToFormat(lastAccessed));
-        else if (lastAccessed == null) {
+
+        // Used if we want to poll from previous days
+        /*else if (lastAccessed == null) {
             for (int i = 0; i < 7; i++) {
                 addressesToPoll.add(dateToFormat(DaysDate(i)));
             }
-        }
+        }*/
 
         // Used if we want to poll from previous days
         /*else if (lastAccessed == null) {
