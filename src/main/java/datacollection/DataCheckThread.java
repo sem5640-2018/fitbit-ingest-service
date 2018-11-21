@@ -7,6 +7,7 @@ import com.github.scribejava.core.model.Verb;
 import persistence.TokenMap;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -49,8 +50,13 @@ public class DataCheckThread implements Runnable {
         LinkedList<String> addressesToPoll = new LinkedList<String>();
 
         addressesToPoll.add(dateToFormat(now));
-        if (doNeedPreviousDay(lastAccessed))
+        if (lastAccessed != null && doNeedPreviousDay(lastAccessed))
             addressesToPoll.add(dateToFormat(lastAccessed));
+        else if (lastAccessed == null) {
+            for (int i = 0; i < 7; i++) {
+                addressesToPoll.add(dateToFormat(DaysDate(i)));
+            }
+        }
 
         try {
             for (String date : addressesToPoll) {
@@ -76,7 +82,7 @@ public class DataCheckThread implements Runnable {
         }
        catch (Exception err) {
             // @TODO LOg error with request
-
+            err.printStackTrace();
            // RETURN TERMINATE UPDATE
            return;
         }
@@ -99,5 +105,11 @@ public class DataCheckThread implements Runnable {
      */
     private String dateToFormat(Date toFormat) {
         return new SimpleDateFormat("yyyy-MM-dd").format(toFormat);
+    }
+
+    private Date DaysDate(int daysBack) {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -daysBack);
+        return cal.getTime();
     }
 }
