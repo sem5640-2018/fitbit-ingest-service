@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Map;
 
 /**
  * This servlet will act as the check endpoint that will allow other microservices to check id a user id belongs to a
@@ -33,13 +34,21 @@ public class Check extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userId = request.getParameter(paramName);
+        String userId = null;
+
+        if (!request.getParameterMap().containsKey(paramName)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No user id in request");
+            return;
+        }
+
+        userId = request.getParameter(paramName);
 
         TokenMap tokenMap = tokenMapDAO.getByUid(userId);
+
         if (tokenMap != null)
-            response.sendError(HttpServletResponse.SC_OK);
+            response.sendError(HttpServletResponse.SC_OK, "Fitbit Authorised");
         else
-            response.sendError(HttpServletResponse.SC_NO_CONTENT); //TODO Not sure if this is appropriate for not connected.
+            response.sendError(HttpServletResponse.SC_NO_CONTENT, "Fitbit Not Authorised"); //TODO Not sure if this is appropriate for not connected.
     }
 
 }

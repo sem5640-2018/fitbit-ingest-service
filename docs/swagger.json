@@ -76,7 +76,9 @@
 				"responses": {
 					"200": {
 						"description": "The FitBit data for the specified user."
-					}
+					},
+					"400": {
+						"description": "Request did not contain user id parameter"
 				}
 			}
 		},
@@ -99,7 +101,13 @@
 				"produces": ["application/json"],
 				"responses": {
 					"200": {
-						"description": "Returns true or false depending if a user has been connected"
+						"description": "User has Authorised fitbit usage"
+					},
+					"204": {
+						"description": "User has not Authorised fitbit usage"
+					},
+					"400": {
+						"description": "Request did not contain user id parameter"
 					}
 				}
 			}
