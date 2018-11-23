@@ -36,7 +36,7 @@ public class Check extends HttpServlet {
         String userId = null;
 
         if (!request.getParameterMap().containsKey(paramName)) {
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No User ID Parameter!");
             return;
         }
 
