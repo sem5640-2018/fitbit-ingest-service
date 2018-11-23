@@ -6,6 +6,7 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import exceptions.EnvConfigException;
 
 import javax.ejb.EJB;
 import java.io.IOException;
@@ -23,9 +24,9 @@ public class AuditHelper {
     @EJB
     private OAuthBean oAuthBean;
 
-    private static String destUrl = "glados.aberfitness.biz";
-    private static String addAuditUrl = "/audit/new";
-    private static String serviceName = "unknown";
+    private static String destUrl;
+    private static String addAuditUrl;
+    private static String serviceName;
 
     private Gson gson;
 
@@ -35,6 +36,18 @@ public class AuditHelper {
     public AuditHelper() {
         gson = new GsonBuilder().create();
         serviceName = System.getenv("SERVICE_NAME");
+        destUrl =  System.getenv("GLADOS_BASE_URL");
+        addAuditUrl =  System.getenv("GLADOS_NEW_AUDIT");
+        checkEnv();
+    }
+
+    private void checkEnv() {
+        if (destUrl == null)
+            throw new EnvConfigException("Glados Base URL environment variable not set!");
+        if (addAuditUrl == null)
+            throw new EnvConfigException("Glados add Audit url pattern environment variable not set!");
+        if (serviceName == null)
+            throw new EnvConfigException("The service name environment variable isn't set!");
     }
 
 
