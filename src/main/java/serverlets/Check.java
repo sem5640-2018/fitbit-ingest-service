@@ -36,7 +36,7 @@ public class Check extends HttpServlet {
         String userId = null;
 
         if (!request.getParameterMap().containsKey(paramName)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No user id in request");
+            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
@@ -45,9 +45,9 @@ public class Check extends HttpServlet {
         TokenMap tokenMap = tokenMapDAO.getByUid(userId);
 
         if (tokenMap != null)
-            response.sendError(HttpServletResponse.SC_OK, "Fitbit Authorised");
+            response.setStatus(HttpServletResponse.SC_OK);
         else
-            response.sendError(HttpServletResponse.SC_NO_CONTENT, "Fitbit Not Authorised"); //TODO Not sure if this is appropriate for not connected.
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT); //TODO Not sure if this is appropriate for not connected.
     }
 
 }
