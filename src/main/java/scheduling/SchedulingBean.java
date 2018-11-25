@@ -2,7 +2,12 @@ package scheduling;
 
 import beans.ActivityMappingBean;
 import beans.OAuthBean;
-import datacollection.*;
+import datacollection.ActivityMapLoading;
+import datacollection.FitbitDataCollector;
+import datacollection.FitbitDataConverter;
+import datacollection.FitbitDataProcessor;
+import datacollection.ProcessedData;
+import datacollection.ActivityMap;
 import persistence.TokenMap;
 
 import javax.annotation.PostConstruct;
