@@ -13,7 +13,7 @@ import javax.ejb.Singleton;
 public class OAuthBean {
   
     @EJB
-    EnvriomentVariableBean variableBean;
+    EnvironmentVariableBean variableBean;
 
     private OAuth20Service fitbitService;
     private OAuth20Service aberfitnessService;
