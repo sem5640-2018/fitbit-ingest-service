@@ -33,13 +33,21 @@ public class Check extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userId = request.getParameter(paramName);
+        String userId = null;
+
+        if (!request.getParameterMap().containsKey(paramName)) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No User ID Parameter!");
+            return;
+        }
+
+        userId = request.getParameter(paramName);
 
         TokenMap tokenMap = tokenMapDAO.getByUid(userId);
+
         if (tokenMap != null)
-            response.sendError(HttpServletResponse.SC_OK);
+            response.setStatus(HttpServletResponse.SC_OK);
         else
-            response.sendError(HttpServletResponse.SC_NO_CONTENT); //TODO Not sure if this is appropriate for not connected.
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT); //TODO Not sure if this is appropriate for not connected.
     }
 
 }
