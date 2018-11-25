@@ -9,8 +9,8 @@ public class ActivityMap {
     private Boolean uses_distance;
     private List<String> fitbit_activity_ids;
 
-    public boolean isMatching(String id) {
-        return fitbit_activity_ids.contains(id);
+    public List<String> getFitbit_activity_ids() {
+        return fitbit_activity_ids;
     }
 
     public Boolean getUses_distance() {
