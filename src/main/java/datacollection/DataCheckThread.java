@@ -8,7 +8,6 @@ import com.github.scribejava.core.model.Verb;
 import persistence.TokenMap;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -118,11 +117,5 @@ public class DataCheckThread implements Runnable {
      */
     private String dateToFormat(Date toFormat) {
         return new SimpleDateFormat("yyyy-MM-dd").format(toFormat);
-    }
-
-    private Date DaysDate(int daysBack) {
-        final Calendar cal = Calendar.getInstance();
-        cal.add(Calendar.DATE, -daysBack);
-        return cal.getTime();
     }
 }
