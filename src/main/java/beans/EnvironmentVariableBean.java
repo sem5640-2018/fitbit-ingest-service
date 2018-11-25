@@ -2,8 +2,8 @@ package beans;
 
 import javax.ejb.Singleton;
 
-@Singleton(name = "EnvriomentVariableEJB")
-public class EnvriomentVariableBean {
+@Singleton(name = "EnvironmentVariableEJB")
+public class EnvironmentVariableBean {
 
     // Fitbit Info
     private static final String fitbitClientId = System.getenv("fitbitClientId");
@@ -14,8 +14,10 @@ public class EnvriomentVariableBean {
     private static final String aberfitnessClientId = System.getenv("ABERFITNESS_CLI_ID");
     private static final String aberfitnessClientSecret = System.getenv("ABERFITNESS_CLI_SECRET");
     private static final String aberfitnessClientCallback = System.getenv("ABERFITNESS_CLI_CALLBACK");
+    private static final String aberfitnessActivityEndPoint = System.getenv("ABERFITNESS_CLI_CALLBACK");
 
-    public EnvriomentVariableBean() {
+
+    public EnvironmentVariableBean() {
     }
 
     public String getFitbitClientSecret() {
@@ -40,6 +42,10 @@ public class EnvriomentVariableBean {
 
     public String getAberfitnessClientCallback() {
         return aberfitnessClientCallback;
+    }
+
+    public String getAberfitnessActivityEndPoint() {
+        return aberfitnessActivityEndPoint;
     }
 
     public boolean isAberfitnessDataPresent() {

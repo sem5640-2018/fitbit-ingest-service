@@ -26,10 +26,10 @@ public class ProcessedData {
     public ProcessedData(TokenMap inputToken) {
         this.InputToken = inputToken;
 
-        ActivityJSON = new LinkedList<ActivityJSON>();
-        StepsJSON = new LinkedList<ActivityJSON>();
+        ActivityJSON = new LinkedList<>();
+        StepsJSON = new LinkedList<>();
 
-        ProcessedActivities = new LinkedList<FitBitJSON>();
+        ProcessedActivities = new LinkedList<>();
     }
 
     public ProcessedData(TokenMap inputToken, ActivityJSON ActivityJSON) {

@@ -11,9 +11,9 @@ import javax.ejb.Singleton;
 
 @Singleton
 public class OAuthBean {
-
+  
     @EJB
-    EnvriomentVariableBean variableBean;
+    EnvironmentVariableBean variableBean;
 
     private OAuth20Service fitbitService;
     private OAuth20Service aberfitnessService;
@@ -25,6 +25,11 @@ public class OAuthBean {
 
     @PostConstruct
     public void init() {
+        fitbitService = createFitbitClient();
+        aberfitnessService = createGateClient();
+    }
+
+    private OAuth20Service createFitbitClient() {
         if (variableBean.isFitbitDataPresent()) {
             fitbitService = new ServiceBuilder(variableBean.getFitbitClientId())
                     .apiSecret(variableBean.getFitbitClientSecret())
@@ -32,8 +37,12 @@ public class OAuthBean {
                     .callback(variableBean.getFitbitClientCallback())
                     .state("some_params")
                     .build(FitbitApi20.instance());
+            return fitbitService;
         }
+        return null;
+    }
 
+    private OAuth20Service createGateClient() {
         if (variableBean.isAberfitnessDataPresent()) {
             aberfitnessService = new ServiceBuilder(variableBean.getAberfitnessClientId())
                     .apiSecret(variableBean.getAberfitnessClientSecret())
@@ -41,14 +50,16 @@ public class OAuthBean {
                     .callback(variableBean.getFitbitClientCallback())
                     //.state("")
                     .build(GatekeeperApi.instance());
+            return aberfitnessService;
         }
+        return null;
     }
 
     public OAuth20Service getFitbitService() {
-        return fitbitService;
+        return fitbitService == null ? createFitbitClient() : fitbitService;
     }
 
     public OAuth20Service getAberfitnessService() {
-        return aberfitnessService;
+        return aberfitnessService == null ? createGateClient() : aberfitnessService;
     }
 }
