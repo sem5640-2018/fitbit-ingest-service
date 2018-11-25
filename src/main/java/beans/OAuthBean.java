@@ -13,7 +13,7 @@ import javax.inject.Inject;
 public class OAuthBean {
 
     @Inject
-    EnvriomentVariableBean variableBean;
+    EnvironmentVariableBean variableBean;
 
     private OAuth20Service fitbitService;
     private OAuth20Service aberfitnessService;
