@@ -1,6 +1,5 @@
 # Builder image which tests locally
 FROM alpine:latest as builder
-ARG RUN_TESTS
 
 COPY bin/syslog-ng.conf /etc/syslog/syslog-ng.conf
 
@@ -16,7 +15,6 @@ COPY pom.xml .
 
 # Maven Stages
 RUN mvn dependency:go-offline
-RUN ${RUN_TESTS} && echo "Running tests...." && mvn test -B
 
 # Prepare exploded war for packaging step
 RUN echo "Exporting project..." && mvn war:exploded
