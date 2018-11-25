@@ -22,7 +22,7 @@ public class Status extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendError(HttpServletResponse.SC_OK);  //TODO may want more information sent than just OK.
+        response.setStatus(HttpServletResponse.SC_OK);  //TODO may want more information sent than just OK.
     }
 
 }
