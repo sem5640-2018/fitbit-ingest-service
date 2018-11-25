@@ -14,6 +14,8 @@ public class EnvironmentVariableBean {
     private static final String aberfitnessClientId = System.getenv("ABERFITNESS_CLI_ID");
     private static final String aberfitnessClientSecret = System.getenv("ABERFITNESS_CLI_SECRET");
     private static final String aberfitnessClientCallback = System.getenv("ABERFITNESS_CLI_CALLBACK");
+    private static final String aberfitnessActivityEndPoint = System.getenv("ABERFITNESS_CLI_CALLBACK");
+
 
     public EnvironmentVariableBean() {
     }
@@ -40,6 +42,10 @@ public class EnvironmentVariableBean {
 
     public String getAberfitnessClientCallback() {
         return aberfitnessClientCallback;
+    }
+
+    public String getAberfitnessActivityEndPoint() {
+        return aberfitnessActivityEndPoint;
     }
 
     public boolean isAberfitnessDataPresent() {

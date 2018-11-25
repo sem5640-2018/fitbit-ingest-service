@@ -9,7 +9,7 @@ import java.util.Map;
 
 @Singleton(name = "ActivityMappingBean")
 public class ActivityMappingBean {
-    Map<String,ActivityMap> mappings;
+    private Map<String,ActivityMap> mappings;
 
     public ActivityMappingBean() {
         mappings = Collections.synchronizedMap(new HashMap<>());
