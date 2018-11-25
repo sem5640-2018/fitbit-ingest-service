@@ -33,7 +33,9 @@ public class OAuthLogin extends HttpServlet{
                     return;
 
                 final FitBitOAuth2AccessToken accessToken = (FitBitOAuth2AccessToken) oauth2AccessToken;
-                tokenMapDAO.save(new TokenMap("Test", accessToken.getAccessToken(), accessToken.getRefreshToken()));
+                TokenMap map = new TokenMap("Test", accessToken.getAccessToken(), accessToken.getExpiresIn(),
+                        accessToken.getRefreshToken(), accessToken.getUserId());
+                tokenMapDAO.save(map);
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
