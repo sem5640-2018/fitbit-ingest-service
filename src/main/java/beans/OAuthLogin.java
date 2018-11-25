@@ -5,7 +5,7 @@ import com.github.scribejava.core.model.OAuth2AccessToken;
 import persistence.TokenMap;
 import persistence.TokenMapDAO;
 
-import javax.inject.Inject;
+import javax.ejb.EJB;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +15,10 @@ import java.io.IOException;
 @WebServlet(name = "Login", urlPatterns = { "/" } )
 public class OAuthLogin extends HttpServlet{
 
-    @Inject
+    @EJB
     OAuthBean oAuthBean;
 
-    @Inject
+    @EJB
     TokenMapDAO tokenMapDAO;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -33,7 +33,9 @@ public class OAuthLogin extends HttpServlet{
                     return;
 
                 final FitBitOAuth2AccessToken accessToken = (FitBitOAuth2AccessToken) oauth2AccessToken;
-                tokenMapDAO.save(new TokenMap("Test", accessToken.getAccessToken(), accessToken.getRefreshToken()));
+                TokenMap map = new TokenMap("Test", accessToken.getAccessToken(), accessToken.getExpiresIn(),
+                        accessToken.getRefreshToken(), accessToken.getUserId());
+                tokenMapDAO.save(map);
                 return;
             } catch (Exception e) {
                 e.printStackTrace();

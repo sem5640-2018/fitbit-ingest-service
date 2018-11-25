@@ -62,10 +62,12 @@ public class ClientCredentials {
      * Contructor that takes in params to set instance variables.
      * @param clientId client id provided by fitbit
      * @param clientSecret client secret provided by fitbit
+     * @param service string identifier for service credentials belong to
      */
-    public ClientCredentials(String clientId, String clientSecret) {
+    public ClientCredentials(String clientId, String clientSecret, String service) {
         this.clientId = clientId;
         this.clientSecret = clientSecret;
+        this.service = service;
     }
 
     public Long getId() {

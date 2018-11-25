@@ -6,14 +6,14 @@ import com.github.scribejava.core.oauth.OAuth20Service;
 import scribe_java.GatekeeperApi;
 
 import javax.annotation.PostConstruct;
+import javax.ejb.EJB;
 import javax.ejb.Singleton;
-import javax.inject.Inject;
 
 @Singleton
 public class OAuthBean {
-
-    @Inject
-    EnvironmentVariableBean variableBean;
+  
+    @EJB
+    EnvriomentVariableBean variableBean;
 
     private OAuth20Service fitbitService;
     private OAuth20Service aberfitnessService;

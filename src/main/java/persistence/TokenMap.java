@@ -73,71 +73,47 @@ public class TokenMap implements Serializable {
      * Constructor that takes parameters.
      * @param userID user id of current user
      * @param accessToken access token obtained from fitbit
+     * @param expiry time till expiry
      * @param refreshToken refresh token obtained from fitbit
+     * @param fitbitUid user id used by fitbit
      */
-    public TokenMap(String userID, String accessToken, String refreshToken) {
+    public TokenMap(String userID, String accessToken,int expiry, String refreshToken, String fitbitUid) {
         this.userID = userID;
         this.accessToken = accessToken;
+        this.expiresIn = expiry;
         this.refreshToken = refreshToken;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getUserID() {
-        return userID;
-    }
-
-    public void setUserID(String userID) {
-        this.userID = userID;
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    public String getRefreshToken() {
-        return refreshToken;
-    }
-
-    public void setRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
-
-    public int getExpiresIn() { return expiresIn; }
-
-    public void setExpiresIn(int expiresIn) {
-        this.expiresIn = expiresIn;
-    }
-
-    public String getFitbitUid() {
-        return fitbitUid;
-    }
-
-    public void setFitbitUid(String fitbitUid) {
         this.fitbitUid = fitbitUid;
     }
 
-    public Date getLastAccessed() {
-        return lastAccessed;
-    }
+    public Long getId() { return id; }
 
-    public void setLastAccessed(Date lastAccessed) {
-        this.lastAccessed = lastAccessed;
-    }
+    public String getUserID() { return userID; }
 
-    public Date getUpdatedAt() {
-        return updatedAt;
-    }
+    public void setUserID(String userID) { this.userID = userID; }
 
-    public Date getCreatedAt() {
-        return createdAt;
-    }
+    public String getAccessToken() { return accessToken; }
+
+    public void setAccessToken(String accessToken) { this.accessToken = accessToken; }
+
+    public String getRefreshToken() { return refreshToken; }
+
+    public void setRefreshToken(String refreshToken) { this.refreshToken = refreshToken; }
+
+    public int getExpiresIn() { return expiresIn; }
+
+    public void setExpiresIn(int expiresIn) { this.expiresIn = expiresIn; }
+
+    public String getFitbitUid() { return fitbitUid; }
+
+    public void setFitbitUid(String fitbitUid) { this.fitbitUid = fitbitUid; }
+
+    public Date getLastAccessed() { return lastAccessed; }
+
+    public void setLastAccessed(Date lastAccessed) { this.lastAccessed = lastAccessed; }
+
+    public Date getUpdatedAt() { return updatedAt; }
+
+    public Date getCreatedAt() { return createdAt; }
 
     @Override
     public String toString() {
