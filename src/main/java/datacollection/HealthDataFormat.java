@@ -6,7 +6,9 @@ import javax.ejb.EJB;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
 public class HealthDataFormat {
+    private static int SOURCE_ID = 1;
 
     @EJB
     ActivityMappingBean mappingBean;
@@ -15,10 +17,12 @@ public class HealthDataFormat {
 
     private String StartTimestamp;
     private String EndTimestamp;
-    private String activity_type;
-    private long CaloriesBurnt;
-    private long StepsTaken;
 
+    private int Source;
+    private int ActivityType;
+    private long CaloriesBurnt;
+
+    private long StepsTaken;
     private float MetresTravelled;
 
     public HealthDataFormat(Activity input) {
@@ -26,19 +30,22 @@ public class HealthDataFormat {
 
         StartTimestamp = sdf.format(input.getJavaDate());
         EndTimestamp = sdf.format(getEndDate(input));
-        StepsTaken = input.getSteps();
-        CaloriesBurnt = input.getCalories();
-        MetresTravelled = input.getDistance();
+
+        Source = SOURCE_ID;
         // If we have a mapping for this item
-        activity_type = map == null ? input.getDescription() : map.getName();
+        ActivityType = map == null ? -1 : map.getId();
+        CaloriesBurnt = input.getCalories();
+
+        StepsTaken = input.getSteps();
+        MetresTravelled = input.getDistance();
     }
 
     public float getDistance() {
         return MetresTravelled;
     }
 
-    public String getActivity_type() {
-        return activity_type;
+    public int getActivity_type() {
+        return ActivityType;
     }
 
     public String getStart_time() {
@@ -59,5 +66,9 @@ public class HealthDataFormat {
 
     public String getEndTimestamp() {
         return EndTimestamp;
+    }
+
+    public int getSource() {
+        return Source;
     }
 }
