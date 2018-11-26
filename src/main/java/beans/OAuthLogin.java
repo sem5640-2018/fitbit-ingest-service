@@ -4,6 +4,7 @@ import com.github.scribejava.apis.fitbit.FitBitOAuth2AccessToken;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import persistence.TokenMap;
 import persistence.TokenMapDAO;
+import scribe_java.GatekeeperLogin;
 
 import javax.ejb.EJB;
 import javax.servlet.annotation.WebServlet;
@@ -21,10 +22,38 @@ public class OAuthLogin extends HttpServlet{
     @EJB
     TokenMapDAO tokenMapDAO;
 
+    @EJB
+    GatekeeperLogin gatekeeperLogin;
+
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws  IOException {
+        OAuth2AccessToken gatekeeperAT;
         response.setContentType("text/html");
 
+        /*try {
+            gatekeeperLogin = (GatekeeperLogin) new InitialContext().lookup("java:comp/env/gatekeeperLogin");
+        } catch (NamingException e) {
+            e.printStackTrace();
+        }*/
+
+        String state = request.getParameter("state");
+
+        if(state == null) {
+            gatekeeperLogin.redirectToGatekeeper(response, "https://localhost:8181/fitbit-ingest/LoginPage", "gateAccess");
+        } else if (state.equals("gateAccess")){
+            gatekeeperLogin.getGatekeeperGetAccessToken(request);
+            redirectToFitbit(response);
+        } else if (state.equals("fitbit_auth")) {
+            getFitbitAccessToken(request, gatekeeperLogin.getUser_id());
+        }
+    }
+
+    private void redirectToFitbit(HttpServletResponse response) throws IOException {
+        final String authorizationUrl = oAuthBean.getFitbitService().getAuthorizationUrl();
+        response.sendRedirect(authorizationUrl);
+    }
+
+    private void getFitbitAccessToken(HttpServletRequest request, String accessT) {
         String str = request.getParameter("code");
         if (str != null) {
             try {
@@ -33,7 +62,7 @@ public class OAuthLogin extends HttpServlet{
                     return;
 
                 final FitBitOAuth2AccessToken accessToken = (FitBitOAuth2AccessToken) oauth2AccessToken;
-                TokenMap map = new TokenMap("Test", accessToken.getAccessToken(), accessToken.getExpiresIn(),
+                TokenMap map = new TokenMap(accessT, accessToken.getAccessToken(), accessToken.getExpiresIn(),
                         accessToken.getRefreshToken(), accessToken.getUserId());
                 tokenMapDAO.save(map);
                 return;
@@ -41,8 +70,5 @@ public class OAuthLogin extends HttpServlet{
                 e.printStackTrace();
             }
         }
-
-        final String authorizationUrl = oAuthBean.getFitbitService().getAuthorizationUrl();
-        response.sendRedirect(authorizationUrl);
     }
 }

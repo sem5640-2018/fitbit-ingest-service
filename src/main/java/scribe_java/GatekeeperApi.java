@@ -26,21 +26,16 @@ public class GatekeeperApi extends DefaultApi20 {
 
     @Override
     public String getAccessTokenEndpoint() {
-        return baseUrl + "/access_token"; //TODO Correct URL needed
-    }
-
-    @Override
-    public String getRefreshTokenEndpoint() {
-        return baseUrl + "/refresh_token"; //TODO Correct URL needed
+        return baseUrl + "/token"; //TODO Correct URL needed
     }
 
     @Override
     public String getRevokeTokenEndpoint() {
-        return baseUrl + "/revoke_token"; //TODO Correct URL needed
+        return baseUrl + "/revocation"; //TODO Correct URL needed
     }
 
     @Override
     protected String getAuthorizationBaseUrl() {
-        return baseUrl + "/authorise"; //TODO Correct URL needed
+        return baseUrl + "/authorize"; //TODO Correct URL needed
     }
 }
