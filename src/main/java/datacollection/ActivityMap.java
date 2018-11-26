@@ -22,7 +22,6 @@ class Source {
 }
 
 public class ActivityMap {
-    private int Id;
     private String Name;
     private Source Source;
 
