@@ -59,6 +59,26 @@ public class TokenMapDAO {
     }
 
     /**
+     * Function for updating or saving a token map, it decides between save or update by checking for an existing record
+     * @param inputMap token map to create or update
+     * @return id of created/updated record
+     */
+    public long saveOrUpdate(TokenMap inputMap) {
+        TokenMap existingMap = getByUid(inputMap.getUserID());
+        if (existingMap != null) {
+            existingMap.setAccessToken(inputMap.getAccessToken());
+            existingMap.setExpiresIn(inputMap.getExpiresIn());
+            existingMap.setRefreshToken(inputMap.getRefreshToken());
+            existingMap.setFitbitUid(inputMap.getFitbitUid());
+            existingMap.setLastAccessed(inputMap.getLastAccessed());
+            return update(existingMap).getId();
+        } else {
+            em.persist(inputMap);
+            return inputMap.getId();
+        }
+    }
+
+    /**
      * Function for removing a token map from the database.
      * @param tokenMap token map to be removed
      * @return true for success, false for failure

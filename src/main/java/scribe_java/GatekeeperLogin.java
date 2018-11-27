@@ -19,7 +19,6 @@ public class GatekeeperLogin implements Serializable {
     OAuthBean oAuthBean;
 
     private GatekeeperOAuth2AccessToken accessToken;
-    private String user_id;
 
     public GatekeeperLogin() {
         //
@@ -38,7 +37,6 @@ public class GatekeeperLogin implements Serializable {
             try {
                 OAuth2AccessToken inAccessToken = oAuthBean.getAberfitnessService().getAccessToken(str);
                 if (!(inAccessToken instanceof GatekeeperOAuth2AccessToken)) {
-                    System.out.println("NOT EQUAL");
                     return;
                 }
 
@@ -53,7 +51,7 @@ public class GatekeeperLogin implements Serializable {
 
     public String getUser_id() {
         if (accessToken != null)
-            return user_id;
+            return accessToken.getUserId();
         return null;
     }
 }

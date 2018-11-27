@@ -29,7 +29,7 @@ public class ClientCredentials {
     @Column(name = "client_secret")
     private String clientSecret;
 
-    @Column(name = "service", unique = true)
+    @Column(name = "service", unique = true, nullable = false)
     private String service;
 
     @Column(name = "updated_at", nullable = false)
