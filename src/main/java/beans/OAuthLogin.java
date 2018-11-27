@@ -27,7 +27,6 @@ public class OAuthLogin extends HttpServlet{
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws  IOException {
-        OAuth2AccessToken gatekeeperAT;
         response.setContentType("text/html");
 
         /*try {

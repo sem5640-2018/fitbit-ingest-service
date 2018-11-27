@@ -10,7 +10,7 @@ public class GatekeeperJsonTokenExtractor extends OAuth2AccessTokenJsonExtractor
 
     private static final Pattern USER_ID_REGEX_PATTERN = Pattern.compile("\"sub\"\\s*:\\s*\"(\\S*?)\"");
     private static final Pattern OPEN_ID_REGEX_PATTERN = Pattern.compile("\"id_token\"\\s*:\\s*\"(\\S*?)\"");
-    private static final Pattern ACCESS_TOKEN_REGEX_PATTERN = Pattern.compile("\"access_token\"\\s*:\\s*\"(\\S*?)\"");
+    //private static final Pattern ACCESS_TOKEN_REGEX_PATTERN = Pattern.compile("\"access_token\"\\s*:\\s*\"(\\S*?)\"");
 
     protected GatekeeperJsonTokenExtractor() {
     }
