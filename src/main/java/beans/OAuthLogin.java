@@ -29,12 +29,6 @@ public class OAuthLogin extends HttpServlet{
             throws  IOException {
         response.setContentType("text/html");
 
-        /*try {
-            gatekeeperLogin = (GatekeeperLogin) new InitialContext().lookup("java:comp/env/gatekeeperLogin");
-        } catch (NamingException e) {
-            e.printStackTrace();
-        }*/
-
         String state = request.getParameter("state");
 
         if(state == null) {
