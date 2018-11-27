@@ -60,6 +60,13 @@
             <version>2.8.5</version>
         </dependency>
 
+        <!-- JWT & JOSE -->
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>6.4</version>
+        </dependency>
+
         <!-- Junit -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
