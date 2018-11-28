@@ -1,31 +1,43 @@
 package datacollection;
 
-import java.util.List;
+class Mappings {
+    private String SourceIdentifier;
+
+    public String getSourceIdentifier() {
+        return SourceIdentifier;
+    }
+}
+
+class Source {
+    private int Id;
+    private Mappings Mappings;
+
+    public int getId() {
+        return Id;
+    }
+
+    public datacollection.Mappings getMappings() {
+        return Mappings;
+    }
+}
 
 public class ActivityMap {
-    private String name;
-    private String quantity_unit;
-    private Boolean uses_duration;
-    private Boolean uses_distance;
-    private List<String> fitbit_activity_ids;
-
-    public List<String> getFitbit_activity_ids() {
-        return fitbit_activity_ids;
-    }
-
-    public Boolean getUses_distance() {
-        return uses_distance;
-    }
-
-    public Boolean getUses_duration() {
-        return uses_duration;
-    }
-
-    public String getQuantity_unit() {
-        return quantity_unit;
-    }
+    private String Name;
+    private Source Source;
 
     public String getName() {
-        return name;
+        return Name;
+    }
+
+    public datacollection.Source getSource() {
+        return Source;
+    }
+
+    public String getKey() {
+        return Source.getMappings().getSourceIdentifier();
+    }
+
+    public int getId() {
+        return Source.getId();
     }
 }

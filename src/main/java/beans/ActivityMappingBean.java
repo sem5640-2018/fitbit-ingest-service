@@ -18,9 +18,7 @@ public class ActivityMappingBean {
     public void UpdateMappings(ActivityMap[] input) {
         mappings.clear();
         for(ActivityMap map : input) {
-            for(String fitbitID : map.getFitbit_activity_ids()) {
-                mappings.put(fitbitID, map);
-            }
+            mappings.put(map.getKey(), map);
         }
     }
 
