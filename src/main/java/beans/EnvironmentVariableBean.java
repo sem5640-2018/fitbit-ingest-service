@@ -1,6 +1,6 @@
 package beans;
 
-public final class EnvriomentVariableBean {
+public final class EnvironmentVariableBean {
 
     //App Config
     private static final String serviceName = System.getenv("SERVICE_NAME");
@@ -29,7 +29,7 @@ public final class EnvriomentVariableBean {
     private static final String gatekeeperRevokeUrl = gatekeeperUrl + System.getenv("GK_REVOKE_URL");
     private static final String gatekeeperJWKUrl = gatekeeperUrl + System.getenv("GK_JWK_URL");
 
-    private EnvriomentVariableBean() {
+    private EnvironmentVariableBean() {
     }
 
     public static String getServiceName() {

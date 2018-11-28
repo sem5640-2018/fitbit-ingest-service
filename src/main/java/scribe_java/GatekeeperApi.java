@@ -1,6 +1,6 @@
 package scribe_java;
 
-import beans.EnvriomentVariableBean;
+import beans.EnvironmentVariableBean;
 import com.github.scribejava.core.builder.api.DefaultApi20;
 import scribe_java.gatekeeper.GatekeeperJsonTokenExtractor;
 
@@ -30,16 +30,16 @@ public class GatekeeperApi extends DefaultApi20 {
 
     @Override
     public String getAccessTokenEndpoint() {
-        return EnvriomentVariableBean.getGatekeeperTokenUrl();
+        return EnvironmentVariableBean.getGatekeeperTokenUrl();
     }
 
     @Override
     public String getRevokeTokenEndpoint() {
-        return EnvriomentVariableBean.getGatekeeperRevokeUrl();
+        return EnvironmentVariableBean.getGatekeeperRevokeUrl();
     }
 
     @Override
     protected String getAuthorizationBaseUrl() {
-        return EnvriomentVariableBean.getGatekeeperAuthoriseUrl();
+        return EnvironmentVariableBean.getGatekeeperAuthoriseUrl();
     }
 }

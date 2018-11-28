@@ -1,6 +1,6 @@
 package logging;
 
-import beans.EnvriomentVariableBean;
+import beans.EnvironmentVariableBean;
 import beans.OAuthBean;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
@@ -36,7 +36,7 @@ public class AuditHelper {
      */
     public AuditHelper() {
         gson = new GsonBuilder().create();
-        serviceName = EnvriomentVariableBean.getServiceName();
+        serviceName = EnvironmentVariableBean.getServiceName();
         destUrl =  System.getenv("GLADOS_BASE_URL");
         addAuditUrl =  System.getenv("GLADOS_NEW_AUDIT");
         checkEnv();

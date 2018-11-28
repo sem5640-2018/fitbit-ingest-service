@@ -21,11 +21,11 @@ public class OAuthBean {
 
     @PostConstruct
     public void init() {
-        if (EnvriomentVariableBean.isFitbitDataPresent()) {
-            fitbitService = new ServiceBuilder(EnvriomentVariableBean.getFitbitClientId())
-                    .apiSecret(EnvriomentVariableBean.getFitbitClientSecret())
+        if (EnvironmentVariableBean.isFitbitDataPresent()) {
+            fitbitService = new ServiceBuilder(EnvironmentVariableBean.getFitbitClientId())
+                    .apiSecret(EnvironmentVariableBean.getFitbitClientSecret())
                     .scope("activity profile")
-                    .callback(EnvriomentVariableBean.getFitbitClientCallback())
+                    .callback(EnvironmentVariableBean.getFitbitClientCallback())
                     .state("fitbit_auth")
                     .build(FitbitApi20.instance());
         }
@@ -36,9 +36,9 @@ public class OAuthBean {
     }
 
     public void initGatekeeperService(String callback, String state) {
-        if (EnvriomentVariableBean.isAberfitnessDataPresent()) {
-            aberfitnessService = new ServiceBuilder(EnvriomentVariableBean.getAberfitnessClientId())
-                    .apiSecret(EnvriomentVariableBean.getAberfitnessClientSecret())
+        if (EnvironmentVariableBean.isAberfitnessDataPresent()) {
+            aberfitnessService = new ServiceBuilder(EnvironmentVariableBean.getAberfitnessClientId())
+                    .apiSecret(EnvironmentVariableBean.getAberfitnessClientSecret())
                     .scope("openid profile offline_access")
                     .callback(callback)
                     .state(state)
