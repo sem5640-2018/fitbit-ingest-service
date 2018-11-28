@@ -8,7 +8,6 @@ public final class EnvironmentVariableClass {
     // Fitbit Info
     private static final String fitbitClientId = System.getenv("fitbitClientId");
     private static final String fitbitClientSecret = System.getenv("fitbitClientSecret");
-    private static final String fitbitClientCallback = System.getenv("fitbitClientCallback");
 
     //Aberfitness Info
     private static final String aberfitnessClientId = System.getenv("ABERFITNESS_CLI_ID");
@@ -46,10 +45,6 @@ public final class EnvironmentVariableClass {
 
     public static String getFitbitClientSecret() {
         return fitbitClientSecret;
-    }
-
-    public static String getFitbitClientCallback() {
-        return fitbitClientCallback;
     }
 
     public static String getAberfitnessClientId() {
@@ -117,6 +112,6 @@ public final class EnvironmentVariableClass {
     }
 
     public static boolean isFitbitDataPresent() {
-        return fitbitClientId != null && fitbitClientSecret != null && fitbitClientCallback != null;
+        return fitbitClientId != null && fitbitClientSecret != null && fitbitIngestLoginUrl != null;
     }
 }
