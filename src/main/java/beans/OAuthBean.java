@@ -6,14 +6,10 @@ import com.github.scribejava.core.oauth.OAuth20Service;
 import scribe_java.GatekeeperApi;
 
 import javax.annotation.PostConstruct;
-import javax.ejb.EJB;
 import javax.ejb.Singleton;
 
 @Singleton
 public class OAuthBean {
-
-    @EJB
-    EnvriomentVariableBean variableBean;
 
     private OAuth20Service fitbitService;
     private OAuth20Service aberfitnessService;
@@ -25,11 +21,11 @@ public class OAuthBean {
 
     @PostConstruct
     public void init() {
-        if (variableBean.isFitbitDataPresent()) {
-            fitbitService = new ServiceBuilder(variableBean.getFitbitClientId())
-                    .apiSecret(variableBean.getFitbitClientSecret())
+        if (EnvriomentVariableBean.isFitbitDataPresent()) {
+            fitbitService = new ServiceBuilder(EnvriomentVariableBean.getFitbitClientId())
+                    .apiSecret(EnvriomentVariableBean.getFitbitClientSecret())
                     .scope("activity profile")
-                    .callback(variableBean.getFitbitClientCallback())
+                    .callback(EnvriomentVariableBean.getFitbitClientCallback())
                     .state("fitbit_auth")
                     .build(FitbitApi20.instance());
         }
@@ -40,9 +36,9 @@ public class OAuthBean {
     }
 
     public void initGatekeeperService(String callback, String state) {
-        if (variableBean.isAberfitnessDataPresent()) {
-            aberfitnessService = new ServiceBuilder(variableBean.getAberfitnessClientId())
-                    .apiSecret(variableBean.getAberfitnessClientSecret())
+        if (EnvriomentVariableBean.isAberfitnessDataPresent()) {
+            aberfitnessService = new ServiceBuilder(EnvriomentVariableBean.getAberfitnessClientId())
+                    .apiSecret(EnvriomentVariableBean.getAberfitnessClientSecret())
                     .scope("openid profile offline_access")
                     .callback(callback)
                     .state(state)

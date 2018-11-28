@@ -14,7 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @WebServlet(name = "Login", urlPatterns = { "/" } )
-public class OAuthLogin extends HttpServlet{
+public class OAuthLogin extends HttpServlet {
 
     @EJB
     OAuthBean oAuthBean;
@@ -32,7 +32,7 @@ public class OAuthLogin extends HttpServlet{
         String state = request.getParameter("state");
 
         if(state == null) {
-            gatekeeperLogin.redirectToGatekeeper(response, "https://localhost:8181/fitbit-ingest/LoginPage", "gateAccess");
+            gatekeeperLogin.redirectToGatekeeper(response, EnvriomentVariableBean.getFitbitIngestLoginUrl(), "gateAccess");
         } else if (state.equals("gateAccess")){
             gatekeeperLogin.getGatekeeperGetAccessToken(request);
             redirectToFitbit(response);
