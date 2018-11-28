@@ -1,9 +1,8 @@
 package datacollection;
 
-import beans.EnvironmentVariableBean;
+import beans.EnvironmentVariableClass;
 import com.google.gson.Gson;
 
-import javax.ejb.EJB;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -11,12 +10,10 @@ import java.net.URL;
 
 public class ActivityMapLoading {
 
-    @EJB
-    EnvironmentVariableBean environmentVariableBean;
     private static Gson gson = new Gson();
 
     public ActivityMap[] checkMappings() {
-        String endPointLocation = environmentVariableBean.getAberfitnessActivityEndPoint();
+        String endPointLocation = EnvironmentVariableClass.getHeathDataRepoAddActivityUrl();
 
         try {
             String returnedJSON = getHTML(endPointLocation);

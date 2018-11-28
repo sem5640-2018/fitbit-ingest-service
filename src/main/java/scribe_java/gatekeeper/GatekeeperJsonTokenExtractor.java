@@ -1,6 +1,6 @@
 package scribe_java.gatekeeper;
 
-import beans.EnvironmentVariableBean;
+import beans.EnvironmentVariableClass;
 import com.github.scribejava.core.extractors.OAuth2AccessTokenJsonExtractor;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -33,7 +33,7 @@ public class GatekeeperJsonTokenExtractor extends OAuth2AccessTokenJsonExtractor
 
     private JWTClaimsSet getJWTClaimSet(String accessToken) throws MalformedURLException, ParseException, JOSEException, BadJOSEException {
         ConfigurableJWTProcessor jwtProcessor = new DefaultJWTProcessor();
-        JWKSource keySrc = new RemoteJWKSet( new URL(EnvironmentVariableBean.getGatekeeperJWKUrl()));
+        JWKSource keySrc = new RemoteJWKSet( new URL(EnvironmentVariableClass.getGatekeeperJWKUrl()));
         JWSAlgorithm jwsAlgorithm = JWSAlgorithm.RS256;
         JWSKeySelector keySelector = new JWSVerificationKeySelector(jwsAlgorithm, keySrc);
         jwtProcessor.setJWSKeySelector(keySelector);

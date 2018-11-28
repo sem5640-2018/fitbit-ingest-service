@@ -32,7 +32,7 @@ public class OAuthLogin extends HttpServlet {
         String state = request.getParameter("state");
 
         if(state == null) {
-            gatekeeperLogin.redirectToGatekeeper(response, EnvironmentVariableBean.getFitbitIngestLoginUrl(), "gateAccess");
+            gatekeeperLogin.redirectToGatekeeper(response, EnvironmentVariableClass.getFitbitIngestLoginUrl(), "gateAccess");
         } else if (state.equals("gateAccess")){
             gatekeeperLogin.getGatekeeperGetAccessToken(request);
             redirectToFitbit(response);
