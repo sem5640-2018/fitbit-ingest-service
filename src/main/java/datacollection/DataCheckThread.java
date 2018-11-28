@@ -1,6 +1,7 @@
 package datacollection;
 
 import beans.OAuthBean;
+import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
@@ -49,19 +50,36 @@ public class DataCheckThread implements Runnable {
         LinkedList<String> addressesToPoll = new LinkedList<String>();
 
         addressesToPoll.add(dateToFormat(now));
-        if (doNeedPreviousDay(lastAccessed))
+        if (lastAccessed != null && doNeedPreviousDay(lastAccessed))
             addressesToPoll.add(dateToFormat(lastAccessed));
 
+        // Used if we want to poll from previous days
+        /*else if (lastAccessed == null) {
+            for (int i = 0; i < 7; i++) {
+                addressesToPoll.add(dateToFormat(DaysDate(i)));
+            }
+        }*/
+
+        // Used if we want to poll from previous days
+        /*else if (lastAccessed == null) {
+            for (int i = 0; i < 7; i++) {
+                addressesToPoll.add(dateToFormat(DaysDate(i)));
+            }
+        }*/
+
         try {
+            // Refresh token on start
+            final OAuth2AccessToken accessToken = oAuthBean.getFitbitService().refreshAccessToken(tokenMap.getRefreshToken());
+
             for (String date : addressesToPoll) {
-                String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
-                String steps = "https://api.fitbit.com/1/user/-/activities/steps/date/" + date + "/1d.json";
+                final String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
+                final String steps = "https://api.fitbit.com/1/user/-/activities/steps/date/" + date + "/1d.json";
 
                 // Request Activities
                 OAuthRequest request = new OAuthRequest(Verb.GET,
                         String.format(activities, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
-                oAuthBean.getFitbitService().signRequest(tokenMap.getAccessToken(), request);
+                oAuthBean.getFitbitService().signRequest(accessToken, request);
                 Response response = oAuthBean.getFitbitService().execute(request);
                 toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
 
@@ -69,14 +87,14 @@ public class DataCheckThread implements Runnable {
                 request = new OAuthRequest(Verb.GET,
                         String.format(steps, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
-                oAuthBean.getFitbitService().signRequest(tokenMap.getAccessToken(), request);
+                oAuthBean.getFitbitService().signRequest(accessToken, request);
                 response = oAuthBean.getFitbitService().execute(request);
                 toReturn.addStepsJSON(new ActivityJSON(response.getBody(), date));
             }
         }
        catch (Exception err) {
             // @TODO LOg error with request
-
+            err.printStackTrace();
            // RETURN TERMINATE UPDATE
            return;
         }

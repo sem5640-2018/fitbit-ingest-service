@@ -28,11 +28,12 @@ public class OAuthBean {
                     .callback(EnvironmentVariableBean.getFitbitClientCallback())
                     .state("fitbit_auth")
                     .build(FitbitApi20.instance());
+            return fitbitService;
         }
     }
 
     public OAuth20Service getFitbitService() {
-        return fitbitService;
+        return fitbitService == null ? createFitbitClient() : fitbitService;
     }
 
     public void initGatekeeperService(String callback, String state) {

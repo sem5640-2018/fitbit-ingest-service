@@ -1,10 +1,13 @@
 package scheduling;
 
+import beans.ActivityMappingBean;
 import beans.OAuthBean;
+import datacollection.ActivityMapLoading;
 import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
+import datacollection.ActivityMap;
 import persistence.TokenMap;
 
 import javax.annotation.PostConstruct;
@@ -34,9 +37,13 @@ public class SchedulingBean {
     @EJB
     OAuthBean oAuthBean;
 
+    @EJB
+    ActivityMappingBean activityMappingBean;
+
     private final FitbitDataCollector collector = new FitbitDataCollector(oAuthBean);
     private final FitbitDataConverter converter = new FitbitDataConverter();
     private final FitbitDataProcessor processor = new FitbitDataProcessor();
+    private final ActivityMapLoading loading = new ActivityMapLoading();
 
     /**
      * This method is ran once the EJB is created.
@@ -73,8 +80,10 @@ public class SchedulingBean {
      */
     @Schedule(hour= "*", minute = "*/30", second = "0", persistent = false)
     public void updateActivityMappings() {
-        System.out.println("Method stub for Update Activity Mappings!");
-        //TODO implement
+        ActivityMap[] map = loading.checkMappings();
+        if (map == null) return;
+
+        activityMappingBean.UpdateMappings(map);
     }
 
     /**
