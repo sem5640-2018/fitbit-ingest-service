@@ -21,22 +21,26 @@ public class OAuthBean {
 
     @PostConstruct
     public void init() {
+        fitbitService = createFitbitClient();
+    }
+
+    private OAuth20Service createFitbitClient() {
         if (EnvironmentVariableClass.isFitbitDataPresent()) {
             fitbitService = new ServiceBuilder(EnvironmentVariableClass.getFitbitClientId())
                     .apiSecret(EnvironmentVariableClass.getFitbitClientSecret())
                     .scope("activity profile")
-                    .callback(EnvironmentVariableClass.getFitbitClientCallback())
-                    .state("fitbit_auth")
+                    .callback(EnvironmentVariableClass.getFitbitIngestLoginUrl())
+                    .state("some_params")
                     .build(FitbitApi20.instance());
             return fitbitService;
         }
-    }
-
-    public OAuth20Service getFitbitService() {
-        return fitbitService == null ? createFitbitClient() : fitbitService;
+        return null;
     }
 
     public void initGatekeeperService(String callback, String state) {
+        if (aberfitnessService != null && aberfitnessService.getCallback().equals(callback))
+            return;
+
         if (EnvironmentVariableClass.isAberfitnessDataPresent()) {
             aberfitnessService = new ServiceBuilder(EnvironmentVariableClass.getAberfitnessClientId())
                     .apiSecret(EnvironmentVariableClass.getAberfitnessClientSecret())
@@ -47,5 +51,11 @@ public class OAuthBean {
         }
     }
 
-    public OAuth20Service getAberfitnessService() { return aberfitnessService; }
+    public OAuth20Service getFitbitService() {
+        return fitbitService == null ? createFitbitClient() : fitbitService;
+    }
+
+    public OAuth20Service getAberfitnessService() {
+        return aberfitnessService;
+    }
 }
