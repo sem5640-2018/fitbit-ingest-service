@@ -24,9 +24,7 @@ public class GatekeeperOAuth2AccessToken extends OAuth2AccessToken {
 
     @Override
     public int hashCode() {
-        int hash = super.hashCode();
-        hash = 37 * hash + Objects.hashCode(userId);
-        return hash;
+        return super.hashCode() + Objects.hashCode(userId);
     }
 
     @Override
