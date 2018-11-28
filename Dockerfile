@@ -21,8 +21,8 @@ RUN mvn clean
 RUN echo "Exporting project..." && mvn compile package
 
 # Creates the resulting image
-FROM payara/micro:5-SNAPSHOT
-RUN wget -O /opt/payara/database-connector.jar http://central.maven.org/maven2/mysql/mysql-connector-java/5.1.43/mysql-connector-java-5.1.43.jar
+FROM payara/micro:prerelease
+RUN wget -nv -O /opt/payara/mariadb-jdbc.jar https://downloads.mariadb.com/Connectors/java/connector-java-2.3.0/mariadb-java-client-2.3.0.jar
 
 COPY --from=builder /app/target/fitbit-ingest-service-0.1.war /opt/payara/fitbit-ingest-service-0.1.war
-ENTRYPOINT ["java", "-jar", "payara-micro.jar", "--addJars" ,"/opt/payara/database-connector.jar" , "--deploy", "/opt/payara/fitbit-ingest-service-0.1.war" ]
+ENTRYPOINT ["java", "-jar", "/opt/payara/payara-micro.jar", "--addJars" ,"/opt/payara/mariadb-jdbc.jar" , "--deploy", "/opt/payara/fitbit-ingest-service-0.1.war" ]
