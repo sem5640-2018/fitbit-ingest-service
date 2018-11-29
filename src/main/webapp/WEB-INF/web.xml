@@ -8,6 +8,11 @@
         <param-value>Development</param-value>
     </context-param>
 
+    <data-source>
+        <name>java:global/MariadbDataSource</name>
+        <class-name>org.mariadb.jdbc.MariaDbDataSource</class-name>
+    </data-source>
+
     <welcome-file-list>
         <welcome-file>Login</welcome-file>
         <welcome-file>index.html</welcome-file>
