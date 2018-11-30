@@ -5,7 +5,7 @@
 
     <!-- MariaDB-->
     <persistence-unit name="fitbitPU" transaction-type="JTA">
-        <jta-data-source>java:global/MariadbDataSource</jta-data-source>
+        <jta-data-source>java:app/MariadbDataSource</jta-data-source>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties />
     </persistence-unit>
