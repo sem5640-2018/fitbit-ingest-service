@@ -46,4 +46,22 @@ ENV DB_NAME fitbit-ingest
 ENV DB_USER james
 ENV DB_PASS password
 
+ENV APP_BASE_URL http://localhost:8080
+ENV SYS_BASE_URL https://docker2.aberfitness.biz
+
+ENV FITBIT_INGEST_URL /fitbit-ingest-service-0.1
+ENV GATEKEEPER_URL /gatekeeper
+ENV HEATH_DATA_REPO_URL /he
+
+ENV FI_LOGIN_URL /LoginPage
+ENV FI_PROMPT_URL /Prompt
+
+ENV GK_AUTH_URL /connect/authorize
+ENV GK_TOKEN_URL /connect/token
+ENV GK_REVOKE_URL /connect/revocation
+ENV GK_JWK_URL /.well-known/openid-configuration/jwks
+
+ENV HDR_ADD_ACTIVITY_URL /api/activity
+ENV HDR_GET_ACTIVITY_TYPES_URL /api/activity-types
+
 ENTRYPOINT ["java", "-jar", "/opt/payara/payara-micro.jar", "--addJars" ,"/opt/payara/mariadb-jdbc.jar" , "--deploy", "/opt/payara/fitbit-ingest-service-0.1.war", "--domainConfig", "/opt/payara/domain.xml" ]

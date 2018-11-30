@@ -51,8 +51,11 @@
     <orderEntry type="library" scope="PROVIDED" name="Payara 5.0.0 - CDI: Contexts and Dependency Injection" level="application_server_libraries" />
     <orderEntry type="library" scope="PROVIDED" name="Payara 5.0.0 - JSF" level="application_server_libraries" />
     <orderEntry type="library" scope="PROVIDED" name="Payara 5.0.0 - EJB" level="application_server_libraries" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: javax:javaee-api:8.0" level="project" />
-    <orderEntry type="library" scope="PROVIDED" name="Maven: com.sun.mail:javax.mail:1.6.0" level="project" />
+    <orderEntry type="library" name="Maven: com.nimbusds:nimbus-jose-jwt:6.4" level="project" />
+    <orderEntry type="library" name="Maven: com.github.stephenc.jcip:jcip-annotations:1.0-1" level="project" />
+    <orderEntry type="library" name="Maven: net.minidev:json-smart:2.3" level="project" />
+    <orderEntry type="library" name="Maven: net.minidev:accessors-smart:1.2" level="project" />
+    <orderEntry type="library" name="Maven: org.ow2.asm:asm:5.0.4" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax:javaee-api:8.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: com.sun.mail:javax.mail:1.6.0" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: javax.activation:activation:1.1" level="project" />
@@ -143,5 +146,6 @@
     <orderEntry type="library" scope="TEST" name="Maven: com.sun.istack:istack-commons-runtime:2.21" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: org.jvnet.staxex:stax-ex:1.7.7" level="project" />
     <orderEntry type="library" scope="TEST" name="Maven: com.sun.xml.fastinfoset:FastInfoset:1.2.13" level="project" />
+    <orderEntry type="library" scope="PROVIDED" name="Maven: org.mariadb.jdbc:mariadb-java-client:1.5.9" level="project" />
   </component>
 </module>
