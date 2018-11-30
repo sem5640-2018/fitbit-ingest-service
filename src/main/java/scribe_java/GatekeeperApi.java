@@ -1,19 +1,23 @@
 package scribe_java;
 
+import beans.EnvironmentVariableClass;
 import com.github.scribejava.core.builder.api.DefaultApi20;
+import scribe_java.gatekeeper.GatekeeperJsonTokenExtractor;
 
 /**
  * Gatekeeper Scribe-Java custom api class for using the Scribe-Java library for authenticating with glados.
- * @Author James H Britton
- * @Version 0.1
+ * @author James H Britton
+ * @version 0.1
  */
 public class GatekeeperApi extends DefaultApi20 {
 
-    //private static String baseUrl = "https://gatekeeper.aberfitness.biz";//TODO extract to environment variables
-    private static String baseUrl = System.getenv("GATEKEEPER_BASEURL");
-
     public GatekeeperApi() {
         //
+    }
+
+    @Override
+    public GatekeeperJsonTokenExtractor getAccessTokenExtractor() {
+        return GatekeeperJsonTokenExtractor.instance();
     }
 
     private static class InstanceHolder {
@@ -26,21 +30,16 @@ public class GatekeeperApi extends DefaultApi20 {
 
     @Override
     public String getAccessTokenEndpoint() {
-        return baseUrl + "/access_token"; //TODO Correct URL needed
-    }
-
-    @Override
-    public String getRefreshTokenEndpoint() {
-        return baseUrl + "/refresh_token"; //TODO Correct URL needed
+        return EnvironmentVariableClass.getGatekeeperTokenUrl();
     }
 
     @Override
     public String getRevokeTokenEndpoint() {
-        return baseUrl + "/revoke_token"; //TODO Correct URL needed
+        return EnvironmentVariableClass.getGatekeeperRevokeUrl();
     }
 
     @Override
     protected String getAuthorizationBaseUrl() {
-        return baseUrl + "/authorise"; //TODO Correct URL needed
+        return EnvironmentVariableClass.getGatekeeperAuthoriseUrl();
     }
 }
