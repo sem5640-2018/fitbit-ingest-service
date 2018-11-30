@@ -32,4 +32,12 @@ COPY --from=builder /app/domain.xml /opt/payara/domain.xml
 
 RUN chmod +x /opt/payara/domain.xml
 
+ENV fitbitClientId 22D8QC
+ENV fitbitClientSecret a4b536e0c59f9157f0d198f16e82eceb
+ENV fitbitClientCallback http://localhost:8080/fitbit-ingest-service-0.1/
+
+ENV ABERFITNESS_CLI_ID fitbit_ingest_service
+ENV ABERFITNESS_CLI_SECRET DavidBeans
+ENV ABERFITNESS_CLI_CALLBACK http://localhost:8080/fitbit-ingest-service-0.1/
+
 ENTRYPOINT ["java", "-jar", "/opt/payara/payara-micro.jar", "--addJars" ,"/opt/payara/mariadb-jdbc.jar" , "--deploy", "/opt/payara/fitbit-ingest-service-0.1.war", "--domainConfig", "/opt/payara/domain.xml" ]
