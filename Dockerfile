@@ -24,11 +24,9 @@ COPY --from=builder /app/target/fitbit-ingest-service-0.1.war /opt/payara/fitbit
 
 ENV fitbitClientId NOT_SET
 ENV fitbitClientSecret NOT_SET
-ENV fitbitClientCallback NOT_SET
 
 ENV ABERFITNESS_CLI_ID fitbit_ingest_service
 ENV ABERFITNESS_CLI_SECRET DavidBeans
-ENV ABERFITNESS_CLI_CALLBACK http://localhost:8080/fitbit-ingest-service-0.1/
 
 ENV DB_HOSTNAME database
 ENV DB_PORT 3306
