@@ -22,6 +22,8 @@ RUN wget -nv -O /opt/payara/mariadb-jdbc.jar https://downloads.mariadb.com/Conne
 
 COPY --from=builder /app/target/fitbit-ingest-service-0.1.war /opt/payara/fitbit-ingest-service-0.1.war
 
+ENV CONTEXT_ROOT /fitbit-ingest
+
 ENV fitbitClientId NOT_SET
 ENV fitbitClientSecret NOT_SET
 
