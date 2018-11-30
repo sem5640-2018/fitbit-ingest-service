@@ -57,7 +57,7 @@ public class OAuthLogin extends HttpServlet {
                 final FitBitOAuth2AccessToken accessToken = (FitBitOAuth2AccessToken) oauth2AccessToken;
                 TokenMap map = new TokenMap(accessT, accessToken.getAccessToken(), accessToken.getExpiresIn(),
                         accessToken.getRefreshToken(), accessToken.getUserId());
-                map.setUserID(gatekeeperLogin.getUser_id());
+                map.setUserID(accessT);
                 tokenMapDAO.saveOrUpdate(map);
                 return;
             } catch (Exception e) {

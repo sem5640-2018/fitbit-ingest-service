@@ -33,7 +33,7 @@ public class Check extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userId = null;
+        String userId;
 
         if (!request.getParameterMap().containsKey(paramName)) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No User ID Parameter!");
