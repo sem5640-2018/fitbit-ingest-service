@@ -8,8 +8,8 @@
                               pool-resize-quantity="2"
                               max-pool-size="32"
                               steady-pool-size="8">
-            <property name="URL" value="jdbc:mariadb://172.17.0.2:3306/fitbit-ingest"/>
-            <property name="User" value="james"/>
+            <property name="URL" value="jdbc:mariadb://database:3306/fitbit-ingest"/>
+            <property name="User" value="root"/>
             <property name="Password" value="password"/>
         </jdbc-connection-pool>
 

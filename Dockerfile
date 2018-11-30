@@ -38,11 +38,11 @@ ENV fitbitClientSecret a4b536e0c59f9157f0d198f16e82eceb
 ENV ABERFITNESS_CLI_ID fitbit_ingest_service
 ENV ABERFITNESS_CLI_SECRET DavidBeans
 
-ENV DB_HOSTNAME 172.17.0.2
+ENV DB_HOSTNAME database
 ENV DB_PORT 3306
 ENV DB_NAME fitbit-ingest
-ENV DB_USER james
-ENV DB_PASS none
+ENV DB_USER root
+ENV DB_PASS password
 
 ENV APP_BASE_URL http://localhost:8080
 ENV SYS_BASE_URL https://docker2.aberfitness.biz
