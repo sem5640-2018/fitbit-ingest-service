@@ -21,7 +21,7 @@
     </persistence-unit>-->
 
     <persistence-unit name="fitbitPU" transaction-type="JTA">
-        <jta-data-source>FitbitDatabaseMariaDB</jta-data-source>
+        <jta-data-source>java:app/FitbitDatabaseMariaDB</jta-data-source>
         <class>persistence.TokenMap</class>
         <class>persistence.ClientCredentials</class>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>

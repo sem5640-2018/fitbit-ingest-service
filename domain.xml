@@ -63,7 +63,7 @@ Portions Copyright [2016-2018] [Payara Foundation and/or its affiliates]
             <property name="Password" value="password"/>
         </jdbc-connection-pool>
         <!-- Creates a DataSource called "jdbc/testDS" for accessing the connection pool -->
-        <jdbc-resource pool-name="MariaDBPool" jndi-name="FitbitDatabaseMariaDB" />
+        <jdbc-resource pool-name="MariaDBPool" jndi-name="java:app/FitbitDatabaseMariaDB" />
         <jdbc-resource pool-name="H2Pool" jndi-name="jdbc/__default" object-type="system-all" />
         <jdbc-connection-pool is-isolation-level-guaranteed="false" name="H2Pool" datasource-classname="org.h2.jdbcx.JdbcDataSource" res-type="javax.sql.DataSource"> 
             <property name="URL" value="jdbc:h2:${com.sun.aas.instanceRoot}/lib/databases/embedded_default;AUTO_SERVER=TRUE" />
