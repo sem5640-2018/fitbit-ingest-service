@@ -15,11 +15,8 @@ COPY src src
 COPY pom.xml .
 COPY domain.xml .
 
-# Maven Stages
-RUN mvn clean
-
 # Prepare exploded war for packaging step
-RUN echo "Exporting project..." && mvn compile package
+RUN echo "Exporting project..." && mvn clean package
 
 # Creates the resulting image
 FROM payara/micro:prerelease
