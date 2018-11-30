@@ -2,7 +2,10 @@ package serverlets;
 
 import beans.EnvironmentVariableClass;
 import beans.OAuthBean;
-import datacollection.*;
+import datacollection.FitbitDataCollector;
+import datacollection.FitbitDataConverter;
+import datacollection.FitbitDataProcessor;
+import datacollection.ProcessedData;
 import persistence.TokenMap;
 import scribe_java.GatekeeperLogin;
 
@@ -32,8 +35,6 @@ public class Prompt extends HttpServlet {
     private final FitbitDataCollector collector = new FitbitDataCollector(oAuthBean);
     private final FitbitDataConverter converter = new FitbitDataConverter();
     private final FitbitDataProcessor processor = new FitbitDataProcessor();
-    private final ActivityMapLoading loading = new ActivityMapLoading();
-
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
