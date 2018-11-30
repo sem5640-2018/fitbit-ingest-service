@@ -40,10 +40,10 @@ ENV ABERFITNESS_CLI_ID fitbit_ingest_service
 ENV ABERFITNESS_CLI_SECRET DavidBeans
 ENV ABERFITNESS_CLI_CALLBACK http://localhost:8080/fitbit-ingest-service-0.1/
 
-ENV DB_HOSTNAME 172.17.0.2
+ENV DB_HOSTNAME database
 ENV DB_PORT 3306
 ENV DB_NAME fitbit-ingest
-ENV DB_USER james
+ENV DB_USER root
 ENV DB_PASS password
 
 ENV APP_BASE_URL http://localhost:8080
