@@ -36,7 +36,7 @@ public class OAuthLogin extends HttpServlet {
         } else if (state.equals("gateAccess")){
             gatekeeperLogin.getGatekeeperGetAccessToken(request);
             redirectToFitbit(response);
-        } else if (state.equals("fitbit_auth")) {
+        } else if (state.equals("some_params")) {
             getFitbitAccessToken(request, gatekeeperLogin.getUser_id());
         }
     }
