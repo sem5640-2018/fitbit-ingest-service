@@ -8,9 +8,9 @@
                               pool-resize-quantity="2"
                               max-pool-size="32"
                               steady-pool-size="8">
-            <property name="URL" value="jdbc:mariadb://database:3306/fitbit-ingest"/>
-            <property name="User" value="root"/>
-            <property name="Password" value="password"/>
+            <property name="URL" value="jdbc:mariadb://${ENV=DB_HOSTNAME}:${ENV=DB_PORT}/${ENV=DB_NAME}"/>
+            <property name="User" value="${ENV=DB_USER}"/>
+            <property name="Password" value="${ENV=DB_PASS}"/>
         </jdbc-connection-pool>
 
         <!-- Creates a DataSource called "jdbc/testDS" for accessing the connection pool -->
