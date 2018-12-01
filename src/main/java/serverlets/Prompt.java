@@ -58,13 +58,13 @@ public class Prompt extends HttpServlet {
         TokenMap userToken = TokenMap.getTokenMap(em, userID);
 
         // Retrieve all the JSON strings needed for processing
-        ConcurrentLinkedQueue<ProcessedData> data = collector.getAllUsersInfo(new TokenMap[]{userToken});
+        ConcurrentLinkedQueue<ProcessedData> data = collector.getAllUsersSynchronous(new TokenMap[]{userToken});
 
         // Convert all our strings to usable objects
         data = converter.convertActivityData(data);
 
         // Process all out data
-        processor.ProcessData(data);
+        processor.ProcessSynchronous(data);
 
         response.sendRedirect(EnvironmentVariableClass.getHeathDataRepoUrl());
     }

@@ -21,6 +21,16 @@ public class FitbitDataCollector {
         this.oAuthBean = oAuthBean;
     }
 
+    public ConcurrentLinkedQueue<ProcessedData> getAllUsersSynchronous(TokenMap[] tokenMap) {
+        ConcurrentLinkedQueue<TokenMap> input = new ConcurrentLinkedQueue<TokenMap>(Arrays.asList(tokenMap));
+        ConcurrentLinkedQueue<ProcessedData> output = new ConcurrentLinkedQueue<ProcessedData>();
+
+        DataCheckThread dataCheckThread = new DataCheckThread(input, output, oAuthBean);
+        dataCheckThread.run();
+
+        return output;
+    }
+
     /**
      * This method takes in all the tokens and runs through these concurrently
      *
@@ -34,7 +44,7 @@ public class FitbitDataCollector {
       Thread[] threads = new Thread[threadCount];
 
       for (int i = 0; i < threadCount; i++) {
-         threads[i] = new Thread(new DataCheckThread(input, output, this.oAuthBean));
+         threads[i] = new Thread(new DataCheckThread(input, output, oAuthBean));
          threads[i].start();
       }
 

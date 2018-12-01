@@ -5,6 +5,11 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class FitbitDataProcessor {
     private static final int threadCount = 4;
 
+    public void ProcessSynchronous(ConcurrentLinkedQueue<ProcessedData> input) {
+        DataProcessThread processThread = new DataProcessThread(input);
+        processThread.run();
+    }
+
     public void ProcessData(ConcurrentLinkedQueue<ProcessedData> input) {
         Thread[] threads = new Thread[threadCount];
 
