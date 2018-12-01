@@ -60,13 +60,6 @@ public class DataCheckThread implements Runnable {
             }
         }*/
 
-        // Used if we want to poll from previous days
-        /*else if (lastAccessed == null) {
-            for (int i = 0; i < 7; i++) {
-                addressesToPoll.add(dateToFormat(DaysDate(i)));
-            }
-        }*/
-
         try {
             // Refresh token on start
             final OAuth2AccessToken accessToken = oAuthBean.getFitbitService().refreshAccessToken(tokenMap.getRefreshToken());
