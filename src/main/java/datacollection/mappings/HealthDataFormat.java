@@ -1,6 +1,7 @@
-package datacollection;
+package datacollection.mappings;
 
 import beans.ActivityMappingBean;
+import datacollection.ActivityMap;
 
 import javax.ejb.EJB;
 import java.text.SimpleDateFormat;
@@ -19,21 +20,28 @@ public class HealthDataFormat {
     private String EndTimestamp;
 
     private int Source;
-    private int ActivityType;
+    private int ActivityType = -1;
     private long CaloriesBurnt;
 
     private long StepsTaken;
     private float MetresTravelled;
 
     public HealthDataFormat(Activity input) {
+
+        // Mapping bean is not working
+        if (mappingBean == null)
+            return;
+
         ActivityMap map = mappingBean.getMapFromID(Long.toString(input.getActivityId()));
+        if (map == null)
+            return;
 
         StartTimestamp = sdf.format(input.getJavaDate());
         EndTimestamp = sdf.format(getEndDate(input));
 
         Source = SOURCE_ID;
         // If we have a mapping for this item
-        ActivityType = map == null ? -1 : map.getId();
+        ActivityType = map.getId();
         CaloriesBurnt = input.getCalories();
 
         StepsTaken = input.getSteps();

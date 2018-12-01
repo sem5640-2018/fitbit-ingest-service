@@ -1,4 +1,4 @@
-package datacollection;
+package datacollection.mappings;
 
 import java.util.Date;
 

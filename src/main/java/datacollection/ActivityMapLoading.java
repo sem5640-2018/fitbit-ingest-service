@@ -13,14 +13,12 @@ public class ActivityMapLoading {
     private static Gson gson = new Gson();
 
     public ActivityMap[] checkMappings() {
-        String endPointLocation = EnvironmentVariableClass.getHeathDataRepoAddActivityUrl();
+        String endPointLocation = EnvironmentVariableClass.getHeathDataRepoGetActivityTypesUrl();
 
         try {
             String returnedJSON = getHTML(endPointLocation);
             return gson.fromJson(returnedJSON, ActivityMap[].class);
-
         } catch (Exception e) {
-            // @TODO Log error
             e.printStackTrace();
         }
 
@@ -29,7 +27,7 @@ public class ActivityMapLoading {
 
     private static String getHTML(String urlToRead) throws Exception {
         StringBuilder result = new StringBuilder();
-        URL url = new URL(urlToRead);
+        URL url = new URL("https://" + urlToRead);
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
         BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));

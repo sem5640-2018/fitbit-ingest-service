@@ -1,10 +1,9 @@
 package beans;
 
 import com.google.gson.Gson;
-import datacollection.DataProcessThread;
-import datacollection.FitBitJSON;
 import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
+import datacollection.mappings.FitBitJSON;
 import org.junit.Assert;
 import org.junit.Test;
 import persistence.TokenMap;
@@ -54,10 +53,9 @@ public class JSONTest {
             queue.add(data);
         }
 
-        Thread t = new Thread(new DataProcessThread(queue));
-        t.start();
+        FitbitDataProcessor processor = new FitbitDataProcessor();
 
-        t.join();
+        processor.ProcessSynchronous(queue);
     }
 
     @Test

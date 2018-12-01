@@ -18,6 +18,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -51,6 +52,9 @@ public class SchedulingBean {
     @PostConstruct
     public void atStartup() {
         System.out.println("Scheduling EJB Initialised!");
+
+        // These are needed on start up.
+        updateActivityMappings();
     }
 
     /**
@@ -61,7 +65,6 @@ public class SchedulingBean {
         List<TokenMap> allTokens = TokenMap.getAllTokenMap(em);
 
         if (allTokens == null || allTokens.size() > 0) {
-            // @TODO Log the fact we have no tokens
             return;
         }
 
@@ -73,6 +76,12 @@ public class SchedulingBean {
 
         // Process all out data
         processor.ProcessData(data);
+
+        // Update last accessed
+        Date now = new Date();
+        for (TokenMap map: allTokens) {
+            map.setLastAccessed(now);
+        }
     }
 
     /**

@@ -1,7 +1,16 @@
 package datacollection;
 
+import beans.EnvironmentVariableClass;
 import com.google.gson.Gson;
+import datacollection.mappings.Activity;
+import datacollection.mappings.FitBitJSON;
+import datacollection.mappings.HealthDataFormat;
 
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -13,11 +22,18 @@ public class DataProcessThread implements Runnable {
     private String format = "yyyy-MM-dd:H:m";
     private DateFormat df = new SimpleDateFormat(format);
     private Gson gson = new Gson();
+    private URL postURL;
+
     private ConcurrentLinkedQueue<ProcessedData> input;
 
     public DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input) {
         // Create Shallow copy to the global linked queue
         this.input = input;
+        try {
+            postURL = new URL("https://" + EnvironmentVariableClass.getHeathDataRepoAddActivityUrl());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -36,16 +52,23 @@ public class DataProcessThread implements Runnable {
         LinkedList<Activity> allActivities = getAllActivities(input);
         allActivities = getRelevantActivities(input, allActivities);
 
-        // @TODO send all new relevant activities to the Heath data Repository
         LinkedList<String> readyToSend = getPacketsToSend(allActivities);
-        readyToSend.size();
+        sendData(readyToSend);
     }
 
     private LinkedList<String> getPacketsToSend(LinkedList<Activity> readyToSend) {
         LinkedList<String> toSend = new LinkedList<String>();
         for (Activity activity: readyToSend) {
-            HealthDataFormat formattedData = new HealthDataFormat(activity);
-            toSend.add(gson.toJson(formattedData));
+            try {
+                HealthDataFormat formattedData = new HealthDataFormat(activity);
+                // If not set, then we can't send the data
+                if (formattedData.getActivity_type() < 0)
+                    continue;
+
+                toSend.add(gson.toJson(formattedData));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return toSend;
     }
@@ -85,5 +108,27 @@ public class DataProcessThread implements Runnable {
 
     private boolean isRelevant(Activity activity, Date lastChecked) {
         return activity.getJavaDate().getTime() + activity.getDuration() > lastChecked.getTime();
+    }
+
+    private void sendData(LinkedList<String> dataToSend) {
+        for (String jsonData: dataToSend) {
+            try {
+                doPost(jsonData);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void doPost(String rawData) throws  Exception{
+        String type = "application/x-www-form-urlencoded";
+        String encodedData = URLEncoder.encode( rawData, "UTF-8" );
+        HttpURLConnection conn = (HttpURLConnection) postURL.openConnection();
+        conn.setDoOutput(true);
+        conn.setRequestMethod("POST");
+        conn.setRequestProperty( "Content-Type", type );
+        conn.setRequestProperty( "Content-Length", String.valueOf(encodedData.length()));
+        OutputStream os = conn.getOutputStream();
+        os.write(encodedData.getBytes());
     }
 }
