@@ -5,6 +5,7 @@ import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth.OAuth20Service;
 import persistence.TokenMap;
 
 import java.text.SimpleDateFormat;
@@ -16,6 +17,7 @@ public class DataCheckThread implements Runnable {
     private ConcurrentLinkedQueue<TokenMap> input;
     private ConcurrentLinkedQueue<ProcessedData> output;
     private OAuthBean oAuthBean;
+    private OAuth20Service fitbitClient;
     private Date now;
 
     DataCheckThread(ConcurrentLinkedQueue<TokenMap> input, ConcurrentLinkedQueue<ProcessedData> out, OAuthBean oAuthBean) {
@@ -23,6 +25,7 @@ public class DataCheckThread implements Runnable {
         this.input = input;
         this.output = out;
         this.oAuthBean = oAuthBean;
+        fitbitClient = oAuthBean.getNewFitbitService();
 
         // Store the start of the requests
         now = new Date();
@@ -62,7 +65,7 @@ public class DataCheckThread implements Runnable {
 
         try {
             // Refresh token on start
-            final OAuth2AccessToken accessToken = oAuthBean.getNewFitbitService().refreshAccessToken(tokenMap.getRefreshToken());
+            final OAuth2AccessToken accessToken = this.fitbitClient.refreshAccessToken(tokenMap.getRefreshToken());
 
             for (String date : addressesToPoll) {
                 final String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
