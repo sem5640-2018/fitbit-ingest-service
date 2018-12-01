@@ -18,6 +18,7 @@ import javax.ejb.Singleton;
 import javax.ejb.Startup;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -75,6 +76,12 @@ public class SchedulingBean {
 
         // Process all out data
         processor.ProcessData(data);
+
+        // Update last accessed
+        Date now = new Date();
+        for (TokenMap map: allTokens) {
+            map.setLastAccessed(now);
+        }
     }
 
     /**
