@@ -1,4 +1,4 @@
-package datacollection;
+package datacollection.mappings;
 
 public class Goals {
     private long caloriesOut;

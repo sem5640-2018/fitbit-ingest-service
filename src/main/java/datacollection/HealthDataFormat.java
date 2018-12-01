@@ -1,6 +1,7 @@
 package datacollection;
 
 import beans.ActivityMappingBean;
+import datacollection.mappings.Activity;
 
 import javax.ejb.EJB;
 import java.text.SimpleDateFormat;

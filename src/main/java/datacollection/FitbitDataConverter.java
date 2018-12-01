@@ -1,6 +1,7 @@
 package datacollection;
 
 import com.google.gson.Gson;
+import datacollection.mappings.FitBitJSON;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
