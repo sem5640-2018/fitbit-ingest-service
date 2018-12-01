@@ -25,7 +25,7 @@ public class GatekeeperLogin implements Serializable {
     }
 
     public void redirectToGatekeeper(HttpServletResponse response, String callback, String state) throws IOException {
-        oAuthBean.initGatekeeperService(callback, state);
+        oAuthBean.initGatekeeperService(callback, state, "openid profile offline_access");
         String url = oAuthBean.getAberfitnessService().getAuthorizationUrl();
         response.sendRedirect(url);
     }
@@ -36,9 +36,8 @@ public class GatekeeperLogin implements Serializable {
         if (str != null) {
             try {
                 OAuth2AccessToken inAccessToken = oAuthBean.getAberfitnessService().getAccessToken(str);
-                if (!(inAccessToken instanceof GatekeeperOAuth2AccessToken)) {
+                if (!(inAccessToken instanceof GatekeeperOAuth2AccessToken))
                     return;
-                }
 
                 accessToken = (GatekeeperOAuth2AccessToken) inAccessToken;
                 System.out.println("USER ID IN GATE AT: " + accessToken.getUserId());
@@ -46,6 +45,24 @@ public class GatekeeperLogin implements Serializable {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    public void getGatekeeperGrantAccessToken(String callback, String state, String scope) {
+        accessToken = null;
+        oAuthBean.initGatekeeperService(callback, state, scope);
+
+        try {
+            OAuth2AccessToken inAccessToken = oAuthBean.getAberfitnessService().getAccessTokenClientCredentialsGrant();
+
+            if (!(inAccessToken instanceof GatekeeperOAuth2AccessToken))
+                return;
+
+            accessToken = (GatekeeperOAuth2AccessToken) inAccessToken;
+            return;
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

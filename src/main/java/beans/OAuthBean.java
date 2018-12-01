@@ -38,14 +38,15 @@ public class OAuthBean {
         return null;
     }
 
-    public void initGatekeeperService(String callback, String state) {
-        if (aberfitnessService != null && aberfitnessService.getCallback().equals(callback))
+    //"openid profile offline_access"
+    public void initGatekeeperService(String callback, String state, String scope) {
+        if (aberfitnessService != null && aberfitnessService.getCallback().equals(callback) && aberfitnessService.getScope().equals(scope))
             return;
 
         if (EnvironmentVariableClass.isAberfitnessDataPresent()) {
             aberfitnessService = new ServiceBuilder(EnvironmentVariableClass.getAberfitnessClientId())
                     .apiSecret(EnvironmentVariableClass.getAberfitnessClientSecret())
-                    .scope("openid profile offline_access")
+                    .scope(scope)
                     .callback(callback)
                     .state(state)
                     .build(GatekeeperApi.instance());
