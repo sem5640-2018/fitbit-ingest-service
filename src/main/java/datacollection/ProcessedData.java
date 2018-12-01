@@ -1,5 +1,6 @@
 package datacollection;
 
+import datacollection.mappings.FitBitJSON;
 import persistence.TokenMap;
 
 import java.util.LinkedList;

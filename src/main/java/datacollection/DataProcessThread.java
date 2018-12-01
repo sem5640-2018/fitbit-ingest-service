@@ -2,6 +2,8 @@ package datacollection;
 
 import beans.EnvironmentVariableClass;
 import com.google.gson.Gson;
+import datacollection.mappings.Activity;
+import datacollection.mappings.FitBitJSON;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;

@@ -2,7 +2,7 @@ package beans;
 
 import com.google.gson.Gson;
 import datacollection.DataProcessThread;
-import datacollection.FitBitJSON;
+import datacollection.mappings.FitBitJSON;
 import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
 import org.junit.Assert;

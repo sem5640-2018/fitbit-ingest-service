@@ -1,4 +1,4 @@
-package datacollection;
+package datacollection.mappings;
 
 public class Distances {
     private String activity;

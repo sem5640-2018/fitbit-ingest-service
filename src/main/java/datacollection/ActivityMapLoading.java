@@ -13,7 +13,7 @@ public class ActivityMapLoading {
     private static Gson gson = new Gson();
 
     public ActivityMap[] checkMappings() {
-        String endPointLocation = EnvironmentVariableClass.getHeathDataRepoAddActivityUrl();
+        String endPointLocation = EnvironmentVariableClass.getHeathDataRepoGetActivityTypesUrl();
 
         try {
             String returnedJSON = getHTML(endPointLocation);
