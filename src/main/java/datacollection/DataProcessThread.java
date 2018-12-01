@@ -29,7 +29,7 @@ public class DataProcessThread implements Runnable {
         // Create Shallow copy to the global linked queue
         this.input = input;
         try {
-            postURL = new URL(EnvironmentVariableClass.getHeathDataRepoAddActivityUrl());
+            postURL = new URL("https://" + EnvironmentVariableClass.getHeathDataRepoAddActivityUrl());
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
