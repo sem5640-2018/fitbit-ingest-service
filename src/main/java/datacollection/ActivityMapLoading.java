@@ -18,7 +18,6 @@ public class ActivityMapLoading {
         try {
             String returnedJSON = getHTML(endPointLocation);
             return gson.fromJson(returnedJSON, ActivityMap[].class);
-
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -4,6 +4,7 @@ import beans.EnvironmentVariableClass;
 import com.google.gson.Gson;
 import datacollection.mappings.Activity;
 import datacollection.mappings.FitBitJSON;
+import datacollection.mappings.HealthDataFormat;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -58,8 +59,16 @@ public class DataProcessThread implements Runnable {
     private LinkedList<String> getPacketsToSend(LinkedList<Activity> readyToSend) {
         LinkedList<String> toSend = new LinkedList<String>();
         for (Activity activity: readyToSend) {
-            HealthDataFormat formattedData = new HealthDataFormat(activity);
-            toSend.add(gson.toJson(formattedData));
+            try {
+                HealthDataFormat formattedData = new HealthDataFormat(activity);
+                // If not set, then we can't send the data
+                if (formattedData.getActivity_type() < 0)
+                    continue;
+
+                toSend.add(gson.toJson(formattedData));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         return toSend;
     }
