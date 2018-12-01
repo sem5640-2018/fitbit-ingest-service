@@ -1,6 +1,6 @@
 package scribe_java.gatekeeper;
 
-import beans.EnvironmentVariableClass;
+import config.EnvironmentVariableClass;
 import com.github.scribejava.core.extractors.OAuth2AccessTokenJsonExtractor;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;

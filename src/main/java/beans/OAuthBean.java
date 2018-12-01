@@ -3,6 +3,7 @@ package beans;
 import com.github.scribejava.apis.FitbitApi20;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.oauth.OAuth20Service;
+import config.EnvironmentVariableClass;
 import scribe_java.GatekeeperApi;
 
 import javax.annotation.PostConstruct;

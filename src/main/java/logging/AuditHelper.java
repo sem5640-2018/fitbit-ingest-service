@@ -1,6 +1,6 @@
 package logging;
 
-import beans.EnvironmentVariableClass;
+import config.EnvironmentVariableClass;
 import beans.OAuthBean;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;

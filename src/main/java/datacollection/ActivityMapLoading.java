@@ -1,6 +1,6 @@
 package datacollection;
 
-import beans.EnvironmentVariableClass;
+import config.EnvironmentVariableClass;
 import com.google.gson.Gson;
 
 import java.io.BufferedReader;
