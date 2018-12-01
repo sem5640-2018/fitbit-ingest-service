@@ -52,7 +52,6 @@ public class FitbitDataCollector {
             try {
                 threads[j].join();
             } catch (InterruptedException e) {
-                // @TODO log error
                 e.printStackTrace();
             }
         }

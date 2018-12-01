@@ -22,7 +22,6 @@ public class ProcessedData {
     private LinkedList<ActivityJSON> StepsJSON;
 
     private LinkedList<FitBitJSON> ProcessedActivities;
-    // @TODO add Steps Object
 
     public ProcessedData(TokenMap inputToken) {
         this.InputToken = inputToken;

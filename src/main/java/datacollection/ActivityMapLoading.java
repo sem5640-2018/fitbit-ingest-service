@@ -20,7 +20,6 @@ public class ActivityMapLoading {
             return gson.fromJson(returnedJSON, ActivityMap[].class);
 
         } catch (Exception e) {
-            // @TODO Log error
             e.printStackTrace();
         }
 

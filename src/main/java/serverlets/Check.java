@@ -47,7 +47,7 @@ public class Check extends HttpServlet {
         if (tokenMap != null)
             response.setStatus(HttpServletResponse.SC_OK);
         else
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT); //TODO Not sure if this is appropriate for not connected.
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
 }

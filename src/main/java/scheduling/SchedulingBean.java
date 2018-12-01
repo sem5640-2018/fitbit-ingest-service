@@ -64,7 +64,6 @@ public class SchedulingBean {
         List<TokenMap> allTokens = TokenMap.getAllTokenMap(em);
 
         if (allTokens == null || allTokens.size() > 0) {
-            // @TODO Log the fact we have no tokens
             return;
         }
 
