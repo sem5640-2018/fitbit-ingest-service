@@ -1,6 +1,6 @@
 package datacollection;
 
-import beans.EnvironmentVariableClass;
+import config.EnvironmentVariableClass;
 import com.google.gson.Gson;
 import datacollection.mappings.Activity;
 import datacollection.mappings.FitBitJSON;

@@ -56,6 +56,10 @@ public class OAuthBean {
         return fitbitService == null ? createFitbitClient() : fitbitService;
     }
 
+    public OAuth20Service getNewFitbitService() {
+        return createFitbitClient();
+    }
+
     public OAuth20Service getAberfitnessService() {
         return aberfitnessService;
     }

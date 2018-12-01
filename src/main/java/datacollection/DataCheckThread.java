@@ -62,7 +62,7 @@ public class DataCheckThread implements Runnable {
 
         try {
             // Refresh token on start
-            final OAuth2AccessToken accessToken = oAuthBean.getFitbitService().refreshAccessToken(tokenMap.getRefreshToken());
+            final OAuth2AccessToken accessToken = oAuthBean.getNewFitbitService().refreshAccessToken(tokenMap.getRefreshToken());
 
             for (String date : addressesToPoll) {
                 final String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
