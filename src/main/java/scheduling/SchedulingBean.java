@@ -51,6 +51,9 @@ public class SchedulingBean {
     @PostConstruct
     public void atStartup() {
         System.out.println("Scheduling EJB Initialised!");
+
+        // These are needed on start up.
+        updateActivityMappings();
     }
 
     /**
