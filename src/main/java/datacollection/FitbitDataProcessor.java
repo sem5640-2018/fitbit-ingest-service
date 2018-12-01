@@ -22,7 +22,6 @@ public class FitbitDataProcessor {
             try {
                 threads[j].join();
             } catch (InterruptedException e) {
-                // @TODO log error
                 e.printStackTrace();
             }
         }

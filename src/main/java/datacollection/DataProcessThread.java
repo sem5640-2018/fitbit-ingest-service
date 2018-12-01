@@ -51,7 +51,6 @@ public class DataProcessThread implements Runnable {
         LinkedList<Activity> allActivities = getAllActivities(input);
         allActivities = getRelevantActivities(input, allActivities);
 
-        // @TODO send all new relevant activities to the Heath data Repository
         LinkedList<String> readyToSend = getPacketsToSend(allActivities);
         sendData(readyToSend);
     }

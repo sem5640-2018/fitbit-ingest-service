@@ -86,7 +86,6 @@ public class DataCheckThread implements Runnable {
             }
         }
        catch (Exception err) {
-            // @TODO LOg error with request
             err.printStackTrace();
            // RETURN TERMINATE UPDATE
            return;
