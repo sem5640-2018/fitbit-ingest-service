@@ -1,7 +1,6 @@
 package serverlets;
 
 import beans.OAuthBean;
-import config.EnvironmentVariableClass;
 import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
@@ -90,8 +89,6 @@ public class Prompt extends HttpServlet {
 
             // Process all out data
             processor.ProcessSynchronous(data);
-
-            //response.sendRedirect(EnvironmentVariableClass.getHeathDataRepoUrl());
 
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Authorization Header Not Set or Not Bearer");
