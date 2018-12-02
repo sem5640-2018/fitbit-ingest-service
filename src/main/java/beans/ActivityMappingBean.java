@@ -18,7 +18,9 @@ public class ActivityMappingBean {
     public void UpdateMappings(ActivityMap[] input) {
         mappings.clear();
         for(ActivityMap map : input) {
-            mappings.put(map.getKey(), map);
+            for (String keys: map.getAllUsedIds()) {
+                mappings.put(keys, map);
+            }
         }
     }
 

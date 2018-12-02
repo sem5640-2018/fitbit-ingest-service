@@ -14,10 +14,20 @@ public class Activity {
     private String startTime;
     private long steps;
 
+    private String userID;
+
     private Date javaDate;
 
     public Activity() {
 
+    }
+
+    public void setUserID(String id) {
+        userID = id;
+    }
+
+    public String getUserID() {
+        return userID;
     }
 
     public Date getJavaDate() {

@@ -1,6 +1,7 @@
 package serverlets;
 
 import beans.OAuthBean;
+import config.EnvironmentVariableClass;
 import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
