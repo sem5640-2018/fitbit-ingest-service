@@ -28,6 +28,7 @@ public final class EnvironmentVariableClass {
     private static final String gatekeeperTokenUrl = gatekeeperUrl + System.getenv("GK_TOKEN_URL");
     private static final String gatekeeperRevokeUrl = gatekeeperUrl + System.getenv("GK_REVOKE_URL");
     private static final String gatekeeperJWKUrl = gatekeeperUrl + System.getenv("GK_JWK_URL");
+    private static final String gatekeeperIntrospectUrl = gatekeeperUrl + System.getenv("GK_INTROSPECT_URL");
     //Heath Data Repo URL Defs
     private static final String heathDataRepoAddActivityUrl = heathDataRepoUrl + System.getenv("HDR_ADD_ACTIVITY_URL");
     private static final String heathDataRepoGetActivityTypesUrl = heathDataRepoUrl + System.getenv("HDR_GET_ACTIVITY_TYPES_URL");
@@ -98,6 +99,8 @@ public final class EnvironmentVariableClass {
     public static String getGatekeeperJWKUrl() {
         return gatekeeperJWKUrl;
     }
+
+    public static String getGatekeeperIntrospectUrl() { return gatekeeperIntrospectUrl; }
 
     public static String getHeathDataRepoAddActivityUrl() {
         return heathDataRepoAddActivityUrl;

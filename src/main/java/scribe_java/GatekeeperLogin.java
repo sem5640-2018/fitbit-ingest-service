@@ -3,6 +3,10 @@ package scribe_java;
 
 import beans.OAuthBean;
 import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Verb;
+import config.EnvironmentVariableClass;
 import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import javax.ejb.EJB;
@@ -64,6 +68,23 @@ public class GatekeeperLogin implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean validateAccessToken(String accessToken) {
+        //oAuthBean.initGatekeeperService(null, null, null);
+        try {
+            OAuthRequest request = new OAuthRequest(Verb.POST, EnvironmentVariableClass.getGatekeeperIntrospectUrl());
+            oAuthBean.getAberfitnessService().signRequest(accessToken, request);
+
+            final Response response = oAuthBean.getAberfitnessService().execute(request);
+
+            System.out.println("Validate Access Token Method: " + response.getCode() + "|" + response.getMessage());
+            //TODO Finish implementing
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public String getUser_id() {
