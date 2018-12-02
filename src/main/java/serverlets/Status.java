@@ -11,7 +11,7 @@ import java.io.IOException;
  * This will act as the Status endpoint. Has scope to be extended if needed.
  * @Author James H Britton
  */
-@WebServlet(name = "Status", urlPatterns = {"/Status"})
+@WebServlet(name = "Status", urlPatterns = {"/api/Status"})
 public class Status extends HttpServlet {
 
     /**

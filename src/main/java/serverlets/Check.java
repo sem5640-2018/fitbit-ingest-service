@@ -18,7 +18,7 @@ import java.util.Map;
  * user who had authorised Fitbit access.
  * @Author James H Britton
  */
-@WebServlet(name = "Check", urlPatterns = {"/Check"})
+@WebServlet(name = "Check", urlPatterns = {"/api/Check"})
 public class Check extends HttpServlet {
 
     @EJB

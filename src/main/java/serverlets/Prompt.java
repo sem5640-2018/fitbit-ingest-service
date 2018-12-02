@@ -20,7 +20,12 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-@WebServlet(name = "Prompt", urlPatterns = {"/Prompt", "/GetFitbit"})
+/**
+ * Serverlet providing the Prompt api Endpoint for the Fitbit Ingest Service
+ * @author James H Britton
+ * @author Jack Thomson
+ */
+@WebServlet(name = "Prompt", urlPatterns = {"/api/Prompt"})
 public class Prompt extends HttpServlet {
 
     @PersistenceContext
@@ -53,7 +58,7 @@ public class Prompt extends HttpServlet {
             String authHead[] = authorization.split(" ", 2);
 
             if (authHead[1] == null) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No Access Token Parameter!");
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No Access Token in Auth Header!");
                 return;
             }
 
