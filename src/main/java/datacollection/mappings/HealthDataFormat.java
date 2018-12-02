@@ -9,22 +9,23 @@ import java.util.Date;
 
 
 public class HealthDataFormat {
-    private static int SOURCE_ID = 1;
-
     @EJB
     ActivityMappingBean mappingBean;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
+    private String UserID;
     private String StartTimestamp;
     private String EndTimestamp;
 
-    private int Source;
+    private String Source = "Fitbit";
     private int ActivityType = -1;
     private long CaloriesBurnt;
 
+    private float AverageHeartRate;
     private long StepsTaken;
     private float MetresTravelled;
+    private float MetresElevationGained;
 
     public HealthDataFormat(Activity input) {
 
@@ -36,16 +37,18 @@ public class HealthDataFormat {
         if (map == null)
             return;
 
+        UserID = input.getUserID();
         StartTimestamp = sdf.format(input.getJavaDate());
         EndTimestamp = sdf.format(getEndDate(input));
 
-        Source = SOURCE_ID;
         // If we have a mapping for this item
-        ActivityType = map.getId();
+        ActivityType = map.getID();
         CaloriesBurnt = input.getCalories();
 
+        AverageHeartRate = -1;
         StepsTaken = input.getSteps();
         MetresTravelled = input.getDistance();
+        MetresElevationGained = -1;
     }
 
     public float getDistance() {
@@ -76,7 +79,19 @@ public class HealthDataFormat {
         return EndTimestamp;
     }
 
-    public int getSource() {
+    public String getSource() {
         return Source;
+    }
+
+    public float getAverageHeartRate() {
+        return AverageHeartRate;
+    }
+
+    public float getMetresElevationGained() {
+        return MetresElevationGained;
+    }
+
+    public String getUserID() {
+        return UserID;
     }
 }

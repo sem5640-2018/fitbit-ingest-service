@@ -1,43 +1,61 @@
 package datacollection;
 
-class Mappings {
-    private String SourceIdentifier;
+import java.util.LinkedList;
+import java.util.List;
+
+class SourceActivities {
+    private String ServiceActivityId;
 
     public String getSourceIdentifier() {
-        return SourceIdentifier;
+        return ServiceActivityId;
     }
 }
 
-class Source {
+class Sources {
     private int Id;
-    private Mappings Mappings;
+    private LinkedList<SourceActivities> SourceActivities;
+    private String Source;
+
+    protected List<String> getAllIds() {
+        LinkedList<String> ids = new LinkedList<>();
+        for (SourceActivities activities: this.SourceActivities) {
+            ids.add(activities.getSourceIdentifier());
+        }
+
+        return ids;
+    }
 
     public int getId() {
         return Id;
     }
 
-    public datacollection.Mappings getMappings() {
-        return Mappings;
+    public String getSource() {
+        return Source;
     }
 }
 
 public class ActivityMap {
+    private int ID;
     private String Name;
-    private Source Source;
+    private LinkedList<Sources> Sources;
 
     public String getName() {
         return Name;
     }
 
-    public datacollection.Source getSource() {
-        return Source;
+    public LinkedList<String> getAllUsedIds() {
+        LinkedList<String> allIds = new LinkedList<>();
+
+        for (Sources source: this.Sources) {
+            if (!source.getSource().equals("Fitbit"))
+                continue;
+            allIds.addAll(source.getAllIds());
+        }
+
+        return allIds;
     }
 
-    public String getKey() {
-        return Source.getMappings().getSourceIdentifier();
-    }
-
-    public int getId() {
-        return Source.getId();
+    public int getID() {
+        return ID;
     }
 }

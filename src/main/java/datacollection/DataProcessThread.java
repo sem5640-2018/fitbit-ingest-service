@@ -96,6 +96,7 @@ public class DataProcessThread implements Runnable {
               try {
                   Date startTime = df.parse(dateStr);
                   activity.setJavaDate(startTime);
+                  activity.setUserID(fitbitClass.getUserID());
                   activities.add(activity);
               } catch (Exception e) {
                   System.out.println(dateStr);

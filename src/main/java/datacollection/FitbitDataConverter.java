@@ -25,6 +25,7 @@ public class FitbitDataConverter {
             for (ActivityJSON json: data.getActivityJSON()) {
                 FitBitJSON activityClass = gson.fromJson(json.JSON, FitBitJSON.class);
                 activityClass.setFromDate(json.date);
+                activityClass.setUserID(data.getInputToken().getUserID());
                 data.addProcessedActivity(activityClass);
             }
         }

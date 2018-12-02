@@ -7,6 +7,7 @@ public class FitBitJSON {
     private Goals goals;
     private Summary summary;
     private String fromDate;
+    private String userID;
 
     public List<Activity> getActivities() {
         return activities;
@@ -26,5 +27,13 @@ public class FitBitJSON {
 
     public Goals getGoals() {
         return goals;
+    }
+
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
     }
 }
