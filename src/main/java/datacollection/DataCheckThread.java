@@ -16,7 +16,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DataCheckThread implements Runnable {
     private ConcurrentLinkedQueue<TokenMap> input;
     private ConcurrentLinkedQueue<ProcessedData> output;
-    private OAuthBean oAuthBean;
     private OAuth20Service fitbitClient;
     private Date now;
 
@@ -24,9 +23,7 @@ public class DataCheckThread implements Runnable {
         // Create Shallow copy to the global linked queue
         this.input = input;
         this.output = out;
-        this.oAuthBean = oAuthBean;
         fitbitClient = oAuthBean.getNewFitbitService();
-
         // Store the start of the requests
         now = new Date();
     }
@@ -75,16 +72,16 @@ public class DataCheckThread implements Runnable {
                 OAuthRequest request = new OAuthRequest(Verb.GET,
                         String.format(activities, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
-                oAuthBean.getFitbitService().signRequest(accessToken, request);
-                Response response = oAuthBean.getFitbitService().execute(request);
+                this.fitbitClient.signRequest(accessToken, request);
+                Response response =  this.fitbitClient.execute(request);
                 toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
 
                 // Request Steps
                 request = new OAuthRequest(Verb.GET,
                         String.format(steps, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
-                oAuthBean.getFitbitService().signRequest(accessToken, request);
-                response = oAuthBean.getFitbitService().execute(request);
+                this.fitbitClient.signRequest(accessToken, request);
+                response =  this.fitbitClient.execute(request);
                 toReturn.addStepsJSON(new ActivityJSON(response.getBody(), date));
             }
         }
