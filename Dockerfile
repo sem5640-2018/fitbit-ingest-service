@@ -32,9 +32,9 @@ ENV ABERFITNESS_CLI_SECRET DavidBeans
 
 ENV DB_HOSTNAME database
 ENV DB_PORT 3306
-ENV DB_NAME fitbit-ingest
-ENV DB_USER root
-ENV DB_PASS password
+ENV DB_NAME fitbit-ingest-service
+ENV DB_USERNAME root
+ENV DB_PASSWORD password
 
 ENV APP_BASE_URL http://localhost:8080
 ENV SYS_BASE_URL NOT_SET
