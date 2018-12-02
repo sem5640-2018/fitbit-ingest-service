@@ -38,31 +38,40 @@ public class Check extends HttpServlet {
      * @throws IOException
      */
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String userId, accessToken;
+        String userId;
         Map<String, String[]> paramMap = request.getParameterMap();
+        String authorization = request.getHeader("Authorization");
 
-        if (!paramMap.containsKey("access_token")) { //TODO fix, for testing not deployment
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No Access Token Parameter!");
-            return;
+        if (authorization != null && authorization.startsWith("Bearer")) {
+            String authHead[] = authorization.split(" ", 2);
+
+            if (authHead[1] == null) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No Access Token Parameter!");
+                return;
+            }
+
+            if (!paramMap.containsKey(paramName)) {
+                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No User ID Parameter!");
+                return;
+            }
+
+            userId = paramMap.get(paramName)[0];
+
+            if (!gatekeeperLogin.validateAccessToken(authHead[1])) {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Access Token!");
+                return;
+            }
+
+            TokenMap tokenMap = tokenMapDAO.getByUid(userId);
+
+            if (tokenMap != null)
+                response.setStatus(HttpServletResponse.SC_OK);
+            else
+                response.setStatus(HttpServletResponse.SC_NO_CONTENT);
+        } else {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Authorization Header Not Set or Not Bearer");
         }
 
-        if (!paramMap.containsKey(paramName)) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "No User ID Parameter!");
-            return;
-        }
-
-        userId = paramMap.get(paramName)[0];
-        accessToken = paramMap.get("access_token")[0];
-
-        if (gatekeeperLogin.validateAccessToken(accessToken))
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Access Token!");
-
-        TokenMap tokenMap = tokenMapDAO.getByUid(userId);
-
-        if (tokenMap != null)
-            response.setStatus(HttpServletResponse.SC_OK);
-        else
-            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
     }
 
 }

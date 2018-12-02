@@ -3,10 +3,9 @@ package scribe_java;
 
 import beans.OAuthBean;
 import com.github.scribejava.core.model.OAuth2AccessToken;
-import com.github.scribejava.core.model.OAuthRequest;
-import com.github.scribejava.core.model.Response;
-import com.github.scribejava.core.model.Verb;
-import config.EnvironmentVariableClass;
+import com.nimbusds.jwt.JWTClaimsSet;
+import config.AuthStorage;
+import scribe_java.gatekeeper.GatekeeperJsonTokenExtractor;
 import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import javax.ejb.EJB;
@@ -22,7 +21,7 @@ public class GatekeeperLogin implements Serializable {
     @EJB
     OAuthBean oAuthBean;
 
-    private GatekeeperOAuth2AccessToken accessToken;
+    private GatekeeperOAuth2AccessToken userAccessToken;
 
     public GatekeeperLogin() {
         //
@@ -35,7 +34,7 @@ public class GatekeeperLogin implements Serializable {
     }
 
     public void getGatekeeperGetAccessToken(HttpServletRequest request) {
-        accessToken = null;
+        userAccessToken = null;
         String str = request.getParameter("code");
         if (str != null) {
             try {
@@ -43,8 +42,8 @@ public class GatekeeperLogin implements Serializable {
                 if (!(inAccessToken instanceof GatekeeperOAuth2AccessToken))
                     return;
 
-                accessToken = (GatekeeperOAuth2AccessToken) inAccessToken;
-                System.out.println("USER ID IN GATE AT: " + accessToken.getUserId());
+                userAccessToken = (GatekeeperOAuth2AccessToken) inAccessToken;
+                System.out.println("USER ID IN GATE AT: " + userAccessToken.getUserId());
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -53,43 +52,62 @@ public class GatekeeperLogin implements Serializable {
     }
 
     public void getGatekeeperGrantAccessToken(String callback, String state, String scope) {
-        accessToken = null;
         oAuthBean.initGatekeeperService(callback, state, scope);
 
         try {
             OAuth2AccessToken inAccessToken = oAuthBean.getAberfitnessService().getAccessTokenClientCredentialsGrant();
 
             if (!(inAccessToken instanceof GatekeeperOAuth2AccessToken))
-                return;
+                throw new Exception("inAccessToken isn't instanceof GatekeeperOAuth2AccessToken");
 
-            accessToken = (GatekeeperOAuth2AccessToken) inAccessToken;
+            AuthStorage.setApplicationToken((GatekeeperOAuth2AccessToken) inAccessToken);
             return;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("[GatekeeperLogin.getGatekeeperGrantAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
         }
     }
 
     public boolean validateAccessToken(String accessToken) {
-        //oAuthBean.initGatekeeperService(null, null, null);
         try {
-            OAuthRequest request = new OAuthRequest(Verb.POST, EnvironmentVariableClass.getGatekeeperIntrospectUrl());
-            oAuthBean.getAberfitnessService().signRequest(accessToken, request);
-
-            final Response response = oAuthBean.getAberfitnessService().execute(request);
-
-            System.out.println("Validate Access Token Method: " + response.getCode() + "|" + response.getMessage());
-            //TODO Finish implementing
-
+            JWTClaimsSet claimsSet = GatekeeperJsonTokenExtractor.instance().getJWTClaimSet(accessToken);
+            System.out.println("Token Issued By: " + claimsSet.getIssuer());
+            return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("[GatekeeperLogin.validateAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
+            return false;
         }
-        return false;
     }
 
     public String getUser_id() {
-        if (accessToken != null)
-            return accessToken.getUserId();
+        if (userAccessToken != null)
+            return userAccessToken.getUserId();
         return null;
+    }
+}
+
+class IntospectResponse {
+    private String active;
+    private String sub;
+
+    public IntospectResponse(String active, String sub) {
+        this.active = active;
+        this.sub = sub;
+    }
+
+    public String getActive() {
+        return active;
+    }
+
+    public String getSub() {
+        return sub;
+    }
+
+    @Override
+    public String toString() {
+        return "IntospectResponse{" +
+                "active='" + active + '\'' +
+                ", sub='" + sub + '\'' +
+                '}';
     }
 }
