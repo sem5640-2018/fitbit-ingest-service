@@ -17,7 +17,7 @@
 	],
 	"schemes": ["https", "http"],
 	"paths": {
-		"/Status": {
+		"/api/Status": {
 			"get": {
 				"tags": ["Monitoring / Status"],
 				"summary": "Returns the heath of the system.",
@@ -56,7 +56,7 @@
 				}
 			}
 		},
-		"/Prompt": {
+		"/api/Prompt": {
 			"get": {
 				"tags": ["Manual Request prompt"],
 				"summary": "This can be used to manually trigger a request to the Fitbit API for a specific user.",
@@ -78,12 +78,18 @@
 						"description": "The FitBit data for the specified user."
 					},
 					"400": {
-						"description": "Request did not contain user id parameter"
+						"description": "Missing Parameters or Authorization Header"
+					},
+					"401": {
+						"description": "Invalid Access Token!"
+					},
+					"403": {
+						"description": "No Fitbit Access Given"
 					}
 				}
 			}
 		},
-		"/Check": {
+		"/api/Check": {
 			"get": {
 				"tags": ["Check if connected"],
 				"summary": "Used to check if a user is connected with Fitbit.",
@@ -108,7 +114,10 @@
 						"description": "User has not Authorised fitbit usage"
 					},
 					"400": {
-						"description": "Request did not contain user id parameter"
+						"description": "Missing Parameters or Authorization Header"
+					},
+					"401": {
+						"description": "Invalid Access Token!"
 					}
 				}
 			}
