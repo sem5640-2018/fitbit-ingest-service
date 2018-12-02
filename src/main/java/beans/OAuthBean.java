@@ -3,6 +3,7 @@ package beans;
 import com.github.scribejava.apis.FitbitApi20;
 import com.github.scribejava.core.builder.ServiceBuilder;
 import com.github.scribejava.core.oauth.OAuth20Service;
+import config.EnvironmentVariableClass;
 import scribe_java.GatekeeperApi;
 
 import javax.annotation.PostConstruct;
@@ -37,14 +38,15 @@ public class OAuthBean {
         return null;
     }
 
-    public void initGatekeeperService(String callback, String state) {
-        if (aberfitnessService != null && aberfitnessService.getCallback().equals(callback))
+    //"openid profile offline_access"
+    public void initGatekeeperService(String callback, String state, String scope) {
+        if (aberfitnessService != null && aberfitnessService.getCallback().equals(callback) && aberfitnessService.getScope().equals(scope))
             return;
 
         if (EnvironmentVariableClass.isAberfitnessDataPresent()) {
             aberfitnessService = new ServiceBuilder(EnvironmentVariableClass.getAberfitnessClientId())
                     .apiSecret(EnvironmentVariableClass.getAberfitnessClientSecret())
-                    .scope("openid profile offline_access")
+                    .scope(scope)
                     .callback(callback)
                     .state(state)
                     .build(GatekeeperApi.instance());
@@ -53,6 +55,10 @@ public class OAuthBean {
 
     public OAuth20Service getFitbitService() {
         return fitbitService == null ? createFitbitClient() : fitbitService;
+    }
+
+    public OAuth20Service getNewFitbitService() {
+        return createFitbitClient();
     }
 
     public OAuth20Service getAberfitnessService() {

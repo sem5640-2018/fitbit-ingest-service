@@ -1,6 +1,6 @@
 package scribe_java.gatekeeper;
 
-import beans.EnvironmentVariableClass;
+import config.EnvironmentVariableClass;
 import com.github.scribejava.core.extractors.OAuth2AccessTokenJsonExtractor;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 
 public class GatekeeperJsonTokenExtractor extends OAuth2AccessTokenJsonExtractor {
 
-    private static final Pattern OPEN_ID_REGEX_PATTERN = Pattern.compile("\"id_token\"\\s*:\\s*\"(\\S*?)\"");
+    private static final Pattern ACCESS_TOKEN_REGEX_PATTERN = Pattern.compile("\"access_token\"\\s*:\\s*\"(\\S*?)\"");
 
     protected GatekeeperJsonTokenExtractor() {
     }
@@ -43,7 +43,7 @@ public class GatekeeperJsonTokenExtractor extends OAuth2AccessTokenJsonExtractor
     @Override
     protected GatekeeperOAuth2AccessToken createToken(String accessToken, String tokenType, Integer expiresIn,
                                                   String refreshToken, String scope, String response) {
-        String open_id_json = extractParameter(response, OPEN_ID_REGEX_PATTERN, false);
+        String open_id_json = extractParameter(response, ACCESS_TOKEN_REGEX_PATTERN, false);
         JWTClaimsSet claimsSet;
         try {
             claimsSet = getJWTClaimSet(open_id_json);

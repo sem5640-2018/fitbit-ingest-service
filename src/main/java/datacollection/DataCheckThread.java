@@ -5,6 +5,7 @@ import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth.OAuth20Service;
 import persistence.TokenMap;
 
 import java.text.SimpleDateFormat;
@@ -15,15 +16,14 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DataCheckThread implements Runnable {
     private ConcurrentLinkedQueue<TokenMap> input;
     private ConcurrentLinkedQueue<ProcessedData> output;
-    private OAuthBean oAuthBean;
+    private OAuth20Service fitbitClient;
     private Date now;
 
     DataCheckThread(ConcurrentLinkedQueue<TokenMap> input, ConcurrentLinkedQueue<ProcessedData> out, OAuthBean oAuthBean) {
         // Create Shallow copy to the global linked queue
         this.input = input;
         this.output = out;
-        this.oAuthBean = oAuthBean;
-
+        fitbitClient = oAuthBean.getNewFitbitService();
         // Store the start of the requests
         now = new Date();
     }
@@ -62,7 +62,7 @@ public class DataCheckThread implements Runnable {
 
         try {
             // Refresh token on start
-            final OAuth2AccessToken accessToken = oAuthBean.getFitbitService().refreshAccessToken(tokenMap.getRefreshToken());
+            final OAuth2AccessToken accessToken = this.fitbitClient.refreshAccessToken(tokenMap.getRefreshToken());
 
             for (String date : addressesToPoll) {
                 final String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
@@ -72,16 +72,16 @@ public class DataCheckThread implements Runnable {
                 OAuthRequest request = new OAuthRequest(Verb.GET,
                         String.format(activities, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
-                oAuthBean.getFitbitService().signRequest(accessToken, request);
-                Response response = oAuthBean.getFitbitService().execute(request);
+                this.fitbitClient.signRequest(accessToken, request);
+                Response response =  this.fitbitClient.execute(request);
                 toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
 
                 // Request Steps
                 request = new OAuthRequest(Verb.GET,
                         String.format(steps, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
-                oAuthBean.getFitbitService().signRequest(accessToken, request);
-                response = oAuthBean.getFitbitService().execute(request);
+                this.fitbitClient.signRequest(accessToken, request);
+                response =  this.fitbitClient.execute(request);
                 toReturn.addStepsJSON(new ActivityJSON(response.getBody(), date));
             }
         }

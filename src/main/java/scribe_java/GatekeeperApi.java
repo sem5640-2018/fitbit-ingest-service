@@ -1,6 +1,6 @@
 package scribe_java;
 
-import beans.EnvironmentVariableClass;
+import config.EnvironmentVariableClass;
 import com.github.scribejava.core.builder.api.DefaultApi20;
 import scribe_java.gatekeeper.GatekeeperJsonTokenExtractor;
 

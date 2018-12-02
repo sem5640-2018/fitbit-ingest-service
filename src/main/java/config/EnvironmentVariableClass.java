@@ -1,4 +1,4 @@
-package beans;
+package config;
 
 public final class EnvironmentVariableClass {
 

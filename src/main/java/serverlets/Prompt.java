@@ -1,7 +1,7 @@
 package serverlets;
 
-import beans.EnvironmentVariableClass;
 import beans.OAuthBean;
+import config.EnvironmentVariableClass;
 import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
@@ -35,10 +35,6 @@ public class Prompt extends HttpServlet {
     private final FitbitDataCollector collector = new FitbitDataCollector(oAuthBean);
     private final FitbitDataConverter converter = new FitbitDataConverter();
     private final FitbitDataProcessor processor = new FitbitDataProcessor();
-
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-    }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         response.setContentType("text/html");

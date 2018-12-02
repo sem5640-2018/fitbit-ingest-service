@@ -1,6 +1,6 @@
 package serverlets;
 
-import beans.EnvironmentVariableClass;
+import config.EnvironmentVariableClass;
 import beans.OAuthBean;
 import com.github.scribejava.apis.fitbit.FitBitOAuth2AccessToken;
 import com.github.scribejava.core.model.OAuth2AccessToken;
