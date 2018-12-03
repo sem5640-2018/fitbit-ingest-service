@@ -49,13 +49,13 @@ public class GatekeeperJsonTokenExtractor extends OAuth2AccessTokenJsonExtractor
         try {
             claimsSet = getJWTClaimSet(open_id_json);
             String subject = claimsSet.getSubject();
-            Date issueTime = claimsSet.getIssueTime(), expiryTime = claimsSet.getExpirationTime();
+            Date startTime = claimsSet.getNotBeforeTime(), expiryTime = claimsSet.getExpirationTime();
 
 
             return new GatekeeperOAuth2AccessToken(accessToken, tokenType, expiresIn, refreshToken, scope,
-                    subject, response, issueTime, expiryTime);
+                    subject, response, startTime, expiryTime);
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.toString());
+            System.err.println("[GatekeeperJsonTokenExtractor.createToken]: " + e.toString());
             return null;
         }
     }

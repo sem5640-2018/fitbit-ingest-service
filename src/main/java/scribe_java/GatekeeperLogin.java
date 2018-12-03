@@ -72,6 +72,10 @@ public class GatekeeperLogin implements Serializable {
         try {
             JWTClaimsSet claimsSet = GatekeeperJsonTokenExtractor.instance().getJWTClaimSet(accessToken);
             System.out.println("Token Issued By: " + claimsSet.getIssuer());
+
+            /*if (!claimsSet.getAudience().contains("fitbit-ingest-service")) //Disabled for testing purposes.
+                throw new Exception("Access Token Audience does not include Fitbit Ingest!");*/
+
             return true;
         } catch (Exception e) {
             System.err.println("[GatekeeperLogin.validateAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
@@ -83,31 +87,5 @@ public class GatekeeperLogin implements Serializable {
         if (userAccessToken != null)
             return userAccessToken.getUserId();
         return null;
-    }
-}
-
-class IntospectResponse {
-    private String active;
-    private String sub;
-
-    public IntospectResponse(String active, String sub) {
-        this.active = active;
-        this.sub = sub;
-    }
-
-    public String getActive() {
-        return active;
-    }
-
-    public String getSub() {
-        return sub;
-    }
-
-    @Override
-    public String toString() {
-        return "IntospectResponse{" +
-                "active='" + active + '\'' +
-                ", sub='" + sub + '\'' +
-                '}';
     }
 }
