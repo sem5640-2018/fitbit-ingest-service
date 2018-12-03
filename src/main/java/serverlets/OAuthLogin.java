@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "Login", urlPatterns = { "/" } )
+@WebServlet(name = "Login", urlPatterns = { "/LoginPage" } )
 public class OAuthLogin extends HttpServlet {
 
     @EJB

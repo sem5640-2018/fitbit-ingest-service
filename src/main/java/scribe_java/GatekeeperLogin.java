@@ -51,8 +51,8 @@ public class GatekeeperLogin implements Serializable {
         }
     }
 
-    public void getGatekeeperGrantAccessToken(String callback, String state, String scope) {
-        oAuthBean.initGatekeeperService(callback, state, scope);
+    public void getGatekeeperGrantAccessToken(String callback, String state) {
+        oAuthBean.initGatekeeperService(callback, state, "health_data_repository glados");
 
         try {
             OAuth2AccessToken inAccessToken = oAuthBean.getAberfitnessService().getAccessTokenClientCredentialsGrant();
@@ -73,8 +73,8 @@ public class GatekeeperLogin implements Serializable {
             JWTClaimsSet claimsSet = GatekeeperJsonTokenExtractor.instance().getJWTClaimSet(accessToken);
             System.out.println("Token Issued By: " + claimsSet.getIssuer());
 
-            /*if (!claimsSet.getAudience().contains("fitbit-ingest-service")) //Disabled for testing purposes.
-                throw new Exception("Access Token Audience does not include Fitbit Ingest!");*/
+            if (!claimsSet.getAudience().contains("fitbit_ingest_service"))
+                throw new Exception("Access Token Audience does not include Fitbit Ingest!");
 
             return true;
         } catch (Exception e) {

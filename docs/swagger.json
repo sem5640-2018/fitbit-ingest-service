@@ -32,7 +32,7 @@
 				}
 			}
 		},
-		"/Login": {
+		"/LoginPage": {
 			"post": {
 				"tags": ["API Endpoint for Fitbit"],
 				"summary": "This is required by the Fitbit API.",
