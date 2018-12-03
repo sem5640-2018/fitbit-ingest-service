@@ -1,6 +1,5 @@
 package scribe_java.gatekeeper;
 
-import config.EnvironmentVariableClass;
 import com.github.scribejava.core.extractors.OAuth2AccessTokenJsonExtractor;
 import com.nimbusds.jose.JOSEException;
 import com.nimbusds.jose.JWSAlgorithm;
@@ -13,10 +12,12 @@ import com.nimbusds.jose.proc.SecurityContext;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
+import config.EnvironmentVariableClass;
 
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 public class GatekeeperJsonTokenExtractor extends OAuth2AccessTokenJsonExtractor {
@@ -30,7 +31,7 @@ public class GatekeeperJsonTokenExtractor extends OAuth2AccessTokenJsonExtractor
         return InstanceHolder.INSTANCE;
     }
 
-    private JWTClaimsSet getJWTClaimSet(String accessToken) throws MalformedURLException, ParseException, JOSEException, BadJOSEException {
+    public JWTClaimsSet getJWTClaimSet(String accessToken) throws MalformedURLException, ParseException, JOSEException, BadJOSEException {
         ConfigurableJWTProcessor jwtProcessor = new DefaultJWTProcessor();
         JWKSource keySrc = new RemoteJWKSet( new URL(EnvironmentVariableClass.getGatekeeperJWKUrl()));
         JWSAlgorithm jwsAlgorithm = JWSAlgorithm.RS256;
@@ -47,10 +48,14 @@ public class GatekeeperJsonTokenExtractor extends OAuth2AccessTokenJsonExtractor
         JWTClaimsSet claimsSet;
         try {
             claimsSet = getJWTClaimSet(open_id_json);
+            String subject = claimsSet.getSubject();
+            Date startTime = claimsSet.getNotBeforeTime(), expiryTime = claimsSet.getExpirationTime();
+
+
             return new GatekeeperOAuth2AccessToken(accessToken, tokenType, expiresIn, refreshToken, scope,
-                    claimsSet.getSubject(), response);
+                    subject, response, startTime, expiryTime);
         } catch (Exception e) {
-            System.out.println("ERROR: " + e.toString());
+            System.err.println("[GatekeeperJsonTokenExtractor.createToken]: " + e.toString());
             return null;
         }
     }

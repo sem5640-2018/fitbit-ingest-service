@@ -3,6 +3,9 @@ package scribe_java;
 
 import beans.OAuthBean;
 import com.github.scribejava.core.model.OAuth2AccessToken;
+import com.nimbusds.jwt.JWTClaimsSet;
+import config.AuthStorage;
+import scribe_java.gatekeeper.GatekeeperJsonTokenExtractor;
 import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import javax.ejb.EJB;
@@ -18,7 +21,7 @@ public class GatekeeperLogin implements Serializable {
     @EJB
     OAuthBean oAuthBean;
 
-    private GatekeeperOAuth2AccessToken accessToken;
+    private GatekeeperOAuth2AccessToken userAccessToken;
 
     public GatekeeperLogin() {
         //
@@ -31,7 +34,7 @@ public class GatekeeperLogin implements Serializable {
     }
 
     public void getGatekeeperGetAccessToken(HttpServletRequest request) {
-        accessToken = null;
+        userAccessToken = null;
         String str = request.getParameter("code");
         if (str != null) {
             try {
@@ -39,8 +42,8 @@ public class GatekeeperLogin implements Serializable {
                 if (!(inAccessToken instanceof GatekeeperOAuth2AccessToken))
                     return;
 
-                accessToken = (GatekeeperOAuth2AccessToken) inAccessToken;
-                System.out.println("USER ID IN GATE AT: " + accessToken.getUserId());
+                userAccessToken = (GatekeeperOAuth2AccessToken) inAccessToken;
+                System.out.println("USER ID IN GATE AT: " + userAccessToken.getUserId());
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
@@ -49,26 +52,40 @@ public class GatekeeperLogin implements Serializable {
     }
 
     public void getGatekeeperGrantAccessToken(String callback, String state, String scope) {
-        accessToken = null;
         oAuthBean.initGatekeeperService(callback, state, scope);
 
         try {
             OAuth2AccessToken inAccessToken = oAuthBean.getAberfitnessService().getAccessTokenClientCredentialsGrant();
 
             if (!(inAccessToken instanceof GatekeeperOAuth2AccessToken))
-                return;
+                throw new Exception("inAccessToken isn't instanceof GatekeeperOAuth2AccessToken");
 
-            accessToken = (GatekeeperOAuth2AccessToken) inAccessToken;
+            AuthStorage.setApplicationToken((GatekeeperOAuth2AccessToken) inAccessToken);
             return;
 
         } catch (Exception e) {
-            e.printStackTrace();
+            System.err.println("[GatekeeperLogin.getGatekeeperGrantAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
+        }
+    }
+
+    public boolean validateAccessToken(String accessToken) {
+        try {
+            JWTClaimsSet claimsSet = GatekeeperJsonTokenExtractor.instance().getJWTClaimSet(accessToken);
+            System.out.println("Token Issued By: " + claimsSet.getIssuer());
+
+            /*if (!claimsSet.getAudience().contains("fitbit-ingest-service")) //Disabled for testing purposes.
+                throw new Exception("Access Token Audience does not include Fitbit Ingest!");*/
+
+            return true;
+        } catch (Exception e) {
+            System.err.println("[GatekeeperLogin.validateAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
+            return false;
         }
     }
 
     public String getUser_id() {
-        if (accessToken != null)
-            return accessToken.getUserId();
+        if (userAccessToken != null)
+            return userAccessToken.getUserId();
         return null;
     }
 }
