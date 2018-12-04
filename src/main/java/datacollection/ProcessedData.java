@@ -38,7 +38,7 @@ public class ProcessedData {
         this.ActivityJSON.add(ActivityJSON);
     }
 
-    // Activity JSON CRUD
+    // Activity JSON
     public LinkedList<ActivityJSON> getActivityJSON() {
         return ActivityJSON;
     }
@@ -47,7 +47,7 @@ public class ProcessedData {
         ActivityJSON.add(input);
     }
 
-    // Steps JSON CRUD
+    // Steps JSON
     public LinkedList<ActivityJSON> getStepsJSON() {
         return StepsJSON;
     }
@@ -56,7 +56,7 @@ public class ProcessedData {
         StepsJSON.add(input);
     }
 
-    // Processed Data CRUD
+    // Processed Data
     public LinkedList<FitBitJSON> getProcessedActivities() {
         return ProcessedActivities;
     }

@@ -42,6 +42,7 @@ public class DataCheckThread implements Runnable {
 
     /**
      * Function for sending a request for Activity Data to the Fitbit API.
+     *
      * @param tokenMap TokenMap for user we want data for.
      */
     private void requestActivityData(TokenMap tokenMap) {
@@ -63,6 +64,9 @@ public class DataCheckThread implements Runnable {
         try {
             // Refresh token on start
             final OAuth2AccessToken accessToken = this.fitbitClient.refreshAccessToken(tokenMap.getRefreshToken());
+            tokenMap.setAccessToken(accessToken.getAccessToken());
+            tokenMap.setRefreshToken(accessToken.getRefreshToken());
+            tokenMap.setExpiresIn(accessToken.getExpiresIn());
 
             for (String date : addressesToPoll) {
                 final String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
@@ -73,7 +77,7 @@ public class DataCheckThread implements Runnable {
                         String.format(activities, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
                 this.fitbitClient.signRequest(accessToken, request);
-                Response response =  this.fitbitClient.execute(request);
+                Response response = this.fitbitClient.execute(request);
                 toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
 
                 // Request Steps
@@ -81,14 +85,13 @@ public class DataCheckThread implements Runnable {
                         String.format(steps, tokenMap.getUserID()));
                 request.addHeader("x-li-format", "json");
                 this.fitbitClient.signRequest(accessToken, request);
-                response =  this.fitbitClient.execute(request);
+                response = this.fitbitClient.execute(request);
                 toReturn.addStepsJSON(new ActivityJSON(response.getBody(), date));
             }
-        }
-       catch (Exception err) {
+        } catch (Exception err) {
             err.printStackTrace();
-           // RETURN TERMINATE UPDATE
-           return;
+            // RETURN TERMINATE UPDATE
+            return;
         }
 
         output.add(toReturn);
