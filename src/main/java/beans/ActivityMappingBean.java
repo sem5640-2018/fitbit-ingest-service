@@ -1,6 +1,6 @@
 package beans;
 
-import datacollection.ActivityMap;
+import datacollection.mappings.ActivityMap;
 
 import javax.ejb.Singleton;
 import java.util.Collections;

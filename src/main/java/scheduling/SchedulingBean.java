@@ -7,7 +7,7 @@ import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
-import datacollection.ActivityMap;
+import datacollection.mappings.ActivityMap;
 import persistence.TokenMap;
 
 import javax.annotation.PostConstruct;
