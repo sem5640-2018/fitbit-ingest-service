@@ -5,7 +5,6 @@ import persistence.TokenMapDAO;
 import scribe_java.GatekeeperLogin;
 
 import javax.ejb.EJB;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -16,7 +15,8 @@ import java.util.Map;
 /**
  * This servlet will act as the check endpoint that will allow other microservices to check id a user id belongs to a
  * user who had authorised Fitbit access.
- * @Author James H Britton
+ *
+ * @author James H Britton
  */
 @WebServlet(name = "Check", urlPatterns = {"/api/Check"})
 public class Check extends HttpServlet {
@@ -32,12 +32,12 @@ public class Check extends HttpServlet {
     /**
      * This function will execute Get request, for this serverlet it will mean checking for a Token Map and returning a
      * status code 200 for true and 204 for false.
-     * @param request HttpServletRequest
+     *
+     * @param request  HttpServletRequest
      * @param response HttpServletResponse
-     * @throws ServletException
-     * @throws IOException
+     * @throws IOException if can't access the request header
      */
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String userId;
         Map<String, String[]> paramMap = request.getParameterMap();
         String authorization = request.getHeader("Authorization");
@@ -57,7 +57,7 @@ public class Check extends HttpServlet {
 
             userId = paramMap.get(paramName)[0];
 
-            if (!gatekeeperLogin.validateAccessToken(authHead[1])) {
+            if (gatekeeperLogin.isInvalidAccessToken(authHead[1])) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Access Token!");
                 return;
             }

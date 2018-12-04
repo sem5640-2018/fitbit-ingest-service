@@ -11,7 +11,7 @@ import scribe_java.gatekeeper.GatekeeperJsonTokenExtractor;
  */
 public class GatekeeperApi extends DefaultApi20 {
 
-    public GatekeeperApi() {
+    private GatekeeperApi() {
         //
     }
 

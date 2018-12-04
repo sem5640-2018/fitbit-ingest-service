@@ -6,7 +6,7 @@ import java.util.List;
 class SourceActivities {
     private String ServiceActivityId;
 
-    public String getSourceIdentifier() {
+    String getSourceIdentifier() {
         return ServiceActivityId;
     }
 }
@@ -16,9 +16,9 @@ class Sources {
     private LinkedList<SourceActivities> SourceActivities;
     private String Source;
 
-    protected List<String> getAllIds() {
+    List<String> getAllIds() {
         LinkedList<String> ids = new LinkedList<>();
-        for (SourceActivities activities: this.SourceActivities) {
+        for (SourceActivities activities : this.SourceActivities) {
             ids.add(activities.getSourceIdentifier());
         }
 
@@ -46,7 +46,7 @@ public class ActivityMap {
     public LinkedList<String> getAllUsedIds() {
         LinkedList<String> allIds = new LinkedList<>();
 
-        for (Sources source: this.Sources) {
+        for (Sources source : this.Sources) {
             if (!source.getSource().equals("Fitbit"))
                 continue;
             allIds.addAll(source.getAllIds());

@@ -32,32 +32,21 @@ public class ProcessedData {
         ProcessedActivities = new LinkedList<>();
     }
 
-    public ProcessedData(TokenMap inputToken, ActivityJSON ActivityJSON) {
-        this(inputToken);
-
-        this.ActivityJSON.add(ActivityJSON);
-    }
-
     // Activity JSON
-    public LinkedList<ActivityJSON> getActivityJSON() {
+    LinkedList<ActivityJSON> getActivityJSON() {
         return ActivityJSON;
     }
 
-    public void addActivityJSON(ActivityJSON input) {
+    void addActivityJSON(ActivityJSON input) {
         ActivityJSON.add(input);
     }
 
-    // Steps JSON
-    public LinkedList<ActivityJSON> getStepsJSON() {
-        return StepsJSON;
-    }
-
-    public void addStepsJSON(ActivityJSON input) {
+    void addStepsJSON(ActivityJSON input) {
         StepsJSON.add(input);
     }
 
     // Processed Data
-    public LinkedList<FitBitJSON> getProcessedActivities() {
+    LinkedList<FitBitJSON> getProcessedActivities() {
         return ProcessedActivities;
     }
 
@@ -65,7 +54,7 @@ public class ProcessedData {
         ProcessedActivities.add(input);
     }
 
-    public TokenMap getInputToken() {
+    TokenMap getInputToken() {
         return InputToken;
     }
 }
