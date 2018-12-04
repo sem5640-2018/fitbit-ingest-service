@@ -5,6 +5,7 @@ import beans.OAuthBean;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.nimbusds.jwt.JWTClaimsSet;
 import config.AuthStorage;
+import config.EnvironmentVariableClass;
 import scribe_java.gatekeeper.GatekeeperJsonTokenExtractor;
 import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
@@ -51,7 +52,7 @@ public class GatekeeperLogin implements Serializable {
         }
     }
 
-    public void getGatekeeperGrantAccessToken(String callback, String state) {
+    private void retrieveNewClientCredAccessToken(String callback, String state) {
         oAuthBean.initGatekeeperService(callback, state, AuthStorage.clientCredScope);
 
         try {
@@ -62,7 +63,18 @@ public class GatekeeperLogin implements Serializable {
 
             AuthStorage.setApplicationToken((GatekeeperOAuth2AccessToken) inAccessToken);
         } catch (Exception e) {
-            System.err.println("[GatekeeperLogin.getGatekeeperGrantAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
+            System.err.println("[GatekeeperLogin.retrieveNewClientCredAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
+        }
+    }
+
+    public GatekeeperOAuth2AccessToken getAccessToken() {
+        GatekeeperOAuth2AccessToken retAT = AuthStorage.getApplicationToken();
+        if (retAT != null &&  !isInvalidAccessToken(retAT.getAccessToken(), AuthStorage.clientCredScope.split(" "))) {
+            return retAT;
+        } else {
+            System.out.println("[AuditHelper.getAccessToken] Invalid Client Cred Access Token, Retrieving New One");
+            retrieveNewClientCredAccessToken(EnvironmentVariableClass.getFitbitIngestLoginUrl(), "gateAccess");
+            return AuthStorage.getApplicationToken();
         }
     }
 

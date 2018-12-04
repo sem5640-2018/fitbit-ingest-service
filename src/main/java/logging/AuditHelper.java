@@ -6,7 +6,6 @@ import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import config.AuthStorage;
 import config.EnvironmentVariableClass;
 import scribe_java.GatekeeperLogin;
 import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
@@ -40,18 +39,6 @@ public class AuditHelper implements Serializable {
         gson = new GsonBuilder().create();
     }
 
-    private GatekeeperOAuth2AccessToken getAccessToken() {
-        GatekeeperOAuth2AccessToken retAT = AuthStorage.getApplicationToken();
-        if (retAT != null &&  !gatekeeperLogin.isInvalidAccessToken(retAT.getAccessToken(), AuthStorage.clientCredScope.split(" "))) {
-            return retAT;
-        } else {
-            System.out.println("[AuditHelper.getAccessToken] Invalid Client Cred Access Token, Retrieving New One");
-            gatekeeperLogin.getGatekeeperGrantAccessToken(EnvironmentVariableClass.getFitbitIngestLoginUrl(), "gateAccess");
-            return AuthStorage.getApplicationToken();
-        }
-    }
-
-
     /**
      * Sends an Audit Log to GLADOS using the API.
      * @param msg Audit Message
@@ -61,7 +48,7 @@ public class AuditHelper implements Serializable {
      */
     public int sendAudit(String msg, String detail, String currentUser) {
         try {
-            GatekeeperOAuth2AccessToken accessToken = getAccessToken();
+            GatekeeperOAuth2AccessToken accessToken = gatekeeperLogin.getAccessToken();
 
             String content = "[" + msg + "]: " + detail;
             AuditObj audObj = new AuditObj(content, EnvironmentVariableClass.getServiceName(), new Date(), currentUser);

@@ -1,10 +1,12 @@
 package datacollection;
 
+import config.AuthStorage;
 import config.EnvironmentVariableClass;
 import com.google.gson.Gson;
 import datacollection.mappings.Activity;
 import datacollection.mappings.FitBitJSON;
 import datacollection.mappings.HealthDataFormat;
+import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -122,11 +124,17 @@ public class DataProcessThread implements Runnable {
     }
 
     private void doPost(String rawData) throws Exception {
+        GatekeeperOAuth2AccessToken accessToken = AuthStorage.getApplicationToken();
+        if(accessToken == null)
+            throw new Exception("Application Access Token Not Set");
+        String accessTokenAuth = accessToken.getTokenType() + " " + accessToken.getAccessToken();
+
         String type = "application/x-www-form-urlencoded";
         String encodedData = URLEncoder.encode(rawData, "UTF-8");
         HttpURLConnection conn = (HttpURLConnection) postURL.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
+        conn.setRequestProperty("Authorization", accessTokenAuth);
         conn.setRequestProperty("Content-Type", type);
         conn.setRequestProperty("Content-Length", String.valueOf(encodedData.length()));
         OutputStream os = conn.getOutputStream();
