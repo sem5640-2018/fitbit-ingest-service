@@ -15,7 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@WebServlet(name = "Login", urlPatterns = { "/" } )
+@WebServlet(name = "Login", urlPatterns = {"/"})
 public class OAuthLogin extends HttpServlet {
 
     @EJB
@@ -28,14 +28,14 @@ public class OAuthLogin extends HttpServlet {
     GatekeeperLogin gatekeeperLogin;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws  IOException {
+            throws IOException {
         response.setContentType("text/html");
 
         String state = request.getParameter("state");
 
-        if(state == null) {
+        if (state == null) {
             gatekeeperLogin.redirectToGatekeeper(response, EnvironmentVariableClass.getFitbitIngestLoginUrl(), "gateAccess");
-        } else if (state.equals("gateAccess")){
+        } else if (state.equals("gateAccess")) {
             gatekeeperLogin.getGatekeeperGetAccessToken(request);
             redirectToFitbit(response);
         } else if (state.equals("some_params")) {
@@ -61,7 +61,6 @@ public class OAuthLogin extends HttpServlet {
                         accessToken.getRefreshToken(), accessToken.getUserId());
                 map.setUserID(accessT);
                 tokenMapDAO.saveOrUpdate(map);
-                return;
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -2,6 +2,7 @@ package datacollection;
 
 import config.EnvironmentVariableClass;
 import com.google.gson.Gson;
+import datacollection.mappings.ActivityMap;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

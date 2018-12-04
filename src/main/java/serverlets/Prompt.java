@@ -6,12 +6,12 @@ import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
 import persistence.TokenMap;
+import persistence.TokenMapDAO;
 import scribe_java.GatekeeperLogin;
 
 import javax.ejb.EJB;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Serverlet providing the Prompt api Endpoint for the Fitbit Ingest Service
+ *
  * @author James H Britton
  * @author Jack Thomson
  */
@@ -37,6 +38,9 @@ public class Prompt extends HttpServlet {
     @EJB
     GatekeeperLogin gatekeeperLogin;
 
+    @EJB
+    TokenMapDAO tokenMapDAO;
+
     private static final String paramName = "userId";
 
     private FitbitDataCollector collector;
@@ -45,10 +49,10 @@ public class Prompt extends HttpServlet {
 
     @Override
     public void init() {
-        collector = new FitbitDataCollector(oAuthBean);
+        collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String userId;
         Map<String, String[]> paramMap = request.getParameterMap();
@@ -69,7 +73,7 @@ public class Prompt extends HttpServlet {
 
             userId = paramMap.get(paramName)[0];
 
-            if (!gatekeeperLogin.validateAccessToken(authHead[1])) {
+            if (gatekeeperLogin.isInvalidAccessToken(authHead[1])) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Access Token!");
                 return;
             }

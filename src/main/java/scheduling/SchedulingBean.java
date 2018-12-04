@@ -7,8 +7,9 @@ import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
-import datacollection.ActivityMap;
+import datacollection.mappings.ActivityMap;
 import persistence.TokenMap;
+import persistence.TokenMapDAO;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -24,9 +25,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
  * Scheduling EJB for kicking of the scheduling tasks that will run once the application has started up.
- * @Author James H Britton
- * @Author "jhb15@aber,ac,uk"
- * @Version 0.1
+ *
+ * @author James H Britton
+ * @author "jhb15@aber,ac,uk"
+ * @version 0.1
  */
 @Startup
 @Singleton
@@ -41,6 +43,9 @@ public class SchedulingBean {
     @EJB
     ActivityMappingBean activityMappingBean;
 
+    @EJB
+    TokenMapDAO tokenMapDAO;
+
     private FitbitDataCollector collector;
     private final FitbitDataConverter converter = new FitbitDataConverter();
     private final FitbitDataProcessor processor = new FitbitDataProcessor();
@@ -52,7 +57,7 @@ public class SchedulingBean {
     @PostConstruct
     public void atStartup() {
         System.out.println("Scheduling EJB Initialised!");
-        collector = new FitbitDataCollector(oAuthBean);
+        collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
 
         // These are needed on start up.
         updateActivityMappings();
@@ -61,7 +66,7 @@ public class SchedulingBean {
     /**
      * This method is ran every hour.
      */
-    @Schedule(hour = "*/1", minute = "0", second = "0", persistent = false)
+    @Schedule(hour = "*/1", persistent = false)
     public void getFitbitData() {
         List<TokenMap> allTokens = TokenMap.getAllTokenMap(em);
 
@@ -80,7 +85,7 @@ public class SchedulingBean {
 
         // Update last accessed
         Date now = new Date();
-        for (TokenMap map: allTokens) {
+        for (TokenMap map : allTokens) {
             map.setLastAccessed(now);
         }
     }
@@ -88,7 +93,7 @@ public class SchedulingBean {
     /**
      * This method is ran every half hour.
      */
-    @Schedule(hour= "*", minute = "*/30", second = "0", persistent = false)
+    @Schedule(hour = "*", minute = "*/30", persistent = false)
     public void updateActivityMappings() {
         ActivityMap[] map = loading.checkMappings();
         if (map == null) return;
