@@ -32,14 +32,14 @@ public class OAuthLogin extends HttpServlet {
     AuditHelper auditHelper;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws  IOException {
+            throws IOException {
         response.setContentType("text/html");
 
         String state = request.getParameter("state");
 
-        if(state == null) {
+        if (state == null) {
             gatekeeperLogin.redirectToGatekeeper(response, EnvironmentVariableClass.getFitbitIngestLoginUrl(), "gateAccess");
-        } else if (state.equals("gateAccess")){
+        } else if (state.equals("gateAccess")) {
             gatekeeperLogin.getGatekeeperGetAccessToken(request);
             redirectToFitbit(response);
         } else if (state.equals("some_params")) {

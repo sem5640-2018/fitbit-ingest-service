@@ -42,12 +42,13 @@ public class DataCheckThread implements Runnable {
 
     /**
      * Function for sending a request for Activity Data to the Fitbit API.
+     *
      * @param tokenMap TokenMap for user we want data for.
      */
     private void requestActivityData(TokenMap tokenMap) {
         ProcessedData toReturn = new ProcessedData(tokenMap);
         Date lastAccessed = tokenMap.getLastAccessed();
-        LinkedList<String> addressesToPoll = new LinkedList<String>();
+        LinkedList<String> addressesToPoll = new LinkedList<>();
 
         addressesToPoll.add(dateToFormat(now));
         if (lastAccessed != null && doNeedPreviousDay(lastAccessed))
@@ -63,32 +64,38 @@ public class DataCheckThread implements Runnable {
         try {
             // Refresh token on start
             final OAuth2AccessToken accessToken = this.fitbitClient.refreshAccessToken(tokenMap.getRefreshToken());
+            tokenMap.setAccessToken(accessToken.getAccessToken());
+            tokenMap.setRefreshToken(accessToken.getRefreshToken());
+            tokenMap.setExpiresIn(accessToken.getExpiresIn());
 
             for (String date : addressesToPoll) {
-                final String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
-                final String steps = "https://api.fitbit.com/1/user/-/activities/steps/date/" + date + "/1d.json";
+                try {
+                    final String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
+                    final String steps = "https://api.fitbit.com/1/user/-/activities/steps/date/" + date + "/1d.json";
 
-                // Request Activities
-                OAuthRequest request = new OAuthRequest(Verb.GET,
-                        String.format(activities, tokenMap.getUserID()));
-                request.addHeader("x-li-format", "json");
-                this.fitbitClient.signRequest(accessToken, request);
-                Response response =  this.fitbitClient.execute(request);
-                toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
+                    // Request Activities
+                    OAuthRequest request = new OAuthRequest(Verb.GET,
+                            String.format(activities, tokenMap.getUserID()));
+                    request.addHeader("x-li-format", "json");
+                    this.fitbitClient.signRequest(accessToken, request);
+                    Response response = this.fitbitClient.execute(request);
+                    toReturn.addActivityJSON(new ActivityJSON(response.getBody(), date));
 
-                // Request Steps
-                request = new OAuthRequest(Verb.GET,
-                        String.format(steps, tokenMap.getUserID()));
-                request.addHeader("x-li-format", "json");
-                this.fitbitClient.signRequest(accessToken, request);
-                response =  this.fitbitClient.execute(request);
-                toReturn.addStepsJSON(new ActivityJSON(response.getBody(), date));
+                    // Request Steps
+                    request = new OAuthRequest(Verb.GET,
+                            String.format(steps, tokenMap.getUserID()));
+                    request.addHeader("x-li-format", "json");
+                    this.fitbitClient.signRequest(accessToken, request);
+                    response = this.fitbitClient.execute(request);
+                    toReturn.addStepsJSON(new ActivityJSON(response.getBody(), date));
+                } catch (Exception err) {
+                    err.printStackTrace();
+                }
             }
-        }
-       catch (Exception err) {
+        } catch (Exception err) {
             err.printStackTrace();
-           // RETURN TERMINATE UPDATE
-           return;
+            // RETURN TERMINATE UPDATE
+            return;
         }
 
         output.add(toReturn);

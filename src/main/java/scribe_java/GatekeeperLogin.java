@@ -45,7 +45,6 @@ public class GatekeeperLogin implements Serializable {
 
                 userAccessToken = (GatekeeperOAuth2AccessToken) inAccessToken;
                 System.out.println("USER ID IN GATE AT: " + userAccessToken.getUserId());
-                return;
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -62,14 +61,12 @@ public class GatekeeperLogin implements Serializable {
                 throw new Exception("inAccessToken isn't instanceof GatekeeperOAuth2AccessToken");
 
             AuthStorage.setApplicationToken((GatekeeperOAuth2AccessToken) inAccessToken);
-            return;
-
         } catch (Exception e) {
             System.err.println("[GatekeeperLogin.getGatekeeperGrantAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
         }
     }
 
-    public boolean validateAccessToken(String accessToken, String[] expectedAud) {
+    public boolean isInvalidAccessToken(String accessToken, String[] expectedAud) {
         try {
             JWTClaimsSet claimsSet = GatekeeperJsonTokenExtractor.instance().getJWTClaimSet(accessToken);
             System.out.println("Token Issued By: " + claimsSet.getIssuer());
@@ -85,10 +82,10 @@ public class GatekeeperLogin implements Serializable {
                 }
             }
 
-            return true;
+            return false;
         } catch (Exception e) {
             System.err.println("[GatekeeperLogin.validateAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
-            return false;
+            return true;
         }
     }
 

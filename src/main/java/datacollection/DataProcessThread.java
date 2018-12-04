@@ -26,7 +26,7 @@ public class DataProcessThread implements Runnable {
 
     private ConcurrentLinkedQueue<ProcessedData> input;
 
-    public DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input) {
+    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input) {
         // Create Shallow copy to the global linked queue
         this.input = input;
         try {
@@ -57,8 +57,8 @@ public class DataProcessThread implements Runnable {
     }
 
     private LinkedList<String> getPacketsToSend(LinkedList<Activity> readyToSend) {
-        LinkedList<String> toSend = new LinkedList<String>();
-        for (Activity activity: readyToSend) {
+        LinkedList<String> toSend = new LinkedList<>();
+        for (Activity activity : readyToSend) {
             try {
                 HealthDataFormat formattedData = new HealthDataFormat(activity);
                 // If not set, then we can't send the data
@@ -74,37 +74,37 @@ public class DataProcessThread implements Runnable {
     }
 
     private LinkedList<Activity> getRelevantActivities(ProcessedData input, LinkedList<Activity> allActivities) {
-      LinkedList<Activity> relevantActivities = new LinkedList<Activity>();
+        LinkedList<Activity> relevantActivities = new LinkedList<>();
 
-      for(Activity activity: allActivities) {
-          if (isRelevant(activity, input.getInputToken().getLastAccessed()))
-              relevantActivities.add(activity);
-      }
+        for (Activity activity : allActivities) {
+            if (isRelevant(activity, input.getInputToken().getLastAccessed()))
+                relevantActivities.add(activity);
+        }
 
-      return relevantActivities;
+        return relevantActivities;
     }
 
     private LinkedList<Activity> getAllActivities(ProcessedData input) {
-      LinkedList<Activity> activities = new LinkedList<Activity>();
+        LinkedList<Activity> activities = new LinkedList<>();
 
-      for(FitBitJSON fitbitClass: input.getProcessedActivities()) {
-          for (Activity activity: fitbitClass.getActivities()) {
+        for (FitBitJSON fitbitClass : input.getProcessedActivities()) {
+            for (Activity activity : fitbitClass.getActivities()) {
 
-              // To deal with Fitbits API formatting getting an end date for an activity.....
-              // Not sure of a better way to approach this.
-              String dateStr = fitbitClass.getFromDate() + ":" + activity.getStartTime();
-              try {
-                  Date startTime = df.parse(dateStr);
-                  activity.setJavaDate(startTime);
-                  activity.setUserID(fitbitClass.getUserID());
-                  activities.add(activity);
-              } catch (Exception e) {
-                  System.out.println(dateStr);
-                  e.printStackTrace();
-              }
-          }
-      }
-      return activities;
+                // To deal with Fitbits API formatting getting an end date for an activity.....
+                // Not sure of a better way to approach this.
+                String dateStr = fitbitClass.getFromDate() + ":" + activity.getStartTime();
+                try {
+                    Date startTime = df.parse(dateStr);
+                    activity.setJavaDate(startTime);
+                    activity.setUserID(fitbitClass.getUserID());
+                    activities.add(activity);
+                } catch (Exception e) {
+                    System.out.println(dateStr);
+                    e.printStackTrace();
+                }
+            }
+        }
+        return activities;
     }
 
     private boolean isRelevant(Activity activity, Date lastChecked) {
@@ -112,7 +112,7 @@ public class DataProcessThread implements Runnable {
     }
 
     private void sendData(LinkedList<String> dataToSend) {
-        for (String jsonData: dataToSend) {
+        for (String jsonData : dataToSend) {
             try {
                 doPost(jsonData);
             } catch (Exception e) {
@@ -121,14 +121,14 @@ public class DataProcessThread implements Runnable {
         }
     }
 
-    private void doPost(String rawData) throws  Exception{
+    private void doPost(String rawData) throws Exception {
         String type = "application/x-www-form-urlencoded";
-        String encodedData = URLEncoder.encode( rawData, "UTF-8" );
+        String encodedData = URLEncoder.encode(rawData, "UTF-8");
         HttpURLConnection conn = (HttpURLConnection) postURL.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
-        conn.setRequestProperty( "Content-Type", type );
-        conn.setRequestProperty( "Content-Length", String.valueOf(encodedData.length()));
+        conn.setRequestProperty("Content-Type", type);
+        conn.setRequestProperty("Content-Length", String.valueOf(encodedData.length()));
         OutputStream os = conn.getOutputStream();
         os.write(encodedData.getBytes());
     }

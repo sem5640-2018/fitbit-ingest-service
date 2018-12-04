@@ -9,9 +9,10 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 /**
  * Class that handles making API calls to Fitbit. Will probably use ScribeJava library to achive this. Currently
  * Unimplemented.
- * @Author James H Britton
- * @Author "jhb15@aber.ac.uk"
- * @Version 0.1
+ *
+ * @author James H Britton
+ * @author "jhb15@aber.ac.uk"
+ * @version 0.1
  */
 public class FitbitDataCollector {
     private static final int threadCount = 4;
@@ -22,8 +23,8 @@ public class FitbitDataCollector {
     }
 
     public ConcurrentLinkedQueue<ProcessedData> getAllUsersSynchronous(TokenMap[] tokenMap) {
-        ConcurrentLinkedQueue<TokenMap> input = new ConcurrentLinkedQueue<TokenMap>(Arrays.asList(tokenMap));
-        ConcurrentLinkedQueue<ProcessedData> output = new ConcurrentLinkedQueue<ProcessedData>();
+        ConcurrentLinkedQueue<TokenMap> input = new ConcurrentLinkedQueue<>(Arrays.asList(tokenMap));
+        ConcurrentLinkedQueue<ProcessedData> output = new ConcurrentLinkedQueue<>();
 
         DataCheckThread dataCheckThread = new DataCheckThread(input, output, oAuthBean);
         dataCheckThread.run();
@@ -38,15 +39,15 @@ public class FitbitDataCollector {
      * @return a linked list of the data ready for it to be processed
      */
     public ConcurrentLinkedQueue<ProcessedData> getAllUsersInfo(TokenMap[] tokenMap) {
-      ConcurrentLinkedQueue<TokenMap> input = new ConcurrentLinkedQueue<TokenMap>(Arrays.asList(tokenMap));
-      ConcurrentLinkedQueue<ProcessedData> output = new ConcurrentLinkedQueue<ProcessedData>();
+        ConcurrentLinkedQueue<TokenMap> input = new ConcurrentLinkedQueue<>(Arrays.asList(tokenMap));
+        ConcurrentLinkedQueue<ProcessedData> output = new ConcurrentLinkedQueue<>();
 
-      Thread[] threads = new Thread[threadCount];
+        Thread[] threads = new Thread[threadCount];
 
-      for (int i = 0; i < threadCount; i++) {
-         threads[i] = new Thread(new DataCheckThread(input, output, oAuthBean));
-         threads[i].start();
-      }
+        for (int i = 0; i < threadCount; i++) {
+            threads[i] = new Thread(new DataCheckThread(input, output, oAuthBean));
+            threads[i].start();
+        }
 
         for (int j = 0; j < threadCount; j++) {
             try {
@@ -56,6 +57,6 @@ public class FitbitDataCollector {
             }
         }
 
-      return output;
+        return output;
     }
 }
