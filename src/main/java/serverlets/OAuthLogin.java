@@ -4,6 +4,7 @@ import config.EnvironmentVariableClass;
 import beans.OAuthBean;
 import com.github.scribejava.apis.fitbit.FitBitOAuth2AccessToken;
 import com.github.scribejava.core.model.OAuth2AccessToken;
+import logging.AuditHelper;
 import persistence.TokenMap;
 import persistence.TokenMapDAO;
 import scribe_java.GatekeeperLogin;
@@ -26,6 +27,9 @@ public class OAuthLogin extends HttpServlet {
 
     @EJB
     GatekeeperLogin gatekeeperLogin;
+
+    @EJB
+    AuditHelper auditHelper;
 
     public void doGet(HttpServletRequest request, HttpServletResponse response)
             throws  IOException {
@@ -61,6 +65,7 @@ public class OAuthLogin extends HttpServlet {
                         accessToken.getRefreshToken(), accessToken.getUserId());
                 map.setUserID(accessT);
                 tokenMapDAO.saveOrUpdate(map);
+                auditHelper.sendAudit("Authorizing Fitbit Access", "User has given Aberfitness permission to access there data.", gatekeeperLogin.getUser_id());
                 return;
             } catch (Exception e) {
                 e.printStackTrace();

@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 @Stateful
 public class GatekeeperLogin implements Serializable {
@@ -28,7 +29,7 @@ public class GatekeeperLogin implements Serializable {
     }
 
     public void redirectToGatekeeper(HttpServletResponse response, String callback, String state) throws IOException {
-        oAuthBean.initGatekeeperService(callback, state, "openid profile offline_access");
+        oAuthBean.initGatekeeperService(callback, state, AuthStorage.userTokenScope);
         String url = oAuthBean.getAberfitnessService().getAuthorizationUrl();
         response.sendRedirect(url);
     }
@@ -52,7 +53,7 @@ public class GatekeeperLogin implements Serializable {
     }
 
     public void getGatekeeperGrantAccessToken(String callback, String state) {
-        oAuthBean.initGatekeeperService(callback, state, "health_data_repository glados");
+        oAuthBean.initGatekeeperService(callback, state, AuthStorage.clientCredScope);
 
         try {
             OAuth2AccessToken inAccessToken = oAuthBean.getAberfitnessService().getAccessTokenClientCredentialsGrant();
@@ -68,13 +69,21 @@ public class GatekeeperLogin implements Serializable {
         }
     }
 
-    public boolean validateAccessToken(String accessToken) {
+    public boolean validateAccessToken(String accessToken, String[] expectedAud) {
         try {
             JWTClaimsSet claimsSet = GatekeeperJsonTokenExtractor.instance().getJWTClaimSet(accessToken);
             System.out.println("Token Issued By: " + claimsSet.getIssuer());
 
-            if (!claimsSet.getAudience().contains("fitbit_ingest_service"))
+            List<String> audience = claimsSet.getAudience();
+
+            if (expectedAud == null && !audience.contains("fitbit_ingest_service"))
                 throw new Exception("Access Token Audience does not include Fitbit Ingest!");
+            else {
+                for (String s: expectedAud) {
+                    if (!audience.contains(s))
+                        throw new Exception("Access Token Audience does not include Glados & Heath Data Repo!");
+                }
+            }
 
             return true;
         } catch (Exception e) {

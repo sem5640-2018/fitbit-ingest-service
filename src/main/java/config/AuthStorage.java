@@ -8,6 +8,9 @@ import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
  */
 public final class AuthStorage {
 
+    public static final String clientCredScope = "health_data_repository glados";
+    public static final String userTokenScope = "openid profile offline_access";
+
     private static GatekeeperOAuth2AccessToken applicationToken;
 
     /**

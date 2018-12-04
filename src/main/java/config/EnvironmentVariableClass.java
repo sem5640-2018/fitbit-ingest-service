@@ -20,6 +20,7 @@ public final class EnvironmentVariableClass {
     private static final String fitbitIngestUrl = appBaseUrl + System.getenv("FITBIT_INGEST_URL");
     private static final String gatekeeperUrl = systemBaseUrl + System.getenv("GATEKEEPER_URL");
     private static final String heathDataRepoUrl = systemBaseUrl + System.getenv("HEATH_DATA_REPO_URL");
+    private static final String gladosUrl = systemBaseUrl + System.getenv("GLADOS_URL");
     //Fitbit Ingest URL Defs
     private static final String fitbitIngestLoginUrl = fitbitIngestUrl + System.getenv("FI_LOGIN_URL");
     private static final String fitbitIngestPromptUrl = fitbitIngestUrl + System.getenv("FI_PROMPT_URL");
@@ -32,6 +33,8 @@ public final class EnvironmentVariableClass {
     //Heath Data Repo URL Defs
     private static final String heathDataRepoAddActivityUrl = heathDataRepoUrl + System.getenv("HDR_ADD_ACTIVITY_URL");
     private static final String heathDataRepoGetActivityTypesUrl = heathDataRepoUrl + System.getenv("HDR_GET_ACTIVITY_TYPES_URL");
+    //Glados URL Defs
+    private static final String gladosAddAudit = gladosUrl + System.getenv("GLADOS_ADD_AUDIT_URL");
 
     private EnvironmentVariableClass() {
     }
@@ -76,6 +79,10 @@ public final class EnvironmentVariableClass {
         return heathDataRepoUrl;
     }
 
+    public static String getGladosUrl() {
+        return gladosUrl;
+    }
+
     public static String getFitbitIngestLoginUrl() {
         return fitbitIngestLoginUrl;
     }
@@ -108,6 +115,10 @@ public final class EnvironmentVariableClass {
 
     public static String getHeathDataRepoGetActivityTypesUrl() {
         return heathDataRepoGetActivityTypesUrl;
+    }
+
+    public static String getGladosAddAudit() {
+        return gladosAddAudit;
     }
 
     public static boolean isAberfitnessDataPresent() {

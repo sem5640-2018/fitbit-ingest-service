@@ -69,7 +69,7 @@ public class Prompt extends HttpServlet {
 
             userId = paramMap.get(paramName)[0];
 
-            if (!gatekeeperLogin.validateAccessToken(authHead[1])) {
+            if (!gatekeeperLogin.validateAccessToken(authHead[1], null)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Access Token!");
                 return;
             }
