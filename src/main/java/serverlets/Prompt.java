@@ -6,6 +6,7 @@ import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
 import persistence.TokenMap;
+import persistence.TokenMapDAO;
 import scribe_java.GatekeeperLogin;
 
 import javax.ejb.EJB;
@@ -37,6 +38,9 @@ public class Prompt extends HttpServlet {
     @EJB
     GatekeeperLogin gatekeeperLogin;
 
+    @EJB
+    TokenMapDAO tokenMapDAO;
+
     private static final String paramName = "userId";
 
     private FitbitDataCollector collector;
@@ -45,7 +49,7 @@ public class Prompt extends HttpServlet {
 
     @Override
     public void init() {
-        collector = new FitbitDataCollector(oAuthBean);
+        collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
