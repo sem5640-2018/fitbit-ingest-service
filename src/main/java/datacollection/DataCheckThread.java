@@ -16,13 +16,15 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class DataCheckThread implements Runnable {
     private ConcurrentLinkedQueue<TokenMap> input;
     private ConcurrentLinkedQueue<ProcessedData> output;
+    private ConcurrentLinkedQueue<TokenMap> mapsToUpdate;
     private OAuth20Service fitbitClient;
     private Date now;
 
-    DataCheckThread(ConcurrentLinkedQueue<TokenMap> input, ConcurrentLinkedQueue<ProcessedData> out, OAuthBean oAuthBean) {
+    DataCheckThread(ConcurrentLinkedQueue<TokenMap> input, ConcurrentLinkedQueue<ProcessedData> out, ConcurrentLinkedQueue<TokenMap> mapsToUpdate, OAuthBean oAuthBean) {
         // Create Shallow copy to the global linked queue
         this.input = input;
         this.output = out;
+        this.mapsToUpdate = mapsToUpdate;
         fitbitClient = oAuthBean.getNewFitbitService();
         // Store the start of the requests
         now = new Date();
@@ -67,6 +69,7 @@ public class DataCheckThread implements Runnable {
             tokenMap.setAccessToken(accessToken.getAccessToken());
             tokenMap.setRefreshToken(accessToken.getRefreshToken());
             tokenMap.setExpiresIn(accessToken.getExpiresIn());
+            mapsToUpdate.add(tokenMap);
 
             for (String date : addressesToPoll) {
                 try {

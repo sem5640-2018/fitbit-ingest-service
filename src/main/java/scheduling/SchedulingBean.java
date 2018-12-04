@@ -9,6 +9,7 @@ import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
 import datacollection.mappings.ActivityMap;
 import persistence.TokenMap;
+import persistence.TokenMapDAO;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -42,6 +43,9 @@ public class SchedulingBean {
     @EJB
     ActivityMappingBean activityMappingBean;
 
+    @EJB
+    TokenMapDAO tokenMapDAO;
+
     private FitbitDataCollector collector;
     private final FitbitDataConverter converter = new FitbitDataConverter();
     private final FitbitDataProcessor processor = new FitbitDataProcessor();
@@ -53,7 +57,7 @@ public class SchedulingBean {
     @PostConstruct
     public void atStartup() {
         System.out.println("Scheduling EJB Initialised!");
-        collector = new FitbitDataCollector(oAuthBean);
+        collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
 
         // These are needed on start up.
         updateActivityMappings();

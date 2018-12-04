@@ -2,6 +2,7 @@ package datacollection;
 
 import beans.OAuthBean;
 import persistence.TokenMap;
+import persistence.TokenMapDAO;
 
 import java.util.Arrays;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -17,18 +18,22 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class FitbitDataCollector {
     private static final int threadCount = 4;
     private OAuthBean oAuthBean;
+    private TokenMapDAO tokenMapDAO;
 
-    public FitbitDataCollector(OAuthBean oAuthBean) {
+    public FitbitDataCollector(OAuthBean oAuthBean, TokenMapDAO tokenMapDAO) {
         this.oAuthBean = oAuthBean;
+        this.tokenMapDAO = tokenMapDAO;
     }
 
     public ConcurrentLinkedQueue<ProcessedData> getAllUsersSynchronous(TokenMap[] tokenMap) {
         ConcurrentLinkedQueue<TokenMap> input = new ConcurrentLinkedQueue<>(Arrays.asList(tokenMap));
+        ConcurrentLinkedQueue<TokenMap> updatedMaps = new ConcurrentLinkedQueue<>();
         ConcurrentLinkedQueue<ProcessedData> output = new ConcurrentLinkedQueue<>();
 
-        DataCheckThread dataCheckThread = new DataCheckThread(input, output, oAuthBean);
+        DataCheckThread dataCheckThread = new DataCheckThread(input, output, updatedMaps, oAuthBean);
         dataCheckThread.run();
 
+        UpdateAllTokens(updatedMaps);
         return output;
     }
 
@@ -40,12 +45,13 @@ public class FitbitDataCollector {
      */
     public ConcurrentLinkedQueue<ProcessedData> getAllUsersInfo(TokenMap[] tokenMap) {
         ConcurrentLinkedQueue<TokenMap> input = new ConcurrentLinkedQueue<>(Arrays.asList(tokenMap));
+        ConcurrentLinkedQueue<TokenMap> updatedMaps = new ConcurrentLinkedQueue<>();
         ConcurrentLinkedQueue<ProcessedData> output = new ConcurrentLinkedQueue<>();
 
         Thread[] threads = new Thread[threadCount];
 
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = new Thread(new DataCheckThread(input, output, oAuthBean));
+            threads[i] = new Thread(new DataCheckThread(input, output, updatedMaps, oAuthBean));
             threads[i].start();
         }
 
@@ -57,6 +63,14 @@ public class FitbitDataCollector {
             }
         }
 
+        UpdateAllTokens(updatedMaps);
+
         return output;
+    }
+
+    private void UpdateAllTokens(ConcurrentLinkedQueue<TokenMap> toUpdate) {
+        for (TokenMap map : toUpdate) {
+            tokenMapDAO.update(map);
+        }
     }
 }
