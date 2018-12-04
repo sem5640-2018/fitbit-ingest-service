@@ -42,7 +42,7 @@ public class AuditHelper implements Serializable {
 
     private GatekeeperOAuth2AccessToken getAccessToken() {
         GatekeeperOAuth2AccessToken retAT = AuthStorage.getApplicationToken();
-        if (retAT != null &&  gatekeeperLogin.validateAccessToken(retAT.getAccessToken(), AuthStorage.clientCredScope.split(" "))) {
+        if (retAT != null &&  !gatekeeperLogin.isInvalidAccessToken(retAT.getAccessToken(), AuthStorage.clientCredScope.split(" "))) {
             return retAT;
         } else {
             System.out.println("[AuditHelper.getAccessToken] Invalid Client Cred Access Token, Retrieving New One");

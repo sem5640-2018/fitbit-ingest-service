@@ -73,7 +73,7 @@ public class GatekeeperLogin implements Serializable {
 
             List<String> audience = claimsSet.getAudience();
 
-            if (expectedAud == null && !audience.contains("fitbit_ingest_service"))
+            if (expectedAud == null && !audience.contains(AuthStorage.fitbitScope))
                 throw new Exception("Access Token Audience does not include Fitbit Ingest!");
             else {
                 for (String s: expectedAud) {
