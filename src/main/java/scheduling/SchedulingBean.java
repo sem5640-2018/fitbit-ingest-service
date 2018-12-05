@@ -10,6 +10,8 @@ import datacollection.ProcessedData;
 import datacollection.mappings.ActivityMap;
 import persistence.TokenMap;
 import persistence.TokenMapDAO;
+import scribe_java.GatekeeperLogin;
+import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -45,6 +47,9 @@ public class SchedulingBean {
 
     @EJB
     TokenMapDAO tokenMapDAO;
+
+    @EJB
+    GatekeeperLogin gatekeeperLogin;
 
     private FitbitDataCollector collector;
     private final FitbitDataConverter converter = new FitbitDataConverter();
@@ -95,7 +100,8 @@ public class SchedulingBean {
      */
     @Schedule(hour = "*", minute = "*/30", persistent = false)
     public void updateActivityMappings() {
-        ActivityMap[] map = loading.checkMappings();
+        GatekeeperOAuth2AccessToken accessToken = gatekeeperLogin.getAccessToken();
+        ActivityMap[] map = loading.checkMappings(accessToken);
         if (map == null) return;
 
         activityMappingBean.UpdateMappings(map);

@@ -1,18 +1,19 @@
 package logging;
 
-import config.EnvironmentVariableClass;
 import beans.OAuthBean;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import exceptions.EnvConfigException;
+import config.EnvironmentVariableClass;
+import scribe_java.GatekeeperLogin;
+import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import javax.ejb.EJB;
-import java.io.IOException;
+import javax.ejb.Singleton;
+import java.io.Serializable;
 import java.util.Date;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Audit Helper for generating audit loggs to send off to the glados service.
@@ -20,14 +21,14 @@ import java.util.concurrent.ExecutionException;
  * @author 'jhb15@aber.ac.uk'
  * @version  0.1
  */
-public class AuditHelper {
+@Singleton
+public class AuditHelper implements Serializable {
 
     @EJB
-    private OAuthBean oAuthBean;
+    OAuthBean oAuthBean;
 
-    private static String destUrl;
-    private static String addAuditUrl;
-    private static String serviceName;
+    @EJB
+    GatekeeperLogin gatekeeperLogin;
 
     private Gson gson;
 
@@ -36,52 +37,34 @@ public class AuditHelper {
      */
     public AuditHelper() {
         gson = new GsonBuilder().create();
-        serviceName = EnvironmentVariableClass.getServiceName();
-        destUrl =  System.getenv("GLADOS_BASE_URL");
-        addAuditUrl =  System.getenv("GLADOS_NEW_AUDIT");
-        checkEnv();
     }
-
-    private void checkEnv() {
-        if (destUrl == null)
-            throw new EnvConfigException("Glados Base URL environment variable not set!");
-        if (addAuditUrl == null)
-            throw new EnvConfigException("Glados add Audit url pattern environment variable not set!");
-        if (serviceName == null)
-            throw new EnvConfigException("The service name environment variable isn't set!");
-    }
-
 
     /**
      * Sends an Audit Log to GLADOS using the API.
-     * @param severity Audit Severity
      * @param msg Audit Message
-     * @param currentUser user id of logged in user
-     * @param accessToken access token for current user
+     * @param detail Audit Details
+     * @param currentUser user id of which the Audit Log Belongs to.
      * @return 201 created, 401 unauthorised, 500 server error, 999 Exception Thrown
      */
-    public int sendAudit(String severity, String msg, String currentUser, String accessToken) {
+    public int sendAudit(String msg, String detail, String currentUser) {
         try {
+            GatekeeperOAuth2AccessToken accessToken = gatekeeperLogin.getAccessToken();
 
-            String content = "[" + severity + "]: " + msg;
-            AuditObj audObj = new AuditObj(content, serviceName, new Date(), currentUser);
+            String content = "[" + msg + "]: " + detail;
+            AuditObj audObj = new AuditObj(content, EnvironmentVariableClass.getServiceName(), new Date(), currentUser);
             String outJson = gson.toJson(audObj);
 
             System.out.println("Audit JSON to be sent to GLADOS: " + outJson);
-            final OAuthRequest request = new OAuthRequest(Verb.POST, destUrl + addAuditUrl);
+            final OAuthRequest request = new OAuthRequest(Verb.POST, EnvironmentVariableClass.getGladosAddAudit());
             request.addHeader("Content-Type", "application/json;charset=UTF-8");
-            request.addBodyParameter("payload", outJson);
+            request.setPayload(outJson);
             oAuthBean.getAberfitnessService().signRequest(accessToken, request);
 
             final Response response = oAuthBean.getAberfitnessService().execute(request);
 
             return response.getCode();
 
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return 999;

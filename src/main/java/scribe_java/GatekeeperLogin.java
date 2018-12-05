@@ -5,6 +5,7 @@ import beans.OAuthBean;
 import com.github.scribejava.core.model.OAuth2AccessToken;
 import com.nimbusds.jwt.JWTClaimsSet;
 import config.AuthStorage;
+import config.EnvironmentVariableClass;
 import scribe_java.gatekeeper.GatekeeperJsonTokenExtractor;
 import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
+import java.util.List;
 
 @Stateful
 public class GatekeeperLogin implements Serializable {
@@ -28,7 +30,7 @@ public class GatekeeperLogin implements Serializable {
     }
 
     public void redirectToGatekeeper(HttpServletResponse response, String callback, String state) throws IOException {
-        oAuthBean.initGatekeeperService(callback, state, "openid profile offline_access");
+        oAuthBean.initGatekeeperService(callback, state, AuthStorage.userTokenScope);
         String url = oAuthBean.getAberfitnessService().getAuthorizationUrl();
         response.sendRedirect(url);
     }
@@ -50,8 +52,8 @@ public class GatekeeperLogin implements Serializable {
         }
     }
 
-    public void getGatekeeperGrantAccessToken(String callback, String state, String scope) {
-        oAuthBean.initGatekeeperService(callback, state, scope);
+    private void retrieveNewClientCredAccessToken(String callback, String state) {
+        oAuthBean.initGatekeeperService(callback, state, AuthStorage.clientCredScope);
 
         try {
             OAuth2AccessToken inAccessToken = oAuthBean.getAberfitnessService().getAccessTokenClientCredentialsGrant();
@@ -61,17 +63,36 @@ public class GatekeeperLogin implements Serializable {
 
             AuthStorage.setApplicationToken((GatekeeperOAuth2AccessToken) inAccessToken);
         } catch (Exception e) {
-            System.err.println("[GatekeeperLogin.getGatekeeperGrantAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
+            System.err.println("[GatekeeperLogin.retrieveNewClientCredAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
         }
     }
 
-    public boolean isInvalidAccessToken(String accessToken) {
+    public GatekeeperOAuth2AccessToken getAccessToken() {
+        GatekeeperOAuth2AccessToken retAT = AuthStorage.getApplicationToken();
+        if (retAT != null &&  !isInvalidAccessToken(retAT.getAccessToken(), AuthStorage.clientCredScope.split(" "))) {
+            return retAT;
+        } else {
+            System.out.println("[AuditHelper.getAccessToken] Invalid Client Cred Access Token, Retrieving New One");
+            retrieveNewClientCredAccessToken(EnvironmentVariableClass.getFitbitIngestLoginUrl(), "gateAccess");
+            return AuthStorage.getApplicationToken();
+        }
+    }
+
+    public boolean isInvalidAccessToken(String accessToken, String[] expectedAud) {
         try {
             JWTClaimsSet claimsSet = GatekeeperJsonTokenExtractor.instance().getJWTClaimSet(accessToken);
             System.out.println("Token Issued By: " + claimsSet.getIssuer());
 
-            /*if (!claimsSet.getAudience().contains("fitbit-ingest-service")) //Disabled for testing purposes.
-                throw new Exception("Access Token Audience does not include Fitbit Ingest!");*/
+            List<String> audience = claimsSet.getAudience();
+
+            if (expectedAud == null && !audience.contains(AuthStorage.fitbitScope))
+                throw new Exception("Access Token Audience does not include Fitbit Ingest!");
+            else {
+                for (String s: expectedAud) {
+                    if (!audience.contains(s))
+                        throw new Exception("Access Token Audience does not include Glados & Heath Data Repo!");
+                }
+            }
 
             return false;
         } catch (Exception e) {

@@ -57,7 +57,7 @@ public class Check extends HttpServlet {
 
             userId = paramMap.get(paramName)[0];
 
-            if (gatekeeperLogin.isInvalidAccessToken(authHead[1])) {
+            if (gatekeeperLogin.isInvalidAccessToken(authHead[1], null)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Access Token!");
                 return;
             }
