@@ -1,12 +1,10 @@
 package datacollection;
 
-import config.AuthStorage;
-import config.EnvironmentVariableClass;
 import com.google.gson.Gson;
+import config.EnvironmentVariableClass;
 import datacollection.mappings.Activity;
 import datacollection.mappings.FitBitJSON;
 import datacollection.mappings.HealthDataFormat;
-import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -25,12 +23,14 @@ public class DataProcessThread implements Runnable {
     private DateFormat df = new SimpleDateFormat(format);
     private Gson gson = new Gson();
     private URL postURL;
+    private String bearerAuthString;
 
     private ConcurrentLinkedQueue<ProcessedData> input;
 
-    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input) {
+    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input, String bearerAuthString) {
         // Create Shallow copy to the global linked queue
         this.input = input;
+        this.bearerAuthString = bearerAuthString;
         try {
             postURL = new URL(EnvironmentVariableClass.getHeathDataRepoAddActivityUrl());
         } catch (MalformedURLException e) {
@@ -124,17 +124,12 @@ public class DataProcessThread implements Runnable {
     }
 
     private void doPost(String rawData) throws Exception {
-        GatekeeperOAuth2AccessToken accessToken = AuthStorage.getApplicationToken();
-        if(accessToken == null)
-            throw new Exception("Application Access Token Not Set");
-        String accessTokenAuth = accessToken.getTokenType() + " " + accessToken.getAccessToken();
-
         String type = "application/x-www-form-urlencoded";
         String encodedData = URLEncoder.encode(rawData, "UTF-8");
         HttpURLConnection conn = (HttpURLConnection) postURL.openConnection();
         conn.setDoOutput(true);
         conn.setRequestMethod("POST");
-        conn.setRequestProperty("Authorization", accessTokenAuth);
+        conn.setRequestProperty("Authorization", bearerAuthString);
         conn.setRequestProperty("Content-Type", type);
         conn.setRequestProperty("Content-Length", String.valueOf(encodedData.length()));
         OutputStream os = conn.getOutputStream();
