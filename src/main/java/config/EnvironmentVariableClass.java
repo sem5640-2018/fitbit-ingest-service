@@ -6,8 +6,8 @@ public final class EnvironmentVariableClass {
     private static final String serviceName = System.getenv("SERVICE_NAME");
 
     // Fitbit Info
-    private static final String fitbitClientId = System.getenv("fitbitClientId");
-    private static final String fitbitClientSecret = System.getenv("fitbitClientSecret");
+    private static final String fitbitClientId = System.getenv("FITBIT_CLI_ID");
+    private static final String fitbitClientSecret = System.getenv("FITBIT_CLI_SECRET");
 
     //Aberfitness Info
     private static final String aberfitnessClientId = System.getenv("ABERFITNESS_CLI_ID");
