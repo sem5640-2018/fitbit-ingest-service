@@ -65,7 +65,9 @@ public class OAuthLogin extends HttpServlet {
                         accessToken.getRefreshToken(), accessToken.getUserId());
                 map.setUserID(accessT);
                 tokenMapDAO.saveOrUpdate(map);
-                auditHelper.sendAudit("Authorizing Fitbit Access", "User has given Aberfitness permission to access there data.", gatekeeperLogin.getUser_id());
+                int ret = auditHelper.sendAudit("Authorizing Fitbit Access", "User has given Aberfitness permission to access there data.", gatekeeperLogin.getUser_id());
+                if (ret != 204)
+                    throw new Exception("Error Response from Glados. Trying to Send Audit. ResponseCode = " + ret);
                 return;
             } catch (Exception e) {
                 e.printStackTrace();
