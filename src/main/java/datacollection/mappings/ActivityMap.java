@@ -3,31 +3,31 @@ package datacollection.mappings;
 import java.util.LinkedList;
 
 class Mappings {
-    private String MappingKey;
-    private String Source;
+    private String mappingKey;
+    private String source;
 
     String getSource() {
-        return Source;
+        return source;
     }
 
     String getMappingKey() {
-        return MappingKey;
+        return mappingKey;
     }
 }
 
 public class ActivityMap {
-    private int ID;
-    private String Name;
-    private LinkedList<Mappings> Mappings;
+    private int id;
+    private String name;
+    private LinkedList<Mappings> mappings;
 
     public String getName() {
-        return Name;
+        return name;
     }
 
     public LinkedList<String> getAllUsedIds() {
         LinkedList<String> allIds = new LinkedList<>();
 
-        for (Mappings source : this.Mappings) {
+        for (Mappings source : this.mappings) {
             if (!source.getSource().equals("Fitbit"))
                 continue;
             allIds.add(source.getMappingKey());
@@ -37,6 +37,6 @@ public class ActivityMap {
     }
 
     int getID() {
-        return ID;
+        return id;
     }
 }
