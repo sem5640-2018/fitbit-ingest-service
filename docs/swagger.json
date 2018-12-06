@@ -45,6 +45,13 @@
 						"description": "The autherisation string",
 						"required": false,
 						"type": "string"
+					},
+					{
+						"name": "callback",
+						"in": "query",
+						"description": "The url to redirect to once logged into fitbit.",
+						"required": false,
+						"type": "string"
 					}
 				],
 				"consumes": ["application/json"],
