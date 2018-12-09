@@ -38,8 +38,8 @@ public class OAuthLogin extends HttpServlet {
         String state = request.getParameter("state");
 
         String callback = request.getParameter("callback");
-        if (callback != null)
-            gatekeeperLogin.setCallback(callback);
+        if (callback != null || state == null)
+            gatekeeperLogin.setCallback(callback != null ? callback : EnvironmentVariableClass.getAppBaseUrl());
 
         if (state == null) {
             gatekeeperLogin.redirectToGatekeeper(response, EnvironmentVariableClass.getFitbitIngestLoginUrl(), "gateAccess");
