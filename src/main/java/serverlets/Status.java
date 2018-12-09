@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author James H Britton
  */
-@WebServlet(name = "Status", urlPatterns = {"/api/Status"})
+@WebServlet(name = "Status", urlPatterns = {"/api/status", "/api/Status"})
 public class Status extends HttpServlet {
 
     /**
