@@ -24,6 +24,7 @@ public class GatekeeperLogin implements Serializable {
     OAuthBean oAuthBean;
 
     private GatekeeperOAuth2AccessToken userAccessToken;
+    private String callback;
 
     public GatekeeperLogin() {
         //
@@ -105,5 +106,13 @@ public class GatekeeperLogin implements Serializable {
         if (userAccessToken != null)
             return userAccessToken.getUserId();
         return null;
+    }
+
+    public String getCallback() {
+        return callback;
+    }
+
+    public void setCallback(String callback) {
+        this.callback = callback;
     }
 }

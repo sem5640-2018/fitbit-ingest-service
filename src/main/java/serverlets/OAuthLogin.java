@@ -37,6 +37,10 @@ public class OAuthLogin extends HttpServlet {
 
         String state = request.getParameter("state");
 
+        String callback = request.getParameter("callback");
+        if (callback != null)
+            gatekeeperLogin.setCallback(callback);
+
         if (state == null) {
             gatekeeperLogin.redirectToGatekeeper(response, EnvironmentVariableClass.getFitbitIngestLoginUrl(), "gateAccess");
         } else if (state.equals("gateAccess")) {
@@ -44,6 +48,7 @@ public class OAuthLogin extends HttpServlet {
             redirectToFitbit(response);
         } else if (state.equals("some_params")) {
             getFitbitAccessToken(request, gatekeeperLogin.getUser_id());
+            response.sendRedirect(gatekeeperLogin.getCallback());
         }
     }
 
