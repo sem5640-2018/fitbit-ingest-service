@@ -13,7 +13,7 @@ import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 import javax.ejb.EJB;
 import javax.ejb.Singleton;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.Instant;
 
 /**
  * Audit Helper for generating audit loggs to send off to the glados service.
@@ -51,7 +51,7 @@ public class AuditHelper implements Serializable {
             GatekeeperOAuth2AccessToken accessToken = gatekeeperLogin.getAccessToken();
 
             String content = "[" + msg + "]: " + detail;
-            AuditObj audObj = new AuditObj(content, EnvironmentVariableClass.getServiceName(), new Date(), currentUser);
+            AuditObj audObj = new AuditObj(content, EnvironmentVariableClass.getServiceName(), Instant.now(), currentUser);
             String outJson = gson.toJson(audObj);
 
             System.out.println("Audit JSON to be sent to GLADOS: " + outJson);
@@ -78,10 +78,10 @@ class AuditObj {
 
     private String content;
     private String serviceName;
-    private Date timestamp;
+    private Instant timestamp;
     private String userId;
 
-    public AuditObj(String content, String serviceName, Date timestamp, String userId) {
+    AuditObj(String content, String serviceName, Instant timestamp, String userId) {
         this.content = content;
         this.serviceName = serviceName;
         this.timestamp = timestamp;
