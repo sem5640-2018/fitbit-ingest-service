@@ -4,6 +4,7 @@ import config.AuthStorage;
 import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class FitbitDataProcessor {
     private static final int threadCount = 4;
@@ -21,15 +22,21 @@ public class FitbitDataProcessor {
     }
 
     public void ProcessSynchronous(ConcurrentLinkedQueue<ProcessedData> input) {
-        DataProcessThread processThread = new DataProcessThread(input, generateBearerString());
+        AtomicInteger counter = new AtomicInteger();
+        counter.set(0);
+        DataProcessThread processThread = new DataProcessThread(input, generateBearerString(), counter);
         processThread.run();
+
+        System.out.println("Sent " + counter.get() + ", data packets to health data repository");
     }
 
     public void ProcessData(ConcurrentLinkedQueue<ProcessedData> input) {
         Thread[] threads = new Thread[threadCount];
+        AtomicInteger counter = new AtomicInteger();
+        counter.set(0);
 
         for (int i = 0; i < threadCount; i++) {
-            threads[i] = new Thread(new DataProcessThread(input, generateBearerString()));
+            threads[i] = new Thread(new DataProcessThread(input, generateBearerString(), counter));
             threads[i].start();
         }
 
@@ -40,5 +47,6 @@ public class FitbitDataProcessor {
                 e.printStackTrace();
             }
         }
+        System.out.println("Sent " + counter.get() + " data packets to health data repository");
     }
 }
