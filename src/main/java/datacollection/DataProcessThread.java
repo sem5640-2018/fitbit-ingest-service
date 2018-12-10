@@ -5,6 +5,7 @@ import config.EnvironmentVariableClass;
 import datacollection.mappings.Activity;
 import datacollection.mappings.FitBitJSON;
 import datacollection.mappings.HealthDataFormat;
+import datacollection.mappings.Steps;
 
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -16,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DataProcessThread implements Runnable {
 
@@ -24,13 +26,15 @@ public class DataProcessThread implements Runnable {
     private Gson gson = new Gson();
     private URL postURL;
     private String bearerAuthString;
+    private AtomicInteger counter;
 
     private ConcurrentLinkedQueue<ProcessedData> input;
 
-    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input, String bearerAuthString) {
+    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input, String bearerAuthString, AtomicInteger atomicInteger) {
         // Create Shallow copy to the global linked queue
         this.input = input;
         this.bearerAuthString = bearerAuthString;
+        this.counter = atomicInteger;
         try {
             postURL = new URL(EnvironmentVariableClass.getHeathDataRepoAddActivityUrl());
         } catch (MalformedURLException e) {
@@ -54,11 +58,12 @@ public class DataProcessThread implements Runnable {
         LinkedList<Activity> allActivities = getAllActivities(input);
         allActivities = getRelevantActivities(input, allActivities);
 
-        LinkedList<String> readyToSend = getPacketsToSend(allActivities);
+        LinkedList<Steps> allSteps = getRelevantSteps(input, input.getProcessedSteps());
+        LinkedList<String> readyToSend = getPacketsToSend(allActivities, allSteps);
         sendData(readyToSend);
     }
 
-    private LinkedList<String> getPacketsToSend(LinkedList<Activity> readyToSend) {
+    private LinkedList<String> getPacketsToSend(LinkedList<Activity> readyToSend, LinkedList<Steps> stepsToSend) {
         LinkedList<String> toSend = new LinkedList<>();
         for (Activity activity : readyToSend) {
             try {
@@ -72,6 +77,16 @@ public class DataProcessThread implements Runnable {
                 e.printStackTrace();
             }
         }
+
+        for (Steps steps : stepsToSend) {
+            try {
+                HealthDataFormat formattedData = new HealthDataFormat(steps);
+                toSend.add(gson.toJson(formattedData));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
         return toSend;
     }
 
@@ -79,6 +94,17 @@ public class DataProcessThread implements Runnable {
         LinkedList<Activity> relevantActivities = new LinkedList<>();
 
         for (Activity activity : allActivities) {
+            if (isRelevant(activity, input.getInputToken().getLastAccessed()))
+                relevantActivities.add(activity);
+        }
+
+        return relevantActivities;
+    }
+
+    private LinkedList<Steps> getRelevantSteps(ProcessedData input, LinkedList<Steps> allSteps) {
+        LinkedList<Steps> relevantActivities = new LinkedList<>();
+
+        for (Steps activity : allSteps) {
             if (isRelevant(activity, input.getInputToken().getLastAccessed()))
                 relevantActivities.add(activity);
         }
@@ -113,11 +139,17 @@ public class DataProcessThread implements Runnable {
         return activity.getJavaDate().getTime() + activity.getDuration() > lastChecked.getTime();
     }
 
+    private boolean isRelevant(Steps activity, Date lastChecked) {
+        return activity.getDateTime().getTime() + 3600000 > lastChecked.getTime();
+    }
+
     private void sendData(LinkedList<String> dataToSend) {
         for (String jsonData : dataToSend) {
             try {
+                counter.incrementAndGet();
                 doPost(jsonData);
             } catch (Exception e) {
+                counter.decrementAndGet();
                 e.printStackTrace();
             }
         }

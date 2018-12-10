@@ -2,6 +2,8 @@ package datacollection;
 
 import com.google.gson.Gson;
 import datacollection.mappings.FitBitJSON;
+import datacollection.mappings.FitbitSteps;
+import datacollection.mappings.Steps;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -27,6 +29,14 @@ public class FitbitDataConverter {
                 activityClass.setFromDate(json.date);
                 activityClass.setUserID(data.getInputToken().getUserID());
                 data.addProcessedActivity(activityClass);
+            }
+
+            for (ActivityJSON json : data.getStepsJSON()) {
+                FitbitSteps overView = gson.fromJson(json.JSON, FitbitSteps.class);
+                for (Steps activityClass: overView.getActivities()) {
+                    activityClass.setUserID(data.getInputToken().getUserID());
+                    data.addProcessedSteps(activityClass);
+                }
             }
         }
 

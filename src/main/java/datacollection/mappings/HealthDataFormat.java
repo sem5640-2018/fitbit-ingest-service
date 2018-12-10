@@ -4,6 +4,7 @@ import beans.ActivityMappingBean;
 
 import javax.ejb.EJB;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 
@@ -50,6 +51,28 @@ public class HealthDataFormat {
         MetresElevationGained = -1;
     }
 
+    public HealthDataFormat(Steps steps) {
+        // Mapping bean is not working
+        if (mappingBean == null)
+            return;
+
+        ActivityMap map = mappingBean.getMapFromID("HOURLYSTEPS");
+        if (map == null)
+            return;
+
+        UserID = steps.getUserID();
+        StartTimestamp = sdf.format(steps.getDateTime());
+        EndTimestamp = sdf.format(getHourLater(steps.getDateTime()));
+
+        ActivityType = map.getID();
+        CaloriesBurnt = 0;
+
+        AverageHeartRate = -1;
+        StepsTaken = steps.getValue();
+        MetresElevationGained = -1;
+        MetresTravelled = -1;
+    }
+
     public float getDistance() {
         return MetresTravelled;
     }
@@ -72,6 +95,13 @@ public class HealthDataFormat {
 
     private static Date getEndDate(Activity input) {
         return new Date(input.getJavaDate().getTime() + input.getDuration());
+    }
+
+    private static Date getHourLater(Date date) {
+        Calendar cal = Calendar.getInstance(); // creates calendar
+        cal.setTime(date); // sets calendar time/date
+        cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
+        return cal.getTime(); // returns new date object, one hour in the future
     }
 
     public String getEndTimestamp() {

@@ -1,6 +1,7 @@
 package datacollection;
 
 import datacollection.mappings.FitBitJSON;
+import datacollection.mappings.Steps;
 import persistence.TokenMap;
 
 import java.util.LinkedList;
@@ -22,12 +23,14 @@ public class ProcessedData {
     private LinkedList<ActivityJSON> StepsJSON;
 
     private LinkedList<FitBitJSON> ProcessedActivities;
+    private LinkedList<Steps> ProcessedSteps;
 
     public ProcessedData(TokenMap inputToken) {
         this.InputToken = inputToken;
 
         ActivityJSON = new LinkedList<>();
         StepsJSON = new LinkedList<>();
+        ProcessedSteps = new LinkedList<>();
 
         ProcessedActivities = new LinkedList<>();
     }
@@ -35,6 +38,10 @@ public class ProcessedData {
     // Activity JSON
     LinkedList<ActivityJSON> getActivityJSON() {
         return ActivityJSON;
+    }
+    // Activity JSON
+    LinkedList<ActivityJSON> getStepsJSON() {
+        return StepsJSON;
     }
 
     void addActivityJSON(ActivityJSON input) {
@@ -52,6 +59,15 @@ public class ProcessedData {
 
     public void addProcessedActivity(FitBitJSON input) {
         ProcessedActivities.add(input);
+    }
+
+    // Processed Steps
+    LinkedList<Steps> getProcessedSteps() {
+        return ProcessedSteps;
+    }
+
+    public void addProcessedSteps(Steps input) {
+        ProcessedSteps.add(input);
     }
 
     TokenMap getInputToken() {
