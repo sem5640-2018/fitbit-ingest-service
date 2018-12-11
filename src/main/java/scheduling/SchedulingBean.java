@@ -53,7 +53,7 @@ public class SchedulingBean {
 
     private FitbitDataCollector collector;
     private final FitbitDataConverter converter = new FitbitDataConverter();
-    private final FitbitDataProcessor processor = new FitbitDataProcessor();
+    private FitbitDataProcessor processor;
     private final ActivityMapLoading loading = new ActivityMapLoading();
 
     /**
@@ -63,6 +63,7 @@ public class SchedulingBean {
     public void atStartup() {
         System.out.println("Scheduling EJB Initialised!");
         collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
+        processor = new FitbitDataProcessor(activityMappingBean);
 
         // These are needed on start up.
         updateActivityMappings();

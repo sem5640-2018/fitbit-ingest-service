@@ -74,7 +74,7 @@ public class DataCheckThread implements Runnable {
             for (String date : addressesToPoll) {
                 try {
                     final String activities = "https://api.fitbit.com/1/user/-/activities/date/" + date + ".json";
-                    final String steps = "https://api.fitbit.com/1/user/-/activities/steps/date/" + date + "/1h.json";
+                    final String steps = "https://api.fitbit.com/1/user/-/activities/steps/date/" + date + "/1d.json";
 
                     // Request Activities
                     OAuthRequest request = new OAuthRequest(Verb.GET,
