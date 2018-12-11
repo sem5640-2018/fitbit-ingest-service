@@ -62,7 +62,7 @@ public class HealthDataFormat {
 
         UserID = steps.getUserID();
         StartTimestamp = sdf.format(steps.getDateTime());
-        EndTimestamp = sdf.format(getHourLater(steps.getDateTime()));
+        EndTimestamp = sdf.format(getDayLater(steps.getDateTime()));
 
         ActivityType = map.getID();
         CaloriesBurnt = 0;
@@ -97,10 +97,10 @@ public class HealthDataFormat {
         return new Date(input.getJavaDate().getTime() + input.getDuration());
     }
 
-    private static Date getHourLater(Date date) {
+    private static Date getDayLater(Date date) {
         Calendar cal = Calendar.getInstance(); // creates calendar
         cal.setTime(date); // sets calendar time/date
-        cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
+        cal.add(Calendar.DATE, 1); // adds one hour
         return cal.getTime(); // returns new date object, one hour in the future
     }
 
