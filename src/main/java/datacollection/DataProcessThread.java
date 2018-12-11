@@ -11,6 +11,7 @@ import datacollection.mappings.Activity;
 import datacollection.mappings.FitBitJSON;
 import datacollection.mappings.HealthDataFormat;
 import datacollection.mappings.Steps;
+import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -25,24 +26,20 @@ public class DataProcessThread implements Runnable {
     private DateFormat df = new SimpleDateFormat(format);
     private Gson gson = new Gson();
     private String postURL;
-    private String bearerAuthString;
+    private GatekeeperOAuth2AccessToken accessToken;
     private AtomicInteger counter;
     private ActivityMappingBean activityMappingBean;
     private OAuth20Service gatekeeperService;
 
     private ConcurrentLinkedQueue<ProcessedData> input;
 
-    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input, String bearerAuthString, AtomicInteger atomicInteger,
+    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input, GatekeeperOAuth2AccessToken accessToken, AtomicInteger atomicInteger,
                       ActivityMappingBean activityMappingBean, OAuth20Service gatekeeperService) {
         // Create Shallow copy to the global linked queue
         this.input = input;
-        this.bearerAuthString = bearerAuthString;
+        this.accessToken = accessToken;
         this.counter = atomicInteger;
-        //try {
-            postURL = EnvironmentVariableClass.getHeathDataRepoAddActivityUrl();
-        /*} catch (MalformedURLException e) {
-            e.printStackTrace();
-        }*/
+        postURL = EnvironmentVariableClass.getHeathDataRepoAddActivityUrl();
         this.activityMappingBean = activityMappingBean;
         this.gatekeeperService = gatekeeperService;
     }
@@ -162,10 +159,14 @@ public class DataProcessThread implements Runnable {
     }
 
     private void doPost(String rawData) throws Exception {
+        String accessTokenString = "";
+        if (accessToken != null)
+            accessTokenString = accessToken.getAccessToken();
+
         OAuthRequest request = new OAuthRequest(Verb.POST, postURL);
         request.addHeader("Content-Type", "application/json;charset=UTF-8");
         request.setPayload(rawData);
-        gatekeeperService.signRequest(bearerAuthString, request);
+        gatekeeperService.signRequest(accessTokenString, request);
         Response response = gatekeeperService.execute(request);
         System.out.println(response.getCode() + "|" + response.getMessage() + "|" + response.getBody());
     }
