@@ -1,17 +1,18 @@
 package datacollection;
 
+import beans.ActivityMappingBean;
+import com.github.scribejava.core.model.OAuthRequest;
+import com.github.scribejava.core.model.Response;
+import com.github.scribejava.core.model.Verb;
+import com.github.scribejava.core.oauth.OAuth20Service;
 import com.google.gson.Gson;
 import config.EnvironmentVariableClass;
 import datacollection.mappings.Activity;
 import datacollection.mappings.FitBitJSON;
 import datacollection.mappings.HealthDataFormat;
 import datacollection.mappings.Steps;
+import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -24,22 +25,23 @@ public class DataProcessThread implements Runnable {
     private String format = "yyyy-MM-dd:H:m";
     private DateFormat df = new SimpleDateFormat(format);
     private Gson gson = new Gson();
-    private URL postURL;
-    private String bearerAuthString;
+    private String postURL;
+    private GatekeeperOAuth2AccessToken accessToken;
     private AtomicInteger counter;
+    private ActivityMappingBean activityMappingBean;
+    private OAuth20Service gatekeeperService;
 
     private ConcurrentLinkedQueue<ProcessedData> input;
 
-    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input, String bearerAuthString, AtomicInteger atomicInteger) {
+    DataProcessThread(ConcurrentLinkedQueue<ProcessedData> input, GatekeeperOAuth2AccessToken accessToken, AtomicInteger atomicInteger,
+                      ActivityMappingBean activityMappingBean, OAuth20Service gatekeeperService) {
         // Create Shallow copy to the global linked queue
         this.input = input;
-        this.bearerAuthString = bearerAuthString;
+        this.accessToken = accessToken;
         this.counter = atomicInteger;
-        try {
-            postURL = new URL(EnvironmentVariableClass.getHeathDataRepoAddActivityUrl());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
+        postURL = EnvironmentVariableClass.getHeathDataRepoAddActivityUrl();
+        this.activityMappingBean = activityMappingBean;
+        this.gatekeeperService = gatekeeperService;
     }
 
     /**
@@ -67,7 +69,7 @@ public class DataProcessThread implements Runnable {
         LinkedList<String> toSend = new LinkedList<>();
         for (Activity activity : readyToSend) {
             try {
-                HealthDataFormat formattedData = new HealthDataFormat(activity);
+                HealthDataFormat formattedData = new HealthDataFormat(activity, activityMappingBean);
                 // If not set, then we can't send the data
                 if (formattedData.getActivity_type() < 0)
                     continue;
@@ -80,7 +82,7 @@ public class DataProcessThread implements Runnable {
 
         for (Steps steps : stepsToSend) {
             try {
-                HealthDataFormat formattedData = new HealthDataFormat(steps);
+                HealthDataFormat formattedData = new HealthDataFormat(steps, activityMappingBean);
                 toSend.add(gson.toJson(formattedData));
             } catch (Exception e) {
                 e.printStackTrace();
@@ -140,7 +142,8 @@ public class DataProcessThread implements Runnable {
     }
 
     private boolean isRelevant(Steps activity, Date lastChecked) {
-        return activity.getDateTime().getTime() + 3600000 > lastChecked.getTime();
+        long compDate = (lastChecked == null) ? activity.getDateTime().getTime() : lastChecked.getTime();
+        return activity.getDateTime().getTime() + 3600000 > compDate;
     }
 
     private void sendData(LinkedList<String> dataToSend) {
@@ -156,15 +159,15 @@ public class DataProcessThread implements Runnable {
     }
 
     private void doPost(String rawData) throws Exception {
-        String type = "application/x-www-form-urlencoded";
-        String encodedData = URLEncoder.encode(rawData, "UTF-8");
-        HttpURLConnection conn = (HttpURLConnection) postURL.openConnection();
-        conn.setDoOutput(true);
-        conn.setRequestMethod("POST");
-        conn.setRequestProperty("Authorization", bearerAuthString);
-        conn.setRequestProperty("Content-Type", type);
-        conn.setRequestProperty("Content-Length", String.valueOf(encodedData.length()));
-        OutputStream os = conn.getOutputStream();
-        os.write(encodedData.getBytes());
+        String accessTokenString = "";
+        if (accessToken != null)
+            accessTokenString = accessToken.getAccessToken();
+
+        OAuthRequest request = new OAuthRequest(Verb.POST, postURL);
+        request.addHeader("Content-Type", "application/json;charset=UTF-8");
+        request.setPayload(rawData);
+        gatekeeperService.signRequest(accessTokenString, request);
+        Response response = gatekeeperService.execute(request);
+        System.out.println(response.getCode() + "|" + response.getMessage() + "|" + response.getBody());
     }
 }

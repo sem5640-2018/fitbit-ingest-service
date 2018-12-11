@@ -2,125 +2,122 @@ package datacollection.mappings;
 
 import beans.ActivityMappingBean;
 
-import javax.ejb.EJB;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
 
 public class HealthDataFormat {
-    @EJB
-    ActivityMappingBean mappingBean;
 
     private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX");
 
-    private String UserID;
-    private String StartTimestamp;
-    private String EndTimestamp;
+    private String userID;
+    private String startTimestamp;
+    private String endTimestamp;
 
-    private String Source = "Fitbit";
-    private int ActivityType = -1;
-    private long CaloriesBurnt;
+    private String source = "Fitbit";
+    private int activityTypeId = -1;
+    private long caloriesBurnt;
 
-    private float AverageHeartRate;
-    private long StepsTaken;
-    private float MetresTravelled;
-    private float MetresElevationGained;
+    private long averageHeartRate;
+    private long stepsTaken;
+    private float metresTravelled;
+    private float metresElevationGained;
 
-    public HealthDataFormat(Activity input) {
+    public HealthDataFormat(Activity input, ActivityMappingBean activityMappingBean) {
 
         // Mapping bean is not working
-        if (mappingBean == null)
+        if (activityMappingBean == null)
             return;
 
-        ActivityMap map = mappingBean.getMapFromID(Long.toString(input.getActivityId()));
+        ActivityMap map = activityMappingBean.getMapFromID(Long.toString(input.getActivityId()));
         if (map == null)
             return;
 
-        UserID = input.getUserID();
-        StartTimestamp = sdf.format(input.getJavaDate());
-        EndTimestamp = sdf.format(getEndDate(input));
+        userID = input.getUserID();
+        startTimestamp = sdf.format(input.getJavaDate());
+        endTimestamp = sdf.format(getEndDate(input));
 
         // If we have a mapping for this item
-        ActivityType = map.getID();
-        CaloriesBurnt = input.getCalories();
+        activityTypeId = map.getID();
+        caloriesBurnt = input.getCalories();
 
-        AverageHeartRate = -1;
-        StepsTaken = input.getSteps();
-        MetresTravelled = input.getDistance();
-        MetresElevationGained = -1;
+        averageHeartRate = 0;
+        stepsTaken = input.getSteps();
+        metresTravelled = input.getDistance();
+        metresElevationGained = 0;
     }
 
-    public HealthDataFormat(Steps steps) {
+    public HealthDataFormat(Steps steps, ActivityMappingBean activityMappingBean) {
         // Mapping bean is not working
-        if (mappingBean == null)
+        if (activityMappingBean == null)
             return;
 
-        ActivityMap map = mappingBean.getMapFromID("HOURLYSTEPS");
+        ActivityMap map = activityMappingBean.getMapFromID("HOURLYSTEPS");
         if (map == null)
             return;
 
-        UserID = steps.getUserID();
-        StartTimestamp = sdf.format(steps.getDateTime());
-        EndTimestamp = sdf.format(getHourLater(steps.getDateTime()));
+        userID = steps.getUserID();
+        startTimestamp = sdf.format(steps.getDateTime());
+        endTimestamp = sdf.format(getDayLater(steps.getDateTime()));
 
-        ActivityType = map.getID();
-        CaloriesBurnt = 0;
+        activityTypeId = map.getID();
+        caloriesBurnt = 0;
 
-        AverageHeartRate = -1;
-        StepsTaken = steps.getValue();
-        MetresElevationGained = -1;
-        MetresTravelled = -1;
+        averageHeartRate = 0;
+        stepsTaken = steps.getValue();
+        metresElevationGained = 0;
+        metresTravelled = 0;
     }
 
     public float getDistance() {
-        return MetresTravelled;
+        return metresTravelled;
     }
 
     public int getActivity_type() {
-        return ActivityType;
+        return activityTypeId;
     }
 
     public String getStart_time() {
-        return StartTimestamp;
+        return startTimestamp;
     }
 
     public long getStepsTaken() {
-        return StepsTaken;
+        return stepsTaken;
     }
 
     public long getCaloriesBurnt() {
-        return CaloriesBurnt;
+        return caloriesBurnt;
     }
 
     private static Date getEndDate(Activity input) {
         return new Date(input.getJavaDate().getTime() + input.getDuration());
     }
 
-    private static Date getHourLater(Date date) {
+    private static Date getDayLater(Date date) {
         Calendar cal = Calendar.getInstance(); // creates calendar
         cal.setTime(date); // sets calendar time/date
-        cal.add(Calendar.HOUR_OF_DAY, 1); // adds one hour
+        cal.add(Calendar.DATE, 1); // adds one hour
         return cal.getTime(); // returns new date object, one hour in the future
     }
 
     public String getEndTimestamp() {
-        return EndTimestamp;
+        return endTimestamp;
     }
 
     public String getSource() {
-        return Source;
+        return source;
     }
 
     public float getAverageHeartRate() {
-        return AverageHeartRate;
+        return averageHeartRate;
     }
 
     public float getMetresElevationGained() {
-        return MetresElevationGained;
+        return metresElevationGained;
     }
 
     public String getUserID() {
-        return UserID;
+        return userID;
     }
 }

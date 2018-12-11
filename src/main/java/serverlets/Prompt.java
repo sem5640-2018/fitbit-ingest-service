@@ -1,5 +1,6 @@
 package serverlets;
 
+import beans.ActivityMappingBean;
 import beans.OAuthBean;
 import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataConverter;
@@ -41,15 +42,19 @@ public class Prompt extends HttpServlet {
     @EJB
     TokenMapDAO tokenMapDAO;
 
+    @EJB
+    ActivityMappingBean activityMappingBean;
+
     private static final String paramName = "userId";
 
     private FitbitDataCollector collector;
     private final FitbitDataConverter converter = new FitbitDataConverter();
-    private final FitbitDataProcessor processor = new FitbitDataProcessor();
+    private FitbitDataProcessor processor;
 
     @Override
     public void init() {
         collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
+        processor = new FitbitDataProcessor(activityMappingBean);
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {

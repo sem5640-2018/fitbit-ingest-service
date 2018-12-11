@@ -1,16 +1,9 @@
 package beans;
 
 import com.google.gson.Gson;
-import datacollection.FitbitDataProcessor;
-import datacollection.ProcessedData;
 import datacollection.mappings.FitBitJSON;
 import org.junit.Assert;
 import org.junit.Test;
-import persistence.TokenMap;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class JSONTest {
 
@@ -29,7 +22,7 @@ public class JSONTest {
     }
 
 
-    @Test
+    /*@Test
     public void TestProcess() throws InterruptedException {
         TokenMap tm = new TokenMap();
         tm.setUserID("");
@@ -56,9 +49,9 @@ public class JSONTest {
         FitbitDataProcessor processor = new FitbitDataProcessor();
 
         processor.ProcessSynchronous(queue);
-    }
+    }*/
 
-    @Test
+    /*@Test
     public void TestConcurrency() {
         TokenMap tm = new TokenMap();
         tm.setUserID("");
@@ -84,5 +77,5 @@ public class JSONTest {
         }
 
         processor.ProcessData(queue);
-    }
+    }*/
 }
