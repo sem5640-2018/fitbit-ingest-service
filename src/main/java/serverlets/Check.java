@@ -3,7 +3,6 @@ package serverlets;
 import persistence.TokenMap;
 import persistence.TokenMapDAO;
 import scribe_java.AberFitnessClientLogin;
-import scribe_java.GatekeeperLogin;
 
 import javax.ejb.EJB;
 import javax.servlet.annotation.WebServlet;
@@ -24,9 +23,6 @@ public class Check extends HttpServlet {
 
     @EJB
     private TokenMapDAO tokenMapDAO;
-
-    @EJB
-    private GatekeeperLogin gatekeeperLogin;
 
     private static final String paramName = "userId";
 
