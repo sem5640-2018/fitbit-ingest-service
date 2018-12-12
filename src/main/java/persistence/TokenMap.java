@@ -20,20 +20,20 @@ import java.util.List;
 public class TokenMap implements Serializable {
 
     @Id
-    @GeneratedValue ( strategy = GenerationType.AUTO)
-    @Column(name="id")
-    private Long id;
+    @GeneratedValue
+    @Column(name="id", unique = true, nullable = false)
+    private long id;
 
     @Column(name="user_id", unique = true, nullable = false)
     private String userID;
 
-    @Column(name= "access_token")
+    @Column(name= "access_token", nullable = false)
     private String accessToken;
 
     @Column(name = "expires_in")
     private int expiresIn;
 
-    @Column(name= "refresh_token")
+    @Column(name= "refresh_token", nullable = false)
     private String refreshToken;
 
     @Column(name = "fitbit_uid")
