@@ -2,12 +2,15 @@ package serverlets;
 
 import beans.ActivityMappingBean;
 import beans.OAuthBean;
+import com.github.scribejava.core.model.Response;
 import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
 import datacollection.ProcessedData;
+import logging.AuditHelper;
 import persistence.TokenMap;
 import persistence.TokenMapDAO;
+import scribe_java.AberFitnessClientLogin;
 import scribe_java.GatekeeperLogin;
 
 import javax.ejb.EJB;
@@ -51,11 +54,13 @@ public class Prompt extends HttpServlet {
     private FitbitDataCollector collector;
     private final FitbitDataConverter converter = new FitbitDataConverter();
     private FitbitDataProcessor processor;
+    private AuditHelper auditHelper;
 
     @Override
     public void init() {
         collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
         processor = new FitbitDataProcessor(activityMappingBean);
+        auditHelper = new AuditHelper();
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -79,7 +84,7 @@ public class Prompt extends HttpServlet {
 
             userId = paramMap.get(paramName)[0];
 
-            if (gatekeeperLogin.isInvalidAccessToken(authHead[1], null)) {
+            if (AberFitnessClientLogin.isInvalidAccessToken(authHead[1], null)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Access Token!");
                 return;
             }
@@ -102,7 +107,9 @@ public class Prompt extends HttpServlet {
 
             userToken.setLastAccessed(new Date());
             tokenMapDAO.update(userToken);
-
+            Response res = auditHelper.sendAudit(AuditHelper.FITBIT_DATA_GRAB_MSG, "Collected at: " + userToken.getLastAccessed(), userToken.getUserID());
+            if (res != null && res.getCode() != 201)
+                System.err.println("[Prompt.doGet] GLaDOS Responded with unexpected code. Response was: " + res.getCode() + "|" + res.getMessage());
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Authorization Header Not Set or Not Bearer");
         }

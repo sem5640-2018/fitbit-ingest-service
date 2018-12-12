@@ -2,6 +2,7 @@ package serverlets;
 
 import persistence.TokenMap;
 import persistence.TokenMapDAO;
+import scribe_java.AberFitnessClientLogin;
 import scribe_java.GatekeeperLogin;
 
 import javax.ejb.EJB;
@@ -57,7 +58,7 @@ public class Check extends HttpServlet {
 
             userId = paramMap.get(paramName)[0];
 
-            if (gatekeeperLogin.isInvalidAccessToken(authHead[1], null)) {
+            if (AberFitnessClientLogin.isInvalidAccessToken(authHead[1], null)) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid Access Token!");
                 return;
             }

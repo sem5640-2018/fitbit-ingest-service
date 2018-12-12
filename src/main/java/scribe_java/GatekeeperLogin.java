@@ -3,10 +3,8 @@ package scribe_java;
 
 import beans.OAuthBean;
 import com.github.scribejava.core.model.OAuth2AccessToken;
-import com.nimbusds.jwt.JWTClaimsSet;
 import config.AuthStorage;
 import config.EnvironmentVariableClass;
-import scribe_java.gatekeeper.GatekeeperJsonTokenExtractor;
 import scribe_java.gatekeeper.GatekeeperOAuth2AccessToken;
 
 import javax.ejb.EJB;
@@ -15,7 +13,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.List;
 
 @Stateful
 public class GatekeeperLogin implements Serializable {
@@ -70,36 +67,12 @@ public class GatekeeperLogin implements Serializable {
 
     public GatekeeperOAuth2AccessToken getAccessToken() {
         GatekeeperOAuth2AccessToken retAT = AuthStorage.getApplicationToken();
-        if (retAT != null &&  !isInvalidAccessToken(retAT.getAccessToken(), AuthStorage.clientCredScope.split(" "))) {
+        if (retAT != null &&  !AberFitnessClientLogin.isInvalidAccessToken(retAT.getAccessToken(), AuthStorage.clientCredScope.split(" "))) {
             return retAT;
         } else {
             System.out.println("[AuditHelper.getAccessToken] Invalid Client Cred Access Token, Retrieving New One");
             retrieveNewClientCredAccessToken(EnvironmentVariableClass.getFitbitIngestLoginUrl(), "gateAccess");
             return AuthStorage.getApplicationToken();
-        }
-    }
-
-    public boolean isInvalidAccessToken(String accessToken, String[] expectedAud) {
-        try {
-            JWTClaimsSet claimsSet = GatekeeperJsonTokenExtractor.instance().getJWTClaimSet(accessToken);
-            System.out.println("Token Issued By: " + claimsSet.getIssuer());
-
-            List<String> audience = claimsSet.getAudience();
-
-            if (expectedAud == null && !audience.contains(AuthStorage.fitbitScope))
-                throw new Exception("Access Token Audience does not include Fitbit Ingest!");
-
-            if (expectedAud != null){
-                for (String s: expectedAud) {
-                    if (!audience.contains(s))
-                        throw new Exception("Access Token Audience does not include Glados & Heath Data Repo!");
-                }
-            }
-
-            return false;
-        } catch (Exception e) {
-            System.err.println("[GatekeeperLogin.validateAccessToken] Message:" + e.getMessage() + " Cause: " + e.getCause());
-            return true;
         }
     }
 
