@@ -2,10 +2,10 @@ package scheduling;
 
 import beans.ActivityMappingBean;
 import beans.OAuthBean;
-import datacollection.ActivityMapLoading;
 import datacollection.FitbitDataCollector;
-import datacollection.FitbitDataConverter;
 import datacollection.FitbitDataProcessor;
+import datacollection.FitbitDataConverter;
+import datacollection.ActivityMapLoading;
 import datacollection.ProcessedData;
 import datacollection.mappings.ActivityMap;
 import persistence.TokenMap;
@@ -19,8 +19,6 @@ import javax.ejb.EJB;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -35,9 +33,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 @Startup
 @Singleton
 public class SchedulingBean {
-
-    @PersistenceContext
-    private EntityManager em;
 
     @EJB
     OAuthBean oAuthBean;
@@ -74,9 +69,11 @@ public class SchedulingBean {
      */
     @Schedule(hour = "*/1", persistent = false)
     public void getFitbitData() {
-        List<TokenMap> allTokens = TokenMap.getAllTokenMap(em);
+        System.out.println("Starting Get Fitbit Data Task");
+        List<TokenMap> allTokens = tokenMapDAO.getAll();
 
-        if (allTokens == null || allTokens.size() > 0) {
+        if (allTokens == null || allTokens.size() <= 0) {
+            System.out.println("Not Fitbit Credentials to Use!");
             return;
         }
 
@@ -101,6 +98,7 @@ public class SchedulingBean {
      */
     @Schedule(hour = "*", minute = "*/30", persistent = false)
     public void updateActivityMappings() {
+        System.out.println("Starting Get Activity Mapping Task");
         GatekeeperOAuth2AccessToken accessToken = gatekeeperLogin.getAccessToken();
         ActivityMap[] map = loading.checkMappings(accessToken);
         if (map == null) return;
