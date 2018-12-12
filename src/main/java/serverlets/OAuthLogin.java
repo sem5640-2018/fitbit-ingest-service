@@ -70,7 +70,7 @@ public class OAuthLogin extends HttpServlet {
                         accessToken.getRefreshToken(), accessToken.getUserId());
                 map.setUserID(accessT);
                 tokenMapDAO.saveOrUpdate(map);
-                auditHelper.sendAudit("Authorizing Fitbit Access", "User has given Aberfitness permission to access there data.", gatekeeperLogin.getUser_id());
+                auditHelper.sendAudit(AuditHelper.FITBIT_AUTH_MSG, "User has given Aberfitness permission to access there data.", gatekeeperLogin.getUser_id());
             } catch (Exception e) {
                 e.printStackTrace();
             }
