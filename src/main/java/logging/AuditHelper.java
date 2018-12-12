@@ -17,9 +17,10 @@ import java.time.Instant;
 
 /**
  * Audit Helper for generating audit loggs to send off to the glados service.
+ *
  * @author James H Britton
  * @author 'jhb15@aber.ac.uk'
- * @version  0.1
+ * @version 0.1
  */
 @Singleton
 public class AuditHelper implements Serializable {
@@ -41,8 +42,9 @@ public class AuditHelper implements Serializable {
 
     /**
      * Sends an Audit Log to GLADOS using the API.
-     * @param msg Audit Message
-     * @param detail Audit Details
+     *
+     * @param msg         Audit Message
+     * @param detail      Audit Details
      * @param currentUser user id of which the Audit Log Belongs to.
      * @return 201 created, 401 unauthorised, 500 server error, 999 Exception Thrown
      */
@@ -51,7 +53,8 @@ public class AuditHelper implements Serializable {
             GatekeeperOAuth2AccessToken accessToken = gatekeeperLogin.getAccessToken();
 
             String content = "[" + msg + "]: " + detail;
-            AuditObj audObj = new AuditObj(content, EnvironmentVariableClass.getServiceName(), Instant.now(), currentUser);
+            AuditObj audObj = new AuditObj(content, EnvironmentVariableClass.getServiceName(),
+                    Instant.now().toEpochMilli(), currentUser);
             String outJson = gson.toJson(audObj);
 
             System.out.println("Audit JSON to be sent to GLADOS: " + outJson);
@@ -78,10 +81,10 @@ class AuditObj {
 
     private String content;
     private String serviceName;
-    private Instant timestamp;
+    private long timestamp;
     private String userId;
 
-    AuditObj(String content, String serviceName, Instant timestamp, String userId) {
+    AuditObj(String content, String serviceName, long timestamp, String userId) {
         this.content = content;
         this.serviceName = serviceName;
         this.timestamp = timestamp;
