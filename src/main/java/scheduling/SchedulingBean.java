@@ -78,7 +78,7 @@ public class SchedulingBean {
     /**
      * This method is ran every hour.
      */
-    @Schedule(hour = "*/1", persistent = false)
+    @Schedule(hour = "*/1", minute = "1", persistent = false)
     public void getFitbitData() {
         System.out.println("Starting Get Fitbit Data Task");
         List<TokenMap> allTokens = tokenMapDAO.getAll();
