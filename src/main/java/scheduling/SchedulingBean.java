@@ -90,6 +90,7 @@ public class SchedulingBean {
         Date now = new Date();
         for (TokenMap map : allTokens) {
             map.setLastAccessed(now);
+            tokenMapDAO.update(map);
         }
     }
 

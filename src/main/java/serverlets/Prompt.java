@@ -18,6 +18,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -98,6 +99,9 @@ public class Prompt extends HttpServlet {
 
             // Process all out data
             processor.ProcessSynchronous(data);
+
+            userToken.setLastAccessed(new Date());
+            tokenMapDAO.update(userToken);
 
         } else {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Authorization Header Not Set or Not Bearer");
