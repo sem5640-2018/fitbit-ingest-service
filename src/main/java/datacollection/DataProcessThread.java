@@ -138,12 +138,12 @@ public class DataProcessThread implements Runnable {
     }
 
     private boolean isRelevant(Activity activity, Date lastChecked) {
-        return activity.getJavaDate().getTime() + activity.getDuration() > lastChecked.getTime();
+        return lastChecked == null || activity.getJavaDate().getTime() + activity.getDuration() > lastChecked.getTime();
     }
 
     private boolean isRelevant(Steps activity, Date lastChecked) {
-        long compDate = (lastChecked == null) ? activity.getDateTime().getTime() : lastChecked.getTime();
-        return activity.getDateTime().getTime() + 86400000 > compDate;
+        long endTime = activity.getDateTime().getTime() + 86400000;
+        return lastChecked == null || (endTime > lastChecked.getTime() && endTime < new Date().getTime());
     }
 
     private void sendData(LinkedList<String> dataToSend) {

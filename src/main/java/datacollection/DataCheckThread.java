@@ -9,6 +9,8 @@ import com.github.scribejava.core.oauth.OAuth20Service;
 import persistence.TokenMap;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -53,15 +55,13 @@ public class DataCheckThread implements Runnable {
         LinkedList<String> addressesToPoll = new LinkedList<>();
 
         addressesToPoll.add(dateToFormat(now));
-        if (lastAccessed != null && doNeedPreviousDay(lastAccessed))
-            addressesToPoll.add(dateToFormat(lastAccessed));
 
         // Used if we want to poll from previous days
-        /*else if (lastAccessed == null) {
+        if (lastAccessed != null) {
             for (int i = 0; i < 7; i++) {
                 addressesToPoll.add(dateToFormat(DaysDate(i)));
             }
-        }*/
+        }
 
         try {
             // Refresh token on start
@@ -111,6 +111,11 @@ public class DataCheckThread implements Runnable {
     private boolean doNeedPreviousDay(Date lastChecked) {
         SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
         return fmt.format(lastChecked).equals(fmt.format(now));
+    }
+
+    private Date DaysDate(int input) {
+        LocalDate now = LocalDate.now().minusDays(input);
+        return Date.from(now.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     /**
