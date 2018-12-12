@@ -59,7 +59,10 @@ public class DataCheckThread implements Runnable {
         // Used if we want to poll from previous days
         if (lastAccessed != null) {
             for (int i = 1; i < 7; i++) {
-                addressesToPoll.add(dateToFormat(DaysDate(i)));
+                Date dateToCheck = DaysDate(i);
+                if (!this.wantToCheck(dateToCheck, tokenMap.getLastAccessed()))
+                    continue;
+                addressesToPoll.add(dateToFormat(dateToCheck));
             }
         }
 
@@ -102,6 +105,10 @@ public class DataCheckThread implements Runnable {
         }
 
         output.add(toReturn);
+    }
+
+    private Boolean wantToCheck(Date toCheck, Date lastChecked) {
+        return toCheck.getTime() + 86400000 < lastChecked.getTime();
     }
 
     private Date DaysDate(int input) {
