@@ -143,7 +143,7 @@ public class DataProcessThread implements Runnable {
 
     private boolean isRelevant(Steps activity, Date lastChecked) {
         long endTime = activity.getDateTime().getTime() + 86400000;
-        return lastChecked == null || (endTime > lastChecked.getTime() && endTime < new Date().getTime());
+        return lastChecked != null && endTime > lastChecked.getTime() && endTime < new Date().getTime();
     }
 
     private void sendData(LinkedList<String> dataToSend) {

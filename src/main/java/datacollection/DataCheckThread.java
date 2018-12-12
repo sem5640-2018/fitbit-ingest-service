@@ -58,7 +58,7 @@ public class DataCheckThread implements Runnable {
 
         // Used if we want to poll from previous days
         if (lastAccessed != null) {
-            for (int i = 0; i < 7; i++) {
+            for (int i = 1; i < 7; i++) {
                 addressesToPoll.add(dateToFormat(DaysDate(i)));
             }
         }
