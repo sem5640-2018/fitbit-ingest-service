@@ -2,12 +2,14 @@ package scheduling;
 
 import beans.ActivityMappingBean;
 import beans.OAuthBean;
+import config.AuthStorage;
 import datacollection.FitbitDataCollector;
 import datacollection.FitbitDataProcessor;
 import datacollection.FitbitDataConverter;
 import datacollection.ActivityMapLoading;
 import datacollection.ProcessedData;
 import datacollection.mappings.ActivityMap;
+import logging.AuditHelper;
 import persistence.TokenMap;
 import persistence.TokenMapDAO;
 import scribe_java.GatekeeperLogin;
@@ -59,15 +61,24 @@ public class SchedulingBean {
         System.out.println("Scheduling EJB Initialised!");
         collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
         processor = new FitbitDataProcessor(activityMappingBean);
+        updateClientAccessToken();
 
         // These are needed on start up.
         updateActivityMappings();
     }
 
     /**
+     * Function for storing a Client Credential Access Token in the AuthStorage static class
+     */
+    @Schedule(hour = "*", minute = "*/30", persistent = false)
+    private void updateClientAccessToken() {
+        AuthStorage.setApplicationToken(gatekeeperLogin.getAccessToken());
+    }
+
+    /**
      * This method is ran every hour.
      */
-    @Schedule(hour = "*/1", persistent = false)
+    @Schedule(hour = "*/1", minute = "1", persistent = false)
     public void getFitbitData() {
         System.out.println("Starting Get Fitbit Data Task");
         List<TokenMap> allTokens = tokenMapDAO.getAll();
@@ -86,10 +97,13 @@ public class SchedulingBean {
         // Process all out data
         processor.ProcessData(data);
 
+        AuditHelper auditHelper = new AuditHelper();
         // Update last accessed
         Date now = new Date();
         for (TokenMap map : allTokens) {
             map.setLastAccessed(now);
+            tokenMapDAO.update(map);
+            auditHelper.sendAudit(AuditHelper.FITBIT_DATA_GRAB_MSG, "Collected at: " + map.getLastAccessed(), map.getUserID());
         }
     }
 

@@ -9,6 +9,8 @@ import com.github.scribejava.core.oauth.OAuth20Service;
 import persistence.TokenMap;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -53,15 +55,16 @@ public class DataCheckThread implements Runnable {
         LinkedList<String> addressesToPoll = new LinkedList<>();
 
         addressesToPoll.add(dateToFormat(now));
-        if (lastAccessed != null && doNeedPreviousDay(lastAccessed))
-            addressesToPoll.add(dateToFormat(lastAccessed));
 
         // Used if we want to poll from previous days
-        /*else if (lastAccessed == null) {
-            for (int i = 0; i < 7; i++) {
-                addressesToPoll.add(dateToFormat(DaysDate(i)));
+        if (lastAccessed != null) {
+            for (int i = 1; i < 7; i++) {
+                Date dateToCheck = DaysDate(i);
+                if (!this.wantToCheck(dateToCheck, tokenMap.getLastAccessed()))
+                    continue;
+                addressesToPoll.add(dateToFormat(dateToCheck));
             }
-        }*/
+        }
 
         try {
             // Refresh token on start
@@ -104,13 +107,15 @@ public class DataCheckThread implements Runnable {
         output.add(toReturn);
     }
 
-    /**
-     * @param lastChecked this parameter is the date to check
-     * @return a boolean representing if now and the input are on the same calendar day
-     */
-    private boolean doNeedPreviousDay(Date lastChecked) {
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
-        return fmt.format(lastChecked).equals(fmt.format(now));
+    private Boolean wantToCheck(Date toCheck, Date lastChecked) {
+        // Check if the end time of the steps is more recent than the last time we checked
+        // 86400000ms = 1 day as we are collecting steps for the day
+        return toCheck.getTime() + 86400000 > lastChecked.getTime();
+    }
+
+    private Date DaysDate(int input) {
+        LocalDate now = LocalDate.now().minusDays(input);
+        return Date.from(now.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 
     /**
