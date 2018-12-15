@@ -1,16 +1,32 @@
-language: java
-sudo: false
+sudo: true
+services:
+- docker
 notifications:
   slack: sem5640-2018:4U7aCLy3FSLaqVepipksnN0a
-
-
-cache:
-  directories:
-    - $HOME/.m2
-
-
-install: 
-# Build dependencies first so it goes away
-- mvn dependency:resolve
-script: 
-- mvn test -B
+env:
+  global:
+  - secure: CEdGRMa411PTIeOMtN1YQ6vdnxXq0FAXcP4uyTfrUgSXTP7EZJYdA8MNB8PZkCXCNdkhT+R1O3JQ8g6ABMn0vZYQatQIaGeOYLcvRML5DnbUszyfjY2yJ2OeczEXtvPU0dO36HdTfIL61a/SE0xxxzff4yTrqwcCixRKi1Deb6W6ma3PuCAWvjNdFST2aA0DVgL5rJx2sq4KKxbHNGsoul68sRS0OgNZT1WR/Z0cAEhIZMFBN150I3RM4OcoAXHGNWdCCVrwRjERydK8SMbUoa5LMGsUAHbYy4bXDRr8dVh+G92lfClR2EhU2c65h4SfKRgMCo3F8YPD+fCsBekWc/uuAgS2ZAL8VUQkEUeJeTbGKzLsg2qea3SJbUQnNETAC6FPnRoqQMJSdySjfpZhm5mjXNZkE+M+ye/4glvyim++UfKnV94ZF81uzadwifkM7CQB9JSVN72vCEWHKQh1t0RoObJQnBtjNFhXlL5Xu0hmQ/wPWD7xx8OKMW+e6QNlHuFSBYBCRiha+sH0EGLcIfiGDi+DH87NVSmFWVK53BdlafiaV/jNRPQBZUnoROY3iKPTf4OWkBr0bl9tvO+LjM0V02ZMupwnuQOYk/kqbUP7B53HOpADdczqzN/dKf9Cmnrv/0Zll/0ivH1t6Eby5/f5VFs92VCEV1Jfkm+sJhg=
+  - secure: XEzMLgJIaJQkxzvS6XvbvCbCCvFwpgOJiXfqObA0errw6NJyVR8UmMicrP1lj5lFlXepB+WbcnUpeRsML9hcQP7/icYTYe+lPzeEcYLSMb/tzj9bAGfyR0hLZJruyWRryNDaDjHR8oZskLIfTVh28LNyvlB5f0hiI9GPAbTA1duNWAEE4ZaTGrcZ2kHGV1uCsUhH6uBhFg41mM7vLXATtbe64OLD2LjXCgGbyeaRuw/NpwOxS0jocftcb3YDYzT5DI1LxqjfQ2QISNdnSUOiDf0eGEYAdnyueHfRGGzj6+0gw0HX9cbKv368qWIxYLA3zq1dmlL80IkCULtn0rhpaJFR80DCHUmI1mVCIFMtt7Nc2oq60Yj4D7eU8MboUE0CaJGrTlcr+UAeC7VLeUHWYxZWiM4lWeGLTBdpyT03URsV5c1wGJeMvKhe5+/5QAVOc3PC7/6lAvy5IC5v8Jiy5M5TKnPxXk1CQKkjitQroVYIkjunluu5cBBc8Yl9/2L/etiFO6hexLWPltsqTkCO8Zz3ZNmQCGP6gbXH5dozz5HzhGlG+be6TEVra+VhccXac5zypLziutmAKYWFuIRQAFVnX/zugRJP/EzIu1QHR/8sQO1lTqmDT82BzItX/s7Iw7FJ1aiUs+MFGSl9vzJmOhVukm2IP6U6Av0yMeaop8E=
+  - SYSLOG_HOST=127.0.0.1
+    
+stages:
+- test
+- name: build_staging
+  if: branch = development AND type = push
+- name: build_release
+  if: branch = master AND type = push
+jobs:
+  include:
+  - stage: test
+    name: Tests
+    language: java
+    script:
+    - mvn test -B
+  - stage: build_staging
+    name: Build docker staging image
+    script:
+    - "./bin/docker.sh staging"
+  - stage: build_release
+    name: Build docker release image
+    script:
+    - "./bin/docker.sh latest"
