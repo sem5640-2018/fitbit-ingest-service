@@ -25,7 +25,6 @@ public class FitbitDataConverter {
     public ConcurrentLinkedQueue<ProcessedData> convertActivityData(ConcurrentLinkedQueue<ProcessedData> input) {
         for (ProcessedData data : input) {
             for (ActivityJSON json : data.getActivityJSON()) {
-                System.out.println(json.JSON);
                 FitBitJSON activityClass = gson.fromJson(json.JSON, FitBitJSON.class);
                 activityClass.setFromDate(json.date);
                 activityClass.setUserID(data.getInputToken().getUserID());
