@@ -30,8 +30,14 @@ public class FitbitDataCollector {
         ConcurrentLinkedQueue<TokenMap> updatedMaps = new ConcurrentLinkedQueue<>();
         ConcurrentLinkedQueue<ProcessedData> output = new ConcurrentLinkedQueue<>();
 
-        DataCheckThread dataCheckThread = new DataCheckThread(input, output, updatedMaps, oAuthBean);
-        dataCheckThread.run();
+        Thread dataCheckThread = new Thread(new DataCheckThread(input, output, updatedMaps, oAuthBean));
+        dataCheckThread.start();
+
+        try {
+            dataCheckThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         UpdateAllTokens(updatedMaps);
         return output;
