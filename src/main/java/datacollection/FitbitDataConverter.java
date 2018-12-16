@@ -25,6 +25,7 @@ public class FitbitDataConverter {
     public ConcurrentLinkedQueue<ProcessedData> convertActivityData(ConcurrentLinkedQueue<ProcessedData> input) {
         for (ProcessedData data : input) {
             for (ActivityJSON json : data.getActivityJSON()) {
+                System.out.println(json.JSON);
                 FitBitJSON activityClass = gson.fromJson(json.JSON, FitBitJSON.class);
                 activityClass.setFromDate(json.date);
                 activityClass.setUserID(data.getInputToken().getUserID());
@@ -32,6 +33,7 @@ public class FitbitDataConverter {
             }
 
             for (ActivityJSON json : data.getStepsJSON()) {
+                System.out.println(json.JSON);
                 FitbitSteps overView = gson.fromJson(json.JSON, FitbitSteps.class);
                 for (Steps activityClass: overView.getActivities()) {
                     activityClass.setUserID(data.getInputToken().getUserID());
