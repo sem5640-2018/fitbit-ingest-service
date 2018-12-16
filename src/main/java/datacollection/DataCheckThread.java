@@ -60,6 +60,8 @@ public class DataCheckThread implements Runnable {
         if (lastAccessed != null) {
             for (int i = 1; i < 7; i++) {
                 Date dateToCheck = DaysDate(i);
+                if (!this.wantToCheck(dateToCheck, lastAccessed))
+                    continue;
                 addressesToPoll.add(dateToFormat(dateToCheck));
             }
         }
@@ -103,6 +105,12 @@ public class DataCheckThread implements Runnable {
         }
 
         output.add(toReturn);
+    }
+
+    private Boolean wantToCheck(Date toCheck, Date lastChecked) {
+        // Check if the end time of the steps is more recent than the last time we checked
+        // 86400000ms = 1 day as we are collecting steps for the day
+        return toCheck.getTime() + 86400000 > lastChecked.getTime();
     }
 
     private Date DaysDate(int input) {
