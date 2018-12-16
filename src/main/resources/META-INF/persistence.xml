@@ -5,10 +5,10 @@
     <persistence-unit name="fitbitPU" transaction-type="JTA">
         <jta-data-source>java:app/FitbitDatabaseMariaDB</jta-data-source>
         <class>persistence.TokenMap</class>
-        <class>persistence.ClientCredentials</class>
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
         <properties>
             <property name="javax.persistence.schema-generation.database.action" value="create"/>
+            <property name="eclipselink.query-results-cache" value="false"/>
         </properties>
     </persistence-unit>
 </persistence>
