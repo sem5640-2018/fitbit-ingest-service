@@ -33,8 +33,14 @@ public class FitbitDataProcessor {
     public void ProcessSynchronous(ConcurrentLinkedQueue<ProcessedData> input) {
         AtomicInteger counter = new AtomicInteger();
         counter.set(0);
-        DataProcessThread processThread = new DataProcessThread(input, AuthStorage.getApplicationToken(), counter, activityMappingBean, getNewGatekeeperService());
-        processThread.run();
+        Thread processThread = new Thread(new DataProcessThread(input, AuthStorage.getApplicationToken(), counter, activityMappingBean, getNewGatekeeperService()));
+        processThread.start();
+
+        try {
+            processThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         System.out.println("Sent " + counter.get() + ", data packets to health data repository");
     }

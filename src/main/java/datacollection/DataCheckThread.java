@@ -60,7 +60,7 @@ public class DataCheckThread implements Runnable {
         if (lastAccessed != null) {
             for (int i = 1; i < 7; i++) {
                 Date dateToCheck = DaysDate(i);
-                if (!this.wantToCheck(dateToCheck, lastAccessed))
+                if (!this.wantToCheck(dateToCheck, lastAccessed ))
                     continue;
                 addressesToPoll.add(dateToFormat(dateToCheck));
             }
