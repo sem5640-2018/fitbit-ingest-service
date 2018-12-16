@@ -58,8 +58,6 @@ public class Prompt extends HttpServlet {
 
     @Override
     public void init() {
-        collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
-        processor = new FitbitDataProcessor(activityMappingBean);
         auditHelper = new AuditHelper();
     }
 
@@ -95,6 +93,9 @@ public class Prompt extends HttpServlet {
                 response.sendError(HttpServletResponse.SC_FORBIDDEN, "No Fitbit Access Given");
                 return;
             }
+
+            collector = new FitbitDataCollector(oAuthBean, tokenMapDAO);
+            processor = new FitbitDataProcessor(activityMappingBean);
 
             // Retrieve all the JSON strings needed for processing
             ConcurrentLinkedQueue<ProcessedData> data = collector.getAllUsersSynchronous(new TokenMap[]{userToken});
